@@ -58,11 +58,11 @@ class ListModel(QObject):
 class HomeworkModel(QObject):
     render_next_question = pyqtSignal()
     
-    def __init__(self, note_store, templates, option_store, subset=None, subset_group=-1):
+    def __init__(self, note_store, templates, options_store, subset=None, subset_group=-1):
         super().__init__()
 
         self.note_store = note_store
-        self.option_store = option_store
+        self.options_store = options_store
 
         self.templates = []
         for templ in templates: # double templates for reverses here.
@@ -84,17 +84,19 @@ class HomeworkModel(QObject):
                 self.cards = subset.get_cards(subset_group)
         self.curr_question = {}
         self.curr_question_type = -1 # use index instead of name.
-        self.globals = self.option_store.get_globals(self.note_store.deck_name)
+        self.globals = self.options_store.get_globals(self.note_store.deck_name)
         if "do_timer" in self.globals and "timer_seconds" in self.globals:
             if self.globals["do_timer"]:
                 self.timed_mode = self.globals["timer_seconds"]
+            else:
+                self.timed_mode = 0
         else:
             self.timed_mode = 0
         # history
         self.total_correct = 0 
         self.total_answered = 0 
 
-        self.time = self.timed_mode * 60
+        self.time = self.timed_mode
 
         self.card_history = set() # set of card indices that have been included.
         # this gets set by view / controller while running; changing this will not turn off summaries.

@@ -157,10 +157,11 @@ class QuestionWidget(QWidget):
     # arg1 = [True, False] => "Correct", "Incorrect"
     # arg2 = [True, False] True if should continue to next question, False if should stay on the current widget. 
     questionAnswered = pyqtSignal(bool, bool)
-    def __init__(self, options):
+    def __init__(self, options, model):
         super().__init__()
 
         self.options = options
+        self.model = model
         self.load()
     
     def load(self):
@@ -181,10 +182,12 @@ class QuestionWidget(QWidget):
 # Shows a Question and then a # of answer buttons to press 
 class MultipleChoiceQuestionWidget(QuestionWidget):
     def load(self):
+        self.conf = self.model.options_store.get_homework_config(self.model.note_store.deck_name)
+
         self.vlayout = QtWidgets.QVBoxLayout(self)
         self.questionLabel = QuestionLabel(self)
         self.questionLabel.setText(self.options["question"])
-        self.set_font_size(self.questionLabel, 30)
+        self.set_font_size(self.questionLabel, self.conf["choice_question_size"])
         self.questionLabel.setAlignment(Qt.AlignCenter)
         
         self.questionLabel.setTextFormat(Qt.RichText)
@@ -193,14 +196,15 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
         
         
         self.buttons = []
-        self.confirm_answer = False
+        
+        self.confirm_answer = self.conf["choice_confirm_answer"]
         self.last_clicked = -1
         num_ans = len(self.options["answers"])
         for i in range(num_ans):
 
             button =  AnswerButton(text=self.options["answers"][i], parent=self)
             button.setStyleSheet(button_style)
-            self.set_font_size(button, 20)
+            self.set_font_size(button, self.conf["choice_answer_size"])
             button.setAutoDefault(False)
             button.setFocusPolicy(Qt.NoFocus)
             button.clicked.connect(lambda ch, i=i:self.answer_callback(i))
@@ -242,7 +246,7 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
 
 class MatchingWidget(QuestionWidget):
     def load(self):
-        
+        self.conf = self.model.options_store.get_homework_config(self.model.note_store.deck_name)
         self.left_layout = QtWidgets.QVBoxLayout()
         self.right_layout = QtWidgets.QVBoxLayout()
 
@@ -264,7 +268,7 @@ class MatchingWidget(QuestionWidget):
             buttonL.setStyleSheet(button_style)
             buttonL.setAutoDefault(False)
             buttonL.setFocusPolicy(Qt.NoFocus)
-            self.set_font_size(buttonL, 20)
+            self.set_font_size(buttonL, self.conf["matching_answer_size"])
             self.l_buttons.append(buttonL)
             self.left_layout.addWidget(self.l_buttons[i])
 
@@ -274,7 +278,7 @@ class MatchingWidget(QuestionWidget):
             buttonR.setStyleSheet(button_style)
             buttonR.setAutoDefault(False)
             buttonR.setFocusPolicy(Qt.NoFocus)
-            self.set_font_size(buttonR, 20)
+            self.set_font_size(buttonR, self.conf["matching_answer_size"])
             self.r_buttons.append(buttonR)
             self.right_layout.addWidget(self.r_buttons[i])
 
@@ -320,7 +324,6 @@ class MatchingWidget(QuestionWidget):
                 self.l_buttons[self.sel_left].setEnabled(True)
             self.sel_left = i
             
-
     def right_callback(self, i):
         button = self.r_buttons[i]
         button.setEnabled(False)
@@ -357,7 +360,7 @@ class MatchingWidget(QuestionWidget):
 # - planned pinyin support
 class WriteTheAnswerWidget(QuestionWidget):
     def load(self):
-        
+        self.conf = self.model.options_store.get_homework_config(self.model.note_store.deck_name)
         self.layout = QtWidgets.QVBoxLayout(self)
         self.questionLabel = QuestionLabel(self)
         self.questionLabel.setText(self.options["question"])
@@ -370,7 +373,7 @@ class WriteTheAnswerWidget(QuestionWidget):
         self.ansBox.setFixedHeight(60)
         
         self.ansBox.returnPressed.connect(self.submit_callback)
-        self.set_font_size(self.ansBox, 20)
+        self.set_font_size(self.ansBox, self.conf["write_question_size"])
         self.ansSubmit = QtWidgets.QPushButton()
         self.ansSubmit.setFixedHeight(60)
         self.ansSubmit.setText("Submit")
@@ -384,11 +387,11 @@ class WriteTheAnswerWidget(QuestionWidget):
         self.layout.addWidget(self.questionLabel)
         self.layout.addLayout(self.ansLayout)
         self.ansBox.setFocusPolicy(Qt.StrongFocus)
-        self.show_keyboard = True
+        self.show_keyboard = self.conf["write_show_keyboard"]
         if self.show_keyboard:
             if not hasattr(mw, "_bKeyboard"):
-
-                mw._bKeyboard = KeyboardView(translation=keyboard_japanese_hiragana)
+                if self.conf["write_keyboard_type"] == 0:
+                    mw._bKeyboard = KeyboardView(translation=keyboard_japanese_hiragana)
                 
             if not mw._bKeyboard.isVisible():
                 mw._bKeyboard.showNormal()

@@ -394,7 +394,12 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
         # Show virtual keyboard enable type combobox
         self.wr_cbKeyboard.stateChanged.connect(lambda state, widget=self.wr_coKeyboardType: self._bind_enabled_widget(state, widget))
 
-        # TODO: make list options buttons work
+        # list dialog
+        self.list_addButton.clicked.connect(self._list_add_btn)
+        self.list_removeButton.clicked.connect(self._list_remove_btn)
+        self.list_moveUpButton.clicked.connect(self._list_move_up_btn)
+        self.list_moveDownButton.clicked.connect(self._list_move_down_btn)
+        self.list_setFrontButton.clicked.connect(self._list_front_back_btn)
 
         ### hidden widgets (unsupported currently) 
         self.gen_soundVolume.setVisible(False)
@@ -441,6 +446,7 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
             item = QListWidgetItem(l["columns"][i])
             font = item.font()
             font.setBold(bool(l["front"][i]))
+            font.setItalic(bool(l["front"][i]))
             item.setFont(font)
             self.list_list.addItem(item)
         
@@ -492,7 +498,15 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
         # TODO: more field options here??
 
         ### List
-        # TODO: yeah i'll do this later
+        cols = []
+        front = []
+        for i in range(self.list_list.count()):
+            item = self.list_list.item(i)
+            cols.append(item.text())
+            front.append(bool(item.font().bold()))
+
+        l["columns"] = cols
+        l["front"] = front
 
         ### Multiple Choice
         h["choice_confirm_answer"] = bool(self.mc_cbConfirm.isChecked())
@@ -518,3 +532,38 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
     def _load_notecard_fields(self, combobox):
         for field in self.notecard_store.model["flds"]:
             combobox.addItem(field["name"])
+
+    # list_list : list widget 
+    # list_fieldSelCo : combobox with fields
+    def _list_add_btn(self):
+        self.list_list.addItem(self.list_fieldSelCo.currentText())
+
+    def _list_remove_btn(self):
+        if not self.list_list.currentItem():
+            return 
+        self.list_list.takeItem(self.list_list.currentRow())
+
+    def _list_move_up_btn(self):
+        row = self.list_list.currentRow()
+        if row <= 0: return
+        item = self.list_list.takeItem(row)
+        self.list_list.insertItem(row - 1, item)
+
+    def _list_move_down_btn(self):
+        row = self.list_list.currentRow()
+        if row >= self.list_list.count() -1: return
+        item = self.list_list.takeItem(row)
+        self.list_list.insertItem(row + 1, item)
+
+    def _list_front_back_btn(self):
+        item = self.list_list.currentItem()
+        if not item: return
+        font = item.font()
+        if font.bold():
+            font.setBold(False)
+            font.setItalic(False)
+        else:
+            font.setBold(True)
+            font.setItalic(True)
+        item.setFont(font)
+        self.list_list.setCurrentItem(item)

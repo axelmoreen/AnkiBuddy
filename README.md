@@ -30,7 +30,7 @@ Anki2/
 * ~~Hover over timer to see stats in Practice~~
 * Options wizard
     * Change correct/incorrect sound volume
-    * Change timer length
+    * ~~Change timer length~~
     * Change subset group size.
     * Change field font / font-sizes
     * Matching/multiple choice/written specific customization

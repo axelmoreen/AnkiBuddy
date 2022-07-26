@@ -16,10 +16,10 @@ from os.path import join, dirname
 # TODO: move datastore access to the ListModel
 class ListView(QDialog):
     # TODO: fix terrible naming scheme.. and document
-    def __init__(self, note_store, option_store, model, controller, do_subsets = True, subset = None):
+    def __init__(self, note_store, options_store, model, controller, do_subsets = True, subset = None):
         super().__init__()
         self.note_store = note_store
-        self.option_store = option_store
+        self.options_store = options_store
         self.controller = controller
         self.model = model
         self.do_subsets = do_subsets
@@ -29,7 +29,7 @@ class ListView(QDialog):
         self.ui.setupUi(self)
         self.setWindowTitle("List - "+note_store.deck_name)
         self.setWindowIcon(mw.windowIcon())
-        dConf = option_store.get_list_config(note_store.deck_name)
+        dConf = options_store.get_list_config(note_store.deck_name)
 
         self.ui.tableWidget.setColumnCount(len(dConf["columns"]))
         self.ui.tableWidget.setHorizontalHeaderLabels([None, None])
@@ -37,9 +37,9 @@ class ListView(QDialog):
 
         # load fonts
         self.fonts = {}
-
-        for item in dConf["fonts"]:
-            self.fonts[item[0]] = QFont(dConf["fonts"][item[0]])
+        #
+        #for item in dConf["fonts"]:
+        #    self.fonts[item[0]] = QFont(dConf["fonts"][item[0]])
 
         self.front = []
         for item in dConf["front"]:
@@ -55,13 +55,13 @@ class ListView(QDialog):
                     item = BTableWidgetItem(str(notecard.fields[
                         dConf["columns"][j]
                     ]))
-                    if str(j) in self.fonts:
-                        item.setFont(self.fonts[str(j)])
+                    #if str(j) in self.fonts:
+                    #    item.setFont(self.fonts[str(j)])
                     
-                    if str(j) in dConf["font-sizes"]:
-                        f = item.font()
-                        f.setPointSize(dConf["font-sizes"][str(j)])
-                        item.setFont(f)
+
+                    f = item.font()
+                    f.setPointSize(20)
+                    item.setFont(f)
                     
                     #self.ui.tableWidget.setItem(i, j, item)
                     self.ui.tableWidget.setCellWidget(i, j, item)
@@ -79,10 +79,10 @@ class ListView(QDialog):
                     if str(j) in self.fonts:
                         item.setFont(self.fonts[str(j)])
                     # TODO: use global font format
-                    if str(j) in dConf["font-sizes"]:
-                        f = item.font()
-                        f.setPointSize(dConf["font-sizes"][str(j)])
-                        item.setFont(f)
+
+                    f = item.font()
+                    f.setPointSize(20)
+                    item.setFont(f)
                     
                     self.ui.tableWidget.setItem(i, j, item)
                 i += 1
@@ -221,11 +221,11 @@ class HomeworkView(QWidget):
         self.model.corrected = False # for show answer to work properly
         #self.ui.labelLeft.setText(self.model.curr_question["type"])
         if self.model.curr_question_type == 0:
-            newQuestionWidget = MultipleChoiceQuestionWidget(self.model.curr_question)
+            newQuestionWidget = MultipleChoiceQuestionWidget(self.model.curr_question, self.model)
         elif self.model.curr_question_type == 1:
-            newQuestionWidget = MatchingWidget(self.model.curr_question)
+            newQuestionWidget = MatchingWidget(self.model.curr_question, self.model)
         elif self.model.curr_question_type == 2:
-            newQuestionWidget = WriteTheAnswerWidget(self.model.curr_question)
+            newQuestionWidget = WriteTheAnswerWidget(self.model.curr_question, self.model)
 
         oldQuestionWidget = self.ui.verticalLayout.itemAt(0)
         oldQuestionWidget.widget().deleteLater()
