@@ -5,7 +5,7 @@ AnkiBuddy is a study companion add-on for Anki 2.1 that gives you study lists, m
 This add-on aims to be a Quizlet-clone / Duolingo-clone to give you quizzing or timed practice from your Anki decks with alternative formats.
 You can choose subsets to study cards you already know, new cards, cards you struggle most with. This add-on tries to be as customizable as possible, as it allows you to create question templates for each deck based on their model. 
 
-This add-on does not aim to replace the core functionality of Anki in any way (it relies on you to complete your daily repetitions in order to have "learned" a card), nor has it been tested alongside SRS at-length, so your mileage may vary. It is something I made for myself simply for fun and to experiment with. Practice from multiple choice and matching might be a stepping-stone for learning, as it is easier than remembering a full notecard, but I cannot guarantee any particular outcome. 
+This add-on does not aim to replace the core functionality of Anki in any way (it relies on you to complete your daily repetitions in order to have "learned" a card), nor has it been tested alongside SRS at-length, so your mileage may vary. It is something I made for myself simply for fun and to experiment with. Practice from multiple choice and matching might be a useful stepping-stone for learning, or it may be good for recall, but I cannot guarantee any particular outcome. It is easier than remembering a full notecard. 
 
 This add-on also does not write to or modify your existing Anki data at all, it only reads the deck information. So it is safe to use. 
 
