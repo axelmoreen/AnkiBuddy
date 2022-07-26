@@ -14,7 +14,7 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 class Ui_QuestionsWizard(object):
     def setupUi(self, QuestionsWizard):
         QuestionsWizard.setObjectName("QuestionsWizard")
-        QuestionsWizard.resize(1033, 383)
+        QuestionsWizard.resize(1033, 390)
         self.gridLayout = QtWidgets.QGridLayout(QuestionsWizard)
         self.gridLayout.setObjectName("gridLayout")
         self.horizontalLayout_2 = QtWidgets.QHBoxLayout()
@@ -113,4 +113,4 @@ class Ui_QuestionsWizard(object):
         self.options.setText(_translate("QuestionsWizard", "Options"))
         self.label_3.setText(_translate("QuestionsWizard", "Subset"))
         self.allgroups_box.setText(_translate("QuestionsWizard", "All Groups"))
-        self.previewSubsetButton.setText(_translate("QuestionsWizard", "Preview"))
+        self.previewSubsetButton.setText(_translate("QuestionsWizard", "List"))

@@ -31,6 +31,12 @@ class ListView(QDialog):
         self.setWindowIcon(mw.windowIcon())
         dConf = options_store.get_list_config(note_store.deck_name)
 
+        # check to see if there are no columns set in options yet
+        if "columns" not in dConf:
+            self._cancel()
+        if len(dConf["columns"]) == 0:
+            self._cancel()
+
         self.ui.tableWidget.setColumnCount(len(dConf["columns"]))
         self.ui.tableWidget.setHorizontalHeaderLabels([None, None])
         self.ui.tableWidget.horizontalHeader().setStretchLastSection(True)
@@ -44,8 +50,7 @@ class ListView(QDialog):
         self.front = []
         for item in dConf["front"]:
             self.front.append(item)
-        # TODO: save preference to either start with all lessons or start with groups 
-        # load all lessons into table
+
         self.length = note_store.length()
 
         if not subset:
@@ -116,7 +121,12 @@ class ListView(QDialog):
         self.model.lesson_changed.connect(self.on_lesson_changed)
 
         self.show()
-    
+        
+    def _cancel(self):
+        self._cancelMsg = QMessageBox()
+        self._cancelMsg.setText("Please set-up List view in Options first.")
+        self._cancelMsg.exec_() # modal popup
+        
     ######
     # signals
     def on_close(self, value):
