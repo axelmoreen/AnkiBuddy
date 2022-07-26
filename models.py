@@ -1,0 +1,191 @@
+from email.policy import strict
+from aqt.qt import *
+import random
+
+class ListModel(QObject):
+    hide_front_changed = pyqtSignal(bool)
+    hide_back_changed = pyqtSignal(bool)
+    show_all_changed = pyqtSignal(bool)
+    lesson_changed = pyqtSignal(int)
+
+    @property
+    def lesson(self):
+        return self._lesson
+    
+    @property
+    def hide_front(self):
+        return self._hide_front
+    
+    @property
+    def hide_back(self):
+        return self._hide_back
+
+    @property
+    def show_all(self):
+        return self._show_all
+
+    @lesson.setter
+    def lesson(self, value):
+        self._lesson = value
+        self.lesson_changed.emit(self._lesson)
+    
+    @hide_front.setter
+    def hide_front(self, value):
+        self._hide_front = value
+        self.hide_front_changed.emit(value)
+    
+    @hide_back.setter
+    def hide_back(self, value):
+        self._hide_back = value
+        self.hide_back_changed.emit(value)
+    
+    @show_all.setter
+    def show_all(self, value):
+        self._show_all = value
+        self.show_all_changed.emit(value)
+
+    def __init__(self):
+        super().__init__()
+        self._hide_front = False
+        self._hide_back = False
+        self._show_all = False
+        
+        self._lesson = 1
+
+# Homework Model
+# represents a "quizzer" window where the user is asked one question at a time.
+# quiz settings are set in the Questions Wizard beforehand and passed to the homework model
+class HomeworkModel(QObject):
+    render_next_question = pyqtSignal()
+    
+    def __init__(self, note_store, templates, option_store, subset=None, subset_group=-1):
+        super().__init__()
+
+        self.note_store = note_store
+        self.option_store = option_store
+
+        self.templates = []
+        for templ in templates: # double templates for reverses here.
+            self.templates.append(templ)
+            if templ["include_reverse"]:
+                rev = templ.copy()
+                rev["question"] = templ["answer"]
+                rev["answer"] = templ["question"]
+                self.templates.append(rev)
+
+        self.subset = subset
+        self.subset_group = subset_group
+        if not subset:
+            self.cards = [i for i in range(note_store.length())]
+        else:
+            if subset_group == -1:
+                self.cards = subset.get_all_cards()
+            else:
+                self.cards = subset.get_cards(subset_group)
+        self.curr_question = {}
+        self.curr_question_type = -1 # use index instead of name.
+        self.globals = self.option_store.get_globals(self.note_store.deck_name)
+        if "timed_mode" in self.globals:
+            self.timed_mode = self.globals["timed_mode"]
+        else:
+            self.timed_mode = 0
+        # history
+        self.total_correct = 0 
+        self.total_answered = 0 
+
+        self.time = self.timed_mode * 60
+
+        self.card_history = set() # set of card indices that have been included.
+        # this gets set by view / controller while running; changing this will not turn off summaries.
+        self.wait_wrong = False # should wait and show answer details before moving onto next question. 
+
+        self.true_random = False
+        self.cards_shuffle = [i for i in range(len(self.cards))]
+        random.shuffle(self.cards_shuffle)
+        self.card_i = 0
+
+    def next_template(self):
+        return self.templates[random.randrange(len(self.templates))]
+    # If not using true random, use a separate (shuffled) deck to order the cards properly
+    def next_card(self, move_ind = False):
+        if self.true_random:
+            ind = random.randrange(len(self.cards))
+            return self.note_store.notecards[
+                self.cards[ind]
+            ], ind
+        else:
+            if self.card_i >= len(self.cards_shuffle):
+                random.shuffle(self.cards_shuffle) # reshuffle deck
+                self.card_i = self.card_i % len(self.cards_shuffle)
+            ind = self.cards_shuffle[self.card_i]
+            if move_ind: self.card_i += 1
+            return self.note_store.notecards[
+                    self.cards[ind]
+                ], ind
+
+
+    def load_new_question(self):
+        self.wait_wrong = False
+        templ = self.next_template()
+        self.answer_card = None
+        self.curr_question_type = q_type = templ["type_ind"]
+        self.curr_question.clear()
+        self.curr_question["type"] = templ["type"]
+        if q_type == 0 : # multiple choice 
+            # TODO: fix bug : card sometimes repeats in answers or from question to answers
+            quest, ind = self.next_card()
+            while quest.fields[templ["answer"]].casefold() == quest.fields[templ["question"]]: quest,ind = self.next_card()
+            self.answer_card = quest 
+            self.card_history.add(ind)
+            self.card_i += 1
+            ans = []
+            while len(ans) < templ["number_choices"]:
+                card, _ind = self.next_card()
+                while card.fields[templ["answer"]].casefold() == card.fields[templ["question"]]: card, _ind= self.next_card() # happens sometimes with the core2k set
+                while card.fields[templ["question"]].casefold() == quest.fields[templ["question"]]: card, _ind = self.next_card() # avoiding duplicating question
+                #while self._has_card(ans, card, templ["question"]): card, _ind = self.next_card() 
+                while self._has_card(ans, card, templ["answer"]): card, _ind = self.next_card()
+                self.card_i += 1
+                ans.append(card.fields[templ["answer"]])
+                
+            ans_ind = random.randrange(templ["number_choices"])
+            ans[ans_ind] = quest.fields[templ["answer"]]
+
+            self.curr_question["question"] = quest.fields[templ["question"]]
+            self.curr_question["answers"] = ans
+            self.curr_question["correct_answer"] = ans_ind
+
+        elif q_type == 1: # matching
+            # TODO: fix bug : sometimes on core2k set, kana and kanji will be the same - so check if question and answer are the same before using
+            quest = []
+            ans = []
+            while len(quest) < templ["groupsize"]:
+                card, _ind = self.next_card()
+                while card.fields[templ["answer"]].casefold() == card.fields[templ["question"]]: card, _ind = self.next_card() # happens sometimes with the core2k set
+                while self._has_card(quest, card, templ["question"]): card, _ind = self.next_card()
+                self.card_history.add(_ind)
+                quest.append(card.fields[templ["question"]])
+                ans.append(card.fields[templ["answer"]])
+                self.card_i += 1
+            self.curr_question["questions"] = quest
+            self.curr_question["answers"] = ans
+
+        elif q_type == 2: #write the answer
+            card, _ind = self.next_card()
+            while card.fields[templ["answer"]].casefold() == card.fields[templ["question"]]: card,ind = self.next_card()
+
+            self.answer_card = card
+            self.card_history.add(_ind)
+            self.card_i += 1
+            quest = card.fields[templ["question"]]
+            ans = card.fields[templ["answer"]]
+            self.curr_question["question"] = quest
+            self.curr_question["answer"] = ans
+            
+
+    def _has_card(self, card_arr, new_card, check_field):
+        for stri in card_arr:
+            if new_card.fields[check_field] == stri: return True
+        return False
+
+    
