@@ -57,7 +57,7 @@
            </size>
           </property>
           <layout class="QGridLayout" name="gridLayout_2">
-           <item row="0" column="0">
+           <item row="1" column="0">
             <widget class="QTableWidget" name="tableWidget">
              <property name="maximumSize">
               <size>
@@ -89,6 +89,18 @@
              <attribute name="verticalHeaderVisible">
               <bool>true</bool>
              </attribute>
+            </widget>
+           </item>
+           <item row="0" column="0">
+            <widget class="QLabel" name="lessonLabel">
+             <property name="font">
+              <font>
+               <pointsize>13</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>All Lessons</string>
+             </property>
             </widget>
            </item>
           </layout>
@@ -156,13 +168,6 @@
         <widget class="QCheckBox" name="checkBox">
          <property name="text">
           <string>Hide Back</string>
-         </property>
-        </widget>
-       </item>
-       <item>
-        <widget class="QLabel" name="lessonLabel">
-         <property name="text">
-          <string>All Lessons</string>
          </property>
         </widget>
        </item>

@@ -16,7 +16,7 @@ from os.path import join, dirname
 # TODO: move datastore access to the ListModel
 class ListView(QDialog):
     # TODO: fix terrible naming scheme.. and document
-    def __init__(self, note_store, options_store, model, controller, do_subsets = True, subset = None):
+    def __init__(self, note_store, options_store, model, controller, do_subsets = True, subset = None, subset_text = None):
         super().__init__()
         self.note_store = note_store
         self.options_store = options_store
@@ -46,7 +46,8 @@ class ListView(QDialog):
             self.front.append(item)
         # TODO: save preference to either start with all lessons or start with groups 
         # load all lessons into table
-        
+        self.length = note_store.length()
+
         if not subset:
             i = 0
             self.ui.tableWidget.setRowCount(note_store.length())
@@ -55,46 +56,44 @@ class ListView(QDialog):
                     item = BTableWidgetItem(str(notecard.fields[
                         dConf["columns"][j]
                     ]))
-                    #if str(j) in self.fonts:
-                    #    item.setFont(self.fonts[str(j)])
-                    
 
                     f = item.font()
                     f.setPointSize(20)
                     item.setFont(f)
                     
-                    #self.ui.tableWidget.setItem(i, j, item)
                     self.ui.tableWidget.setCellWidget(i, j, item)
                 i += 1
+        # manually set subset
         else: # TODO really need to clean this up ....
             i = 0
             self.ui.tableWidget.setRowCount(len(subset))
+            self.length = len(subset)
+            if subset_text:
+                self.ui.lessonLabel.setText(subset_text)
+        
             for ele in subset:
                 notecard = note_store.notecards[ele]
 
                 for j in range(0, len(dConf["columns"])):
-                    item = QTableWidgetItem(str(notecard.fields[
+                    item = BTableWidgetItem(str(notecard.fields[
                         dConf["columns"][j]
                     ]))
-                    if str(j) in self.fonts:
-                        item.setFont(self.fonts[str(j)])
-                    # TODO: use global font format
 
                     f = item.font()
                     f.setPointSize(20)
                     item.setFont(f)
                     
-                    self.ui.tableWidget.setItem(i, j, item)
+                    self.ui.tableWidget.setCellWidget(i, j, item)
                 i += 1
             # will disable the subset widgets here. 
-            self.ui.checkBox.setVisible(False)
-            self.ui.checkBox_2.setVisible(False)
+            #self.ui.checkBox.setVisible(False)
+            #self.ui.checkBox_2.setVisible(False)
             self.ui.checkBox_3.setVisible(False)
             # TODO: will soon be defunct.... 
             self.ui.pushButton_4.setVisible(False)
             self.ui.pushButton_5.setVisible(False)
             self.ui.pushButton.setVisible(False)
-            self.ui.lessonLabel.setVisible(False)
+            #self.ui.lessonLabel.setVisible(False)
             
         self.ui.tableWidget.resizeColumnsToContents()
         self.ui.tableWidget.resizeRowsToContents()
@@ -123,34 +122,31 @@ class ListView(QDialog):
     def on_close(self, value):
         self.close()
 
-    # todo: validate length of front [] so it does not throw error on too many columns input 
     def on_hide_front_changed(self, value):
         for i in range(len(self.front)):
-            for j in range(self.note_store.length()):
-                if self.front[i] == 1:
+            for j in range(self.length):
+                if self.front[i]:
                     if value:
-                        #self.ui.tableWidget.item(j, i).hide_value()
                         self.ui.tableWidget.cellWidget(j, i).hide_value()
                     else:
-                        #self.ui.tableWidget.item(j, i).show_value()
                         self.ui.tableWidget.cellWidget(j, i).show_value()
 
     def on_hide_back_changed(self, value):
+        print(self.front)
         for i in range(len(self.front)):
-            for j in range(self.note_store.length()):
-                if self.front[i] == 0:
+            for j in range(self.length):
+                if not self.front[i]:
                     if value:
-                        #self.ui.tableWidget.item(j, i).hide_value()
                         self.ui.tableWidget.cellWidget(j, i).hide_value()
                     else:
-                        #self.ui.tableWidget.item(j, i).show_value()
                         self.ui.tableWidget.cellWidget(j, i).show_value()
 
+    # No longer supported
     def on_show_all_changed(self, value):
-        print("show all")
-
+        pass
+    # No longer supported
     def on_lesson_changed(self, value):
-        print("lesson changed to: "+str(value))
+        pass
 
     # end signals
 

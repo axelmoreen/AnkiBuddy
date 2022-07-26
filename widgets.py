@@ -223,8 +223,6 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
             self.set_font_size(self.confirmButton, 16)
             self.gridLayout.addWidget(self.confirmButton, 1 + (num_ans // 2), 0, 1, 2)
             
-            
-
         self.vlayout.addLayout(self.gridLayout)
 
     def answer_callback(self, button_ind):
@@ -243,7 +241,6 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
         self.questionAnswered.emit(self.last_clicked == ansind, True)
 # Matching widget
 # Shows two columns of buttons to match
-
 class MatchingWidget(QuestionWidget):
     def load(self):
         self.conf = self.model.options_store.get_homework_config(self.model.note_store.deck_name)
@@ -271,7 +268,6 @@ class MatchingWidget(QuestionWidget):
             self.set_font_size(buttonL, self.conf["matching_answer_size"])
             self.l_buttons.append(buttonL)
             self.left_layout.addWidget(self.l_buttons[i])
-
 
             buttonR = AnswerButton(text=self.options["answers"][self.order[i]], parent=self)
             buttonR.clicked.connect(lambda ch, i=i:self.right_callback(i))

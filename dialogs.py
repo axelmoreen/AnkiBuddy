@@ -262,7 +262,10 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         else:
             _subset = self.subsets[self.curr_subset].get_cards(self.sub_group_ind)
         self.list = ListView(self.notecard_store, self.options_store, self.listmodel, self.listcontroller,
-            do_subsets = False, subset = _subset
+            do_subsets = False, subset = _subset, 
+            subset_text = self.subsets[self.curr_subset].get_subset_name() +" - "+ # TODO: yuck..
+            ("All" if self.all_groups else "Group "+str(self.sub_group_ind)
+            )
         )
         #self.list.setModal(True)
         #self.list.setFocusPolicy(Qt.ClickFocus)
