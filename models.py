@@ -85,8 +85,9 @@ class HomeworkModel(QObject):
         self.curr_question = {}
         self.curr_question_type = -1 # use index instead of name.
         self.globals = self.option_store.get_globals(self.note_store.deck_name)
-        if "timed_mode" in self.globals:
-            self.timed_mode = self.globals["timed_mode"]
+        if "do_timer" in self.globals and "timer_seconds" in self.globals:
+            if self.globals["do_timer"]:
+                self.timed_mode = self.globals["timer_seconds"]
         else:
             self.timed_mode = 0
         # history
@@ -97,12 +98,18 @@ class HomeworkModel(QObject):
 
         self.card_history = set() # set of card indices that have been included.
         # this gets set by view / controller while running; changing this will not turn off summaries.
-        self.wait_wrong = False # should wait and show answer details before moving onto next question. 
+        self.wait_wrong = self.globals["show_answer_before_next"] # should wait and show answer details before moving onto next question. 
 
-        self.true_random = False
+        self.true_random = self.globals["true_random"]
         self.cards_shuffle = [i for i in range(len(self.cards))]
         random.shuffle(self.cards_shuffle)
         self.card_i = 0
+
+        self.play_sounds = self.globals["play_sounds"]
+
+        # revisit mistakes
+        self.do_revisit = self.globals["revisit_mistakes"]
+        self.revisit_steps = self.globals["revisit_steps"]
 
     def next_template(self):
         return self.templates[random.randrange(len(self.templates))]
