@@ -110,6 +110,7 @@ class OptionStore:
         self._set_default(deck_name, "decks", "play_sounds", True)
         #self._set_default(deck_name, "decks", "sort", None)
         self._set_default(deck_name, "decks", "field_settings", dict())
+        
         self.save()
 
     def write_list_defaults(self, deck_name):

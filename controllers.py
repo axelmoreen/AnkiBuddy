@@ -17,15 +17,18 @@ class ListController(QObject):
     def on_all_lessons_changed(self, value):
         self.model.show_all = bool(value)
 
+    # deprecated
     @pyqtSlot(bool)
     def on_options(self, value):
-        print("Opening options... hahaha..")
+        pass
 
+    # deprecated
     @pyqtSlot(bool)
     def on_forward(self, value):
         if not self.model.show_all:
             self.model.lesson = self.model.lesson + 1
     
+    # deprecated
     @pyqtSlot(bool)
     def on_backward(self, value):
         if not self.model.show_all:

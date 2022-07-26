@@ -54,8 +54,6 @@ class QuestionLabel(QLabel):
             super().setText("<a href='#' style='color: #32a3fa; text-decoration: none;'><span style='color: #fff;'>Play </span>▶</a>")
             
             self.sound = m.group(0)[7:-1]
-            print("New sound tag found: "+text)
-            print(self.sound)
             self._isSound = True
             
             aqt.sound.av_player.play_file(self.sound)
@@ -103,7 +101,6 @@ class AnswerButton(QPushButton):
             self.__lbl.setText("Play  <a href='#' style='color: #32a3fa; text-decoration: none;'>▶</a>")
             
             self.sound = m.group(0)[7:-1]
-            #print(self.sound)
             self._isSound = True
             
             #aqt.sound.av_player.play_file(self.sound) # don't auto-play for buttons
@@ -120,6 +117,7 @@ class AnswerButton(QPushButton):
     
     def setFont(self, font):
         self.__lbl.setFont(font)
+        self.sizeHint()
 
     def sizeHint(self):
         s = QPushButton.sizeHint(self)
@@ -167,11 +165,22 @@ class QuestionWidget(QWidget):
     def load(self):
         pass
         
+    # deprecated: use handle_font instead
     def set_font_size(self, ele, size):
         font = ele.font()
         font.setPointSize(size)
         ele.setFont(font)
-
+        
+    def handle_font(self, ele, base_size, field_name):
+        font = ele.font()
+        size = base_size
+        field_opts = self.model.options_store.get_globals(self.model.note_store.deck_name)["field_settings"]
+        if field_name in field_opts:
+            settings = field_opts[field_name]
+            size += settings[1] # font size offset
+            font.setFamily(settings[0])
+        font.setPointSize(size)
+        ele.setFont(font)
     def on_key(self, event): # event passed from parent
         pass
 
@@ -187,7 +196,9 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
         self.vlayout = QtWidgets.QVBoxLayout(self)
         self.questionLabel = QuestionLabel(self)
         self.questionLabel.setText(self.options["question"])
-        self.set_font_size(self.questionLabel, self.conf["choice_question_size"])
+        #self.set_font_size(self.questionLabel, self.conf["choice_question_size"])
+        self.handle_font(self.questionLabel, 
+            self.conf["choice_question_size"], self.options["question_field"])
         self.questionLabel.setAlignment(Qt.AlignCenter)
         
         self.questionLabel.setTextFormat(Qt.RichText)
@@ -204,14 +215,17 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
 
             button =  AnswerButton(text=self.options["answers"][i], parent=self)
             button.setStyleSheet(button_style)
-            self.set_font_size(button, self.conf["choice_answer_size"])
+            #self.set_font_size(button, self.conf["choice_answer_size"])
+            self.handle_font(button, 
+                self.conf["choice_answer_size"], self.options["answer_field"])
             button.setAutoDefault(False)
             button.setFocusPolicy(Qt.NoFocus)
             button.clicked.connect(lambda ch, i=i:self.answer_callback(i))
+            button.setCheckable(True)
             if button.is_sound():
                 # change default behavior
                 self.confirm_answer = True
-                button.setCheckable(True)
+                
             self.buttons.append(button)
             row = i // 2
             column = i % 2
@@ -220,7 +234,7 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
             self.confirmButton = QtWidgets.QPushButton("Confirm Answer")
             self.confirmButton.clicked.connect(self.confirm_callback)
             self.confirmButton.setStyleSheet(confirm_button_style)
-            self.set_font_size(self.confirmButton, 16)
+            self.set_font_size(self.confirmButton, 14)
             self.gridLayout.addWidget(self.confirmButton, 1 + (num_ans // 2), 0, 1, 2)
             
         self.vlayout.addLayout(self.gridLayout)
@@ -265,7 +279,9 @@ class MatchingWidget(QuestionWidget):
             buttonL.setStyleSheet(button_style)
             buttonL.setAutoDefault(False)
             buttonL.setFocusPolicy(Qt.NoFocus)
-            self.set_font_size(buttonL, self.conf["matching_answer_size"])
+            #self.set_font_size(buttonL, self.conf["matching_answer_size"])
+            self.handle_font(buttonL, self.conf["matching_answer_size"],
+                self.options["question_field"])
             self.l_buttons.append(buttonL)
             self.left_layout.addWidget(self.l_buttons[i])
 
@@ -274,7 +290,9 @@ class MatchingWidget(QuestionWidget):
             buttonR.setStyleSheet(button_style)
             buttonR.setAutoDefault(False)
             buttonR.setFocusPolicy(Qt.NoFocus)
-            self.set_font_size(buttonR, self.conf["matching_answer_size"])
+            #self.set_font_size(buttonR, self.conf["matching_answer_size"])
+            self.handle_font(buttonR, self.conf["matching_answer_size"],
+                self.options["answer_field"])
             self.r_buttons.append(buttonR)
             self.right_layout.addWidget(self.r_buttons[i])
 
@@ -363,13 +381,19 @@ class WriteTheAnswerWidget(QuestionWidget):
         self.questionLabel.setAlignment(Qt.AlignCenter)
         self.questionLabel.setTextFormat(Qt.RichText)
 
-        self.set_font_size(self.questionLabel, 30)
+        #self.set_font_size(self.questionLabel, 30)
+        self.handle_font(self.questionLabel, self.conf["write_question_size"],
+            self.options["question_field"])
         self.ansLayout = QtWidgets.QHBoxLayout()
         self.ansBox = EventLineEdit()
         self.ansBox.setFixedHeight(60)
         
         self.ansBox.returnPressed.connect(self.submit_callback)
-        self.set_font_size(self.ansBox, self.conf["write_question_size"])
+        self.set_font_size(self.ansBox, 20)
+        #self.set_font_size(self.ansBox, self.conf["write_question_size"])
+        #self.handle_font(self.ansBox, self.conf["write_question_size"], 
+        #    self.options["question_field"])
+
         self.ansSubmit = QtWidgets.QPushButton()
         self.ansSubmit.setFixedHeight(60)
         self.ansSubmit.setText("Submit")

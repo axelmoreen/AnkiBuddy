@@ -121,7 +121,7 @@ class ListView(QDialog):
         self.model.lesson_changed.connect(self.on_lesson_changed)
 
         self.show()
-        
+
     def _cancel(self):
         self._cancelMsg = QMessageBox()
         self._cancelMsg.setText("Please set-up List view in Options first.")
@@ -142,7 +142,6 @@ class ListView(QDialog):
                         self.ui.tableWidget.cellWidget(j, i).show_value()
 
     def on_hide_back_changed(self, value):
-        print(self.front)
         for i in range(len(self.front)):
             for j in range(self.length):
                 if not self.front[i]:
@@ -299,7 +298,6 @@ class HomeworkView(QWidget):
         self.cardsAction.setText("{} cards visited".format(len(self.model.card_history)))
 
         if self.model.time < 0:
-            print("Times up!!!!")
             # TODO: play sound
             self.timer.stop()
             self.model.time = 0
@@ -312,8 +310,6 @@ class HomeworkView(QWidget):
         dial = SummaryDialog()
         dial.load(self.model)
         dial.show()
-        print("Exited homework view")
-        print(event)
 
 class SummaryDialog(QDialog, Ui_Summary):
     def __init__(self):

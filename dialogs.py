@@ -1,8 +1,10 @@
 from .forms.questions_wizard import *
 from .forms.template_wizard import *
 from .forms.options import *
+from .forms.field_options import *
 
 from aqt.qt import *
+from aqt import mw
 
 from .subsets import *
 
@@ -75,13 +77,6 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         if "last_subset" in self.options_store.get_homework_config(notecard_store.deck_name):
             self.curr_subset = self.options_store.get_homework_config(notecard_store.deck_name)["last_subset"]
             self.subsetBox.setCurrentIndex(self.curr_subset)
-    # unsupported behavior  
-    # this dialog was originaly modal, but it has been made modeless with the buttonBox.accepted signal. 
-    #def getResults(self):
-    #    if self.exec_() == QDialog.Accepted:
-    #        return True
-    #    else:
-    #        return None
     
     def do_accept(self):
 
@@ -214,10 +209,6 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         del self.sel_templates[row]
         self.selectedList.takeItem(row)
 
-    # self.subsets = []
-    #    self.all_groups = True
-    #    self.curr_subset = 0
-     #   self.sub_group_ind = 0 # group index for the current subset
     def addSubset(self, subset):
         self.subsets.append(subset)
         self.subsetBox.addItem(subset.get_subset_name())
@@ -389,7 +380,7 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
         # sound checkbox to enable volume slider
         self.gen_cbDoSounds.stateChanged.connect(lambda state, widget=self.gen_soundVolume: self._bind_enabled_widget(state, widget))
         # edit field button
-        
+        self.gen_editFieldButton.clicked.connect(self._edit_field_btn)
         # MC play audio on button press to enable combo box (moved to edit field...)
         # self.mc_cbAudio.stateChanged.connect(lambda state, widget=self.mc_audioField: self._bind_enabled_widget(state, widget))
         # Matching play audio on button press to enable combo box (moved to edit field..)
@@ -408,7 +399,6 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
         self.gen_soundVolume.setVisible(False)
         self.gen_SoundVolumeLabel.setVisible(False)
     def do_accept(self):
-        print("Saving options...")
         self.save_values()
 
     def load_values(self):
@@ -570,3 +560,50 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
             font.setItalic(True)
         item.setFont(font)
         self.list_list.setCurrentItem(item)
+
+    def _edit_field_btn(self):
+        self._fieldopts = FieldOptionsDialog(self.options_store, 
+            self.notecard_store, 
+            self.gen_fieldsCb.currentText())
+        self._fieldopts.show()
+
+class FieldOptionsDialog(QDialog, Ui_FieldOptions):
+    # set templ for edit card dialog, otherwise leave as None to create new card
+    def __init__(self, options_store, note_store, field):
+        super(FieldOptionsDialog, self).__init__()
+        self.setupUi(self)
+        self.setWindowTitle("Field Options - "+note_store.deck_name)
+        self.setWindowIcon(mw.windowIcon())
+
+        self.options_store = options_store
+        self.note_store = note_store
+        self.field = field
+
+        g = self.options_store.config["decks"][self.note_store.deck_name]
+        self.all_settings = g["field_settings"] # field dict
+
+        self.field_settings = [mw.font().family(), 0, "(None)"]
+        if field in self.all_settings: # load from settings present
+            self.field_settings = self.all_settings[field]
+
+        # TODO: fix duplicate code
+        for f in self.note_store.model["flds"]:
+            self.fieldAudioBox.addItem(f["name"])
+
+        # update ui to current settings
+        self.fieldName.setText(field)
+
+        self.fontTypeBox.setCurrentFont(QFont(self.field_settings[0]))
+        self.fontSizeOffsetBox.setValue(self.field_settings[1])
+        self.fieldAudioBox.setCurrentText(self.field_settings[2])
+
+        # sig accepted
+        self.buttonBox.accepted.connect(self.do_accept)
+    
+    def do_accept(self):
+        self.field_settings[0] = self.fontTypeBox.currentFont().family()
+        self.field_settings[1] = self.fontSizeOffsetBox.value()
+        self.field_settings[2] = self.fieldAudioBox.currentText()
+
+        self.options_store.config["decks"][self.note_store.deck_name]["field_settings"][self.field] = self.field_settings
+        self.options_store.save()

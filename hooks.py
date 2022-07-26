@@ -79,7 +79,6 @@ if message == "BuddyList":
         mw._bHwView = wiz = QuestionsDialog(nstore, options)
         wiz.deck = curr_did
         wiz.notecard_store = nstore
-        #print(wiz.getResults())
         wiz.show()
     return handled
 

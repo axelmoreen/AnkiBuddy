@@ -115,8 +115,10 @@ class HomeworkModel(QObject):
 
     def next_template(self):
         return self.templates[random.randrange(len(self.templates))]
+
+    # TODO: optimize fake random by not moving index every call. this had to be done to avoid some infinite recurrences by accident
     # If not using true random, use a separate (shuffled) deck to order the cards properly
-    def next_card(self, move_ind = False):
+    def next_card(self, move_ind = True):
         if self.true_random:
             ind = random.randrange(len(self.cards))
             return self.note_store.notecards[
@@ -146,7 +148,7 @@ class HomeworkModel(QObject):
             while quest.fields[templ["answer"]].casefold() == quest.fields[templ["question"]]: quest,ind = self.next_card()
             self.answer_card = quest 
             self.card_history.add(ind)
-            self.card_i += 1
+            #self.card_i += 1
             ans = []
             while len(ans) < templ["number_choices"]:
                 card, _ind = self.next_card()
@@ -154,7 +156,7 @@ class HomeworkModel(QObject):
                 while card.fields[templ["question"]].casefold() == quest.fields[templ["question"]]: card, _ind = self.next_card() # avoiding duplicating question
                 #while self._has_card(ans, card, templ["question"]): card, _ind = self.next_card() 
                 while self._has_card(ans, card, templ["answer"]): card, _ind = self.next_card()
-                self.card_i += 1
+                #self.card_i += 1
                 ans.append(card.fields[templ["answer"]])
                 
             ans_ind = random.randrange(templ["number_choices"])
@@ -163,6 +165,10 @@ class HomeworkModel(QObject):
             self.curr_question["question"] = quest.fields[templ["question"]]
             self.curr_question["answers"] = ans
             self.curr_question["correct_answer"] = ans_ind
+
+            # don't forget the field types
+            self.curr_question["question_field"] = templ["question"]
+            self.curr_question["answer_field"] = templ["answer"]
 
         elif q_type == 1: # matching
             # TODO: fix bug : sometimes on core2k set, kana and kanji will be the same - so check if question and answer are the same before using
@@ -175,9 +181,12 @@ class HomeworkModel(QObject):
                 self.card_history.add(_ind)
                 quest.append(card.fields[templ["question"]])
                 ans.append(card.fields[templ["answer"]])
-                self.card_i += 1
+                #self.card_i += 1
             self.curr_question["questions"] = quest
             self.curr_question["answers"] = ans
+
+            self.curr_question["question_field"] = templ["question"]
+            self.curr_question["answer_field"] = templ["answer"]
 
         elif q_type == 2: #write the answer
             card, _ind = self.next_card()
@@ -185,11 +194,14 @@ class HomeworkModel(QObject):
 
             self.answer_card = card
             self.card_history.add(_ind)
-            self.card_i += 1
+            #self.card_i += 1
             quest = card.fields[templ["question"]]
             ans = card.fields[templ["answer"]]
             self.curr_question["question"] = quest
             self.curr_question["answer"] = ans
+
+            self.curr_question["question_field"] = templ["question"]
+            self.curr_question["answer_field"] = templ["answer"]
             
 
     def _has_card(self, card_arr, new_card, check_field):
