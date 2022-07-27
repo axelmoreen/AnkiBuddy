@@ -261,7 +261,7 @@ class HomeworkView(QWidget):
                 self.model.has_answered = True # 
 
         # handle sounds
-        if self.model.play_sounds:
+        if self.model.play_sounds and not self.model.corrected:
             if correct:
                 aqt.sound.av_player.play_file("{}/correct.mp3".format(med_dir))
             else:
@@ -271,7 +271,12 @@ class HomeworkView(QWidget):
         if not correct and self.model.do_revisit and not self.model.has_answered:
             for i in range(self.model.revisit_steps):
                 self.model.to_revisit.append(self.model.last_card)
-        
+
+        # allow you to press resubmit (Write the answer) to move to the next question
+        if correct and self.model.corrected:
+            self.next_question()
+            return
+
         # handle ui changes
         if not multi_answer:
             if self.model.wait_wrong and correct:
@@ -288,44 +293,10 @@ class HomeworkView(QWidget):
             else: # not correct, should stay on UI no matter what
                 self.ui.pushButton.setText("Show Answer")
                 self.ui.label.setText("Incorrect!")
-                self.ui.horizontalWidget.show()
-                self.ui.pushButton.show()
-        # TODO: fix this mess
-        """
-        if not self.model.corrected:
-            self.model.total_answered += 1
-        if correct:
-            if not self.model.corrected:
-                if self.model.play_sounds: aqt.sound.av_player.play_file("{}/correct.mp3".format(med_dir))
-                self.model.total_correct += 1
-                if next:
-                    self.model.corrected = True
-            elif self.model.wait_wrong and next:
-                if self.model.corrected:
-                    self.next_question()     
-                # wait for pushbutton
-                self.ui.pushButton.setText("Continue")
-                self.ui.label.setText("Correct")
-                self.ui.horizontalWidget.show()
-                self.ui.pushButton.show()
-            if next and not self.model.wait_wrong:
-                self.next_question()
-            
-        else:
-            self.model.play_sounds: aqt.sound.av_player.play_file("{}/incorrect.mp3".format(med_dir))
-            self.model.wait_wrong = True
-            self.ui.horizontalWidget.show()
-            self.ui.label.setText("Incorrect!")
-            if self.model.do_revisit:
-                for i in range(self.model.revisit_steps):
-                    self.model.to_revisit.append(self.model.last_card) 
-
-            if self.model.answer: # None or set by widget, will tell you answer if you're wrong
-                self.ui.pushButton.setText("Show Answer")
-                self.ui.pushButton.show()
                 self.model.corrected = False
-        """
-
+                self.ui.horizontalWidget.show()
+                self.ui.pushButton.show()
+        
     def accept_wait(self):
         if self.model.corrected:
             self.next_question()
@@ -337,7 +308,6 @@ class HomeworkView(QWidget):
             self.ui.pushButton.setText("Continue")
 
     def on_timeout(self):
-        
         if self.model.timed_mode > 0:
             self.model.time -= 1
         else:

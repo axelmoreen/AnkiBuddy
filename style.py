@@ -38,7 +38,7 @@ QPushButton{
 """
 incorrect_button_style="""
 QPushButton{
-    background-color: transparent;C
+    background-color: transparent;
     border-radius: 8px;
     border: 5px solid #32a3fa;
     min-height: 13px;

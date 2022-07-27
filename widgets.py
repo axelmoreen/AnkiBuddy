@@ -405,15 +405,15 @@ class MatchingWidget(QuestionWidget):
     def show_answer(self):
         used_cols = []
         for i in range(len(self.l_buttons)):
-            buttonL = self.l_buttons[i]
-            buttonR = self.r_buttons[self.order[i]]
+            buttonL = self.l_buttons[self.order[i]]
+            buttonR = self.r_buttons[i]
 
             # pick a color
             r = lambda: random.randint(0,255)
             # try to avoid similar colors...
             d = lambda col1, col2, i: (col1[i]- col2[i]) ** 2  
             su_sq = lambda col1, col2: d(col1,col2, 0) + d(col1,col2, 1) + d(col1, col2, 2)
-            min_sq_dist = 350
+            min_sq_dist = 1200 # sqrt(1000) ~= 31, so about 10 diff per color. 
             def valid_col(col, col_array):
                 for other in col_array:
                     if su_sq(col, other) < min_sq_dist:
