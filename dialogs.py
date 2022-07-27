@@ -99,7 +99,11 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
 
         # self.subsets[self.curr_subset] -> returns Subset object with information needed
         #           must also include self.sub_group_ind to know which group of the subset to look at. or pass -1 to pass nothing
-        
+        if len(self.sel_templates) == 0:
+            self._cancelMsg = QMessageBox()
+            self._cancelMsg.setText("Please set-up question templates in order to proceed.")
+            self._cancelMsg.exec_()
+            return
         templs = [self.templates[i] for i in self.sel_templates]
         if self.all_groups:
             model = HomeworkModel(self.notecard_store, templs, self.options_store, subset=self.subsets[self.curr_subset], subset_group = -1)
