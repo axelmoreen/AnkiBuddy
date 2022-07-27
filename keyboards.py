@@ -203,7 +203,6 @@ class KeyboardView(QDialog, Ui_Keyboard):
     
     # key is given as a string of the character that is being used for entry (ime event limitation, i think)
     def on_key(self, key):
-        #print("Print: "+key)
         # TODO: use a map
         ind = -1
         for i in range(len(self.translation)):

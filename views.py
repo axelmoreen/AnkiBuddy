@@ -62,9 +62,7 @@ class ListView(QDialog):
                         dConf["columns"][j]
                     ]))
 
-                    f = item.font()
-                    f.setPointSize(20)
-                    item.setFont(f)
+                    self.handle_font(item, 20, dConf["columns"][j])
                     
                     self.ui.tableWidget.setCellWidget(i, j, item)
                 i += 1
@@ -84,9 +82,7 @@ class ListView(QDialog):
                         dConf["columns"][j]
                     ]))
 
-                    f = item.font()
-                    f.setPointSize(20)
-                    item.setFont(f)
+                    self.handle_font(item, 20, dConf["columns"][j])
                     
                     self.ui.tableWidget.setCellWidget(i, j, item)
                 i += 1
@@ -159,6 +155,17 @@ class ListView(QDialog):
 
     # end signals
 
+    # TODO: copy pasted from widgets.py...
+    def handle_font(self, ele, base_size, field_name):
+        font = ele.font()
+        size = base_size
+        field_opts = self.options_store.get_globals(self.note_store.deck_name)["field_settings"]
+        if field_name in field_opts:
+            settings = field_opts[field_name]
+            size += settings[1] # font size offset
+            font.setFamily(settings[0])
+        font.setPointSize(size)
+        ele.setFont(font)
 
 # TODO: move logic to the controller...
 class HomeworkView(QWidget):
@@ -204,8 +211,6 @@ class HomeworkView(QWidget):
         self.info_menu.addAction(self.correctAction)
         self.info_menu.addAction(self.accuracyAction)
         self.info_menu.addAction(self.cardsAction)
-        # TODO: get rid of this as it currently causes console spam since it doesnt work
-        #self.keypress = lambda x: print("AnkiBuddy Warning: keypress event not loaded?")
         self.answer = None
         self.ui.toolButton.setMenu(self.info_menu)
 
@@ -236,17 +241,18 @@ class HomeworkView(QWidget):
         oldQuestionWidget.widget().deleteLater()
         newQuestionWidget.questionAnswered.connect(self.question_answered)
         #self.keypress = newQuestionWidget.on_key
-        self.model.answer = newQuestionWidget.show_answer()
+        self.model.answer = newQuestionWidget.get_answer()
         self.ui.verticalLayout.replaceWidget(oldQuestionWidget.widget(), newQuestionWidget)
         # refocus window
         #self.setFocus(Qt.ActiveWindowFocusReason)
+    # TODO: fix this mess
     def question_answered(self, correct, next):
         med_dir = join(dirname(__file__), "resources")
         if not self.model.corrected:
             self.model.total_answered += 1
         if correct:
             if not self.model.corrected:
-                aqt.sound.av_player.play_file("{}/correct.mp3".format(med_dir))
+                if self.model.play_sounds: aqt.sound.av_player.play_file("{}/correct.mp3".format(med_dir))
                 self.model.total_correct += 1
                 if next:
                     self.model.corrected = True
@@ -258,14 +264,18 @@ class HomeworkView(QWidget):
                 self.ui.label.setText("Correct")
                 self.ui.horizontalWidget.show()
                 self.ui.pushButton.show()
-            if next:
+            if next and not self.model.wait_wrong:
                 self.next_question()
             
         else:
-            aqt.sound.av_player.play_file("{}/incorrect.mp3".format(med_dir))
+            self.model.play_sounds: aqt.sound.av_player.play_file("{}/incorrect.mp3".format(med_dir))
             self.model.wait_wrong = True
             self.ui.horizontalWidget.show()
             self.ui.label.setText("Incorrect!")
+            if self.model.do_revisit:
+                for i in range(self.model.revisit_steps):
+                    self.model.to_revisit.append(self.model.last_card) 
+
             if self.model.answer: # None or set by widget, will tell you answer if you're wrong
                 self.ui.pushButton.setText("Show Answer")
                 self.ui.pushButton.show()

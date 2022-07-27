@@ -113,12 +113,19 @@ class HomeworkModel(QObject):
         self.do_revisit = self.globals["revisit_mistakes"]
         self.revisit_steps = self.globals["revisit_steps"]
 
+        self.to_revisit = []
+
     def next_template(self):
         return self.templates[random.randrange(len(self.templates))]
 
     # TODO: optimize fake random by not moving index every call. this had to be done to avoid some infinite recurrences by accident
     # If not using true random, use a separate (shuffled) deck to order the cards properly
-    def next_card(self, move_ind = True):
+    def next_card(self, move_ind = True, revisit = True):
+        if revisit and len(self.to_revisit) > 0 and random.random() < 0.4: # roll the dice...
+            card_ind = self.to_revisit[random.randrange(len(self.to_revisit))]
+            return self.note_store.notecards[
+                self.cards[card_ind]
+                ], card_ind
         if self.true_random:
             ind = random.randrange(len(self.cards))
             return self.note_store.notecards[
@@ -146,41 +153,65 @@ class HomeworkModel(QObject):
             # TODO: fix bug : card sometimes repeats in answers or from question to answers
             quest, ind = self.next_card()
             while quest.fields[templ["answer"]].casefold() == quest.fields[templ["question"]]: quest,ind = self.next_card()
+            # TODO: move card history code to its own method (repeats)
             self.answer_card = quest 
             self.card_history.add(ind)
+
+            if ind in self.to_revisit:
+                self.to_revisit.remove(ind)
+
             #self.card_i += 1
             ans = []
+            ans_cards = []
+            ans_cards_inds = []
             while len(ans) < templ["number_choices"]:
-                card, _ind = self.next_card()
-                while card.fields[templ["answer"]].casefold() == card.fields[templ["question"]]: card, _ind= self.next_card() # happens sometimes with the core2k set
-                while card.fields[templ["question"]].casefold() == quest.fields[templ["question"]]: card, _ind = self.next_card() # avoiding duplicating question
+                card, _ind = self.next_card(revisit=False)
+                while card.fields[templ["answer"]].casefold() == card.fields[templ["question"]]: card, _ind= self.next_card(revisit=False) # happens sometimes with the core2k set
+                while card.fields[templ["question"]].casefold() == quest.fields[templ["question"]]: card, _ind = self.next_card(revisit=False) # avoiding duplicating question
                 #while self._has_card(ans, card, templ["question"]): card, _ind = self.next_card() 
-                while self._has_card(ans, card, templ["answer"]): card, _ind = self.next_card()
+                while self._has_card(ans, card, templ["answer"]): card, _ind = self.next_card(revisit=False)
                 #self.card_i += 1
                 ans.append(card.fields[templ["answer"]])
+                ans_cards.append(card)
+                ans_cards_inds.append(_ind)
                 
             ans_ind = random.randrange(templ["number_choices"])
             ans[ans_ind] = quest.fields[templ["answer"]]
+            ans_cards[ans_ind] = quest
 
             self.curr_question["question"] = quest.fields[templ["question"]]
             self.curr_question["answers"] = ans
             self.curr_question["correct_answer"] = ans_ind
 
-            # don't forget the field types
+            # extended behavior
             self.curr_question["question_field"] = templ["question"]
             self.curr_question["answer_field"] = templ["answer"]
+
+            self.curr_question["question_card"] = quest
+            self.curr_question["answer_cards"] = ans_cards
+
+            self.curr_question["question_card_ind"] = ind
+            self.curr_question["answer_cards_ind"] = ans_cards_inds
 
         elif q_type == 1: # matching
             # TODO: fix bug : sometimes on core2k set, kana and kanji will be the same - so check if question and answer are the same before using
             quest = []
             ans = []
+
+            cards = []
+            cards_inds = []
             while len(quest) < templ["groupsize"]:
                 card, _ind = self.next_card()
                 while card.fields[templ["answer"]].casefold() == card.fields[templ["question"]]: card, _ind = self.next_card() # happens sometimes with the core2k set
                 while self._has_card(quest, card, templ["question"]): card, _ind = self.next_card()
                 self.card_history.add(_ind)
+                if _ind in self.to_revisit:
+                    self.to_revisit.remove(_ind)
                 quest.append(card.fields[templ["question"]])
+                
                 ans.append(card.fields[templ["answer"]])
+                cards.append(card)
+                cards_inds.append(_ind)
                 #self.card_i += 1
             self.curr_question["questions"] = quest
             self.curr_question["answers"] = ans
@@ -188,12 +219,17 @@ class HomeworkModel(QObject):
             self.curr_question["question_field"] = templ["question"]
             self.curr_question["answer_field"] = templ["answer"]
 
+            self.curr_question["cards"] = cards
+            self.curr_question["cards_inds"] = cards_inds
+
         elif q_type == 2: #write the answer
             card, _ind = self.next_card()
             while card.fields[templ["answer"]].casefold() == card.fields[templ["question"]]: card,ind = self.next_card()
 
             self.answer_card = card
             self.card_history.add(_ind)
+            if _ind in self.to_revisit:
+                self.to_revisit.remove(_ind)
             #self.card_i += 1
             quest = card.fields[templ["question"]]
             ans = card.fields[templ["answer"]]
@@ -202,6 +238,9 @@ class HomeworkModel(QObject):
 
             self.curr_question["question_field"] = templ["question"]
             self.curr_question["answer_field"] = templ["answer"]
+
+            self.curr_question["card"] = card
+            self.curr_question["card_ind"] = _ind
             
 
     def _has_card(self, card_arr, new_card, check_field):

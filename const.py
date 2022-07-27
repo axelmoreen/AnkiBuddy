@@ -18,8 +18,10 @@ class NotecardStoreManager:
             
             # sort deck, if needed
             if "sort" in options.get_globals(store.deck_name):
-                store.sort(options.get_globals(store.deck_name)["sort"])
-
+                try:
+                    store.sort(options.get_globals(store.deck_name)["sort"])
+                except:
+                    print("Warning: AnkiBuddy could not sort deck")
             self.stores[did] = store
             return store
 

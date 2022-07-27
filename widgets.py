@@ -59,7 +59,7 @@ class QuestionLabel(QLabel):
             aqt.sound.av_player.play_file(self.sound)
         else:
             super().setText(text)
-    
+    # TODO: add sound as an option for some fields here. i.e., optionally listening to the question in multiple choice
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
 
@@ -108,6 +108,12 @@ class AnswerButton(QPushButton):
         self.__lbl.setText(text)
         self.handle_sound(text)
         self.updateGeometry()
+
+    def set_sound(self, sound_field_text):
+        m = re.search('\[sound:[\w.\-]{0,}\]', sound_field_text)
+        if m:            
+            self.sound = m.group(0)[7:-1]
+            self._isSound = True
 
     def is_sound(self):
         return self._isSound
@@ -181,10 +187,17 @@ class QuestionWidget(QWidget):
             font.setFamily(settings[0])
         font.setPointSize(size)
         ele.setFont(font)
+
+    def handle_field_sound(self, ele, field_name, card):
+        field_opts = self.model.options_store.get_globals(self.model.note_store.deck_name)["field_settings"]
+        if field_name in field_opts:
+            audio_name = field_opts[field_name][2]
+            if audio_name in card.fields:
+                ele.set_sound(card.fields[audio_name])
     def on_key(self, event): # event passed from parent
         pass
 
-    def show_answer(self):
+    def get_answer(self):
         return None
 
 # multiple choice widget 
@@ -205,27 +218,31 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
         self.vlayout.addWidget(self.questionLabel)
         self.gridLayout = QtWidgets.QGridLayout()
         
-        
+        self.model.last_card = self.options["question_card_ind"]
         self.buttons = []
         
         self.confirm_answer = self.conf["choice_confirm_answer"]
         self.last_clicked = -1
         num_ans = len(self.options["answers"])
         for i in range(num_ans):
-
             button =  AnswerButton(text=self.options["answers"][i], parent=self)
             button.setStyleSheet(button_style)
             #self.set_font_size(button, self.conf["choice_answer_size"])
             self.handle_font(button, 
                 self.conf["choice_answer_size"], self.options["answer_field"])
+            
             button.setAutoDefault(False)
             button.setFocusPolicy(Qt.NoFocus)
             button.clicked.connect(lambda ch, i=i:self.answer_callback(i))
             button.setCheckable(True)
+            
+            self.handle_field_sound(button, self.options["answer_field"], self.options["answer_cards"][i])
+            # currently if buttons are allowed to have sound and not confirm answer, sound may not play/might be buggy
+            # but this if block could be moved above the line above to create that behavior. 
             if button.is_sound():
                 # change default behavior
                 self.confirm_answer = True
-                
+            
             self.buttons.append(button)
             row = i // 2
             column = i % 2
@@ -253,6 +270,9 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
             return
         ansind = int(self.options["correct_answer"])
         self.questionAnswered.emit(self.last_clicked == ansind, True)
+
+    def get_answer(self):
+        return self.options["answers"][self.options["correct_answer"]]
 # Matching widget
 # Shows two columns of buttons to match
 class MatchingWidget(QuestionWidget):
@@ -279,9 +299,10 @@ class MatchingWidget(QuestionWidget):
             buttonL.setStyleSheet(button_style)
             buttonL.setAutoDefault(False)
             buttonL.setFocusPolicy(Qt.NoFocus)
-            #self.set_font_size(buttonL, self.conf["matching_answer_size"])
+
             self.handle_font(buttonL, self.conf["matching_answer_size"],
                 self.options["question_field"])
+            self.handle_field_sound(buttonL, self.options["question_field"], self.options["cards"][i])
             self.l_buttons.append(buttonL)
             self.left_layout.addWidget(self.l_buttons[i])
 
@@ -290,9 +311,10 @@ class MatchingWidget(QuestionWidget):
             buttonR.setStyleSheet(button_style)
             buttonR.setAutoDefault(False)
             buttonR.setFocusPolicy(Qt.NoFocus)
-            #self.set_font_size(buttonR, self.conf["matching_answer_size"])
+
             self.handle_font(buttonR, self.conf["matching_answer_size"],
                 self.options["answer_field"])
+            self.handle_field_sound(buttonR, self.options["answer_field"], self.options["cards"][self.order[i]])
             self.r_buttons.append(buttonR)
             self.right_layout.addWidget(self.r_buttons[i])
 
@@ -316,6 +338,7 @@ class MatchingWidget(QuestionWidget):
         # try match first
         if self.sel_right > -1:
             self.sel_left = i
+            self.model.last_card = self.options["cards_inds"][i]
             if self.order[self.sel_right] == i: # correct
                 self.answered.append(i)
                 self.questionAnswered.emit(True, len(self.answered) == self.size)
@@ -344,6 +367,7 @@ class MatchingWidget(QuestionWidget):
         # try match
         if self.sel_left > -1:
             self.sel_right = i
+            self.model.last_card = self.options["cards_inds"][self.order[i]]
             if self.order[i] == self.sel_left: # correct
                 self.answered.append(self.sel_left)
                 self.questionAnswered.emit(True, len(self.answered) == self.size)
@@ -387,7 +411,7 @@ class WriteTheAnswerWidget(QuestionWidget):
         self.ansLayout = QtWidgets.QHBoxLayout()
         self.ansBox = EventLineEdit()
         self.ansBox.setFixedHeight(60)
-        
+        self.model.last_card = self.options["card_ind"]
         self.ansBox.returnPressed.connect(self.submit_callback)
         self.set_font_size(self.ansBox, 20)
         #self.set_font_size(self.ansBox, self.conf["write_question_size"])
@@ -438,6 +462,6 @@ class WriteTheAnswerWidget(QuestionWidget):
     def keyPressEvent(self, event):
         self.on_key(event)
 
-    def show_answer(self):
+    def get_answer(self):
         return self.options["answer"]
 
