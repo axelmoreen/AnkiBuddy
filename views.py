@@ -279,7 +279,7 @@ class HomeworkView(QWidget):
                 self.ui.label.setText("Correct")
                 self.ui.horizontalWidget.show()
                 self.ui.pushButton.show()
-
+                self.widget.show_answer()
                 self.model.corrected = True
 
             elif not self.model.wait_wrong and correct: 
@@ -332,6 +332,7 @@ class HomeworkView(QWidget):
 
         else: # show answer
             self.ui.label.setText(self.model.answer)
+            self.widget.show_answer()
             self.model.corrected = True
             self.ui.pushButton.setText("Continue")
 

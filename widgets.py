@@ -200,6 +200,9 @@ class QuestionWidget(QWidget):
     def get_answer(self):
         return None
 
+    def show_answer(self):
+        pass
+
 # multiple choice widget 
 # Shows a Question and then a # of answer buttons to press 
 class MultipleChoiceQuestionWidget(QuestionWidget):
@@ -273,6 +276,13 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
 
     def get_answer(self):
         return self.options["answers"][self.options["correct_answer"]]
+    
+    def show_answer(self):
+        # highlight the button that is correct
+        for i in range(len(self.buttons)):
+            self.buttons[i].setEnabled(i == self.options["correct_answer"])
+            self.buttons[i].setFlat(i != self.options["correct_answer"])
+            self.buttons[i].setChecked(i == self.options["correct_answer"])
 # Matching widget
 # Shows two columns of buttons to match
 class MatchingWidget(QuestionWidget):
