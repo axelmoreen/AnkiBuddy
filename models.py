@@ -143,7 +143,7 @@ class HomeworkModel(QObject):
 
 
     def load_new_question(self):
-        self.wait_wrong = False
+        #self.wait_wrong = False
         templ = self.next_template()
         self.answer_card = None
         self.curr_question_type = q_type = templ["type_ind"]

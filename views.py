@@ -229,6 +229,7 @@ class HomeworkView(QWidget):
         self.ui.pushButton.setFocusPolicy(Qt.NoFocus)
         self.ui.horizontalWidget.hide()
         self.model.corrected = False # for show answer to work properly
+        self.model.has_answered = False
         #self.ui.labelLeft.setText(self.model.curr_question["type"])
         if self.model.curr_question_type == 0:
             newQuestionWidget = MultipleChoiceQuestionWidget(self.model.curr_question, self.model)
@@ -240,14 +241,57 @@ class HomeworkView(QWidget):
         oldQuestionWidget = self.ui.verticalLayout.itemAt(0)
         oldQuestionWidget.widget().deleteLater()
         newQuestionWidget.questionAnswered.connect(self.question_answered)
+        self.widget = newQuestionWidget
         #self.keypress = newQuestionWidget.on_key
         self.model.answer = newQuestionWidget.get_answer()
         self.ui.verticalLayout.replaceWidget(oldQuestionWidget.widget(), newQuestionWidget)
         # refocus window
         #self.setFocus(Qt.ActiveWindowFocusReason)
-    # TODO: fix this mess
-    def question_answered(self, correct, next):
+
+    
+    def question_answered(self, correct, multi_answer):
         med_dir = join(dirname(__file__), "resources")
+        # handle counting
+        if not self.model.has_answered:
+            self.model.total_answered += 1
+            if correct:
+                self.model.total_correct += 1
+            
+            if not multi_answer: 
+                self.model.has_answered = True # 
+
+        # handle sounds
+        if self.model.play_sounds:
+            if correct:
+                aqt.sound.av_player.play_file("{}/correct.mp3".format(med_dir))
+            else:
+                aqt.sound.av_player.play_file("{}/incorrect.mp3".format(med_dir))
+
+        # handle revisits
+        if not correct and self.model.do_revisit and not self.model.has_answered:
+            for i in range(self.model.revisit_steps):
+                self.model.to_revisit.append(self.model.last_card)
+        
+        # handle ui changes
+        if not multi_answer:
+            if self.model.wait_wrong and correct:
+                self.ui.pushButton.setText("Continue")
+                self.ui.label.setText("Correct")
+                self.ui.horizontalWidget.show()
+                self.ui.pushButton.show()
+
+                self.model.corrected = True
+
+            elif not self.model.wait_wrong and correct: 
+                self.next_question()
+
+            else: # not correct, should stay on UI no matter what
+                self.ui.pushButton.setText("Show Answer")
+                self.ui.label.setText("Incorrect!")
+                self.ui.horizontalWidget.show()
+                self.ui.pushButton.show()
+        # TODO: fix this mess
+        """
         if not self.model.corrected:
             self.model.total_answered += 1
         if correct:
@@ -280,6 +324,7 @@ class HomeworkView(QWidget):
                 self.ui.pushButton.setText("Show Answer")
                 self.ui.pushButton.show()
                 self.model.corrected = False
+        """
 
     def accept_wait(self):
         if self.model.corrected:
@@ -289,6 +334,7 @@ class HomeworkView(QWidget):
             self.ui.label.setText(self.model.answer)
             self.model.corrected = True
             self.ui.pushButton.setText("Continue")
+
     def on_timeout(self):
         
         if self.model.timed_mode > 0:

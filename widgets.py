@@ -260,7 +260,7 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
         self.last_clicked = button_ind
         if not self.confirm_answer:
             ansind = int(self.options["correct_answer"])
-            self.questionAnswered.emit(button_ind == ansind, True)
+            self.questionAnswered.emit(button_ind == ansind, False)
         else:
             # show as selected, unselect rest
             for i in range(len(self.buttons)):
@@ -269,7 +269,7 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
         if self.last_clicked == -1:
             return
         ansind = int(self.options["correct_answer"])
-        self.questionAnswered.emit(self.last_clicked == ansind, True)
+        self.questionAnswered.emit(self.last_clicked == ansind, False)
 
     def get_answer(self):
         return self.options["answers"][self.options["correct_answer"]]
@@ -341,7 +341,7 @@ class MatchingWidget(QuestionWidget):
             self.model.last_card = self.options["cards_inds"][i]
             if self.order[self.sel_right] == i: # correct
                 self.answered.append(i)
-                self.questionAnswered.emit(True, len(self.answered) == self.size)
+                self.questionAnswered.emit(True, len(self.answered) < self.size)
 
                 button2 = self.r_buttons[self.sel_right]
                 button.setFlat(True)
@@ -352,7 +352,7 @@ class MatchingWidget(QuestionWidget):
                 self.sel_right = -1
                 
             else:
-                self.questionAnswered.emit(False, False)
+                self.questionAnswered.emit(False, True)
                 self.unsel_buttons()
             
         # right is not selected
@@ -370,7 +370,7 @@ class MatchingWidget(QuestionWidget):
             self.model.last_card = self.options["cards_inds"][self.order[i]]
             if self.order[i] == self.sel_left: # correct
                 self.answered.append(self.sel_left)
-                self.questionAnswered.emit(True, len(self.answered) == self.size)
+                self.questionAnswered.emit(True, len(self.answered) < self.size)
                 button2 = self.l_buttons[self.sel_left]
                 button.setFlat(True)
                 button2.setFlat(True)
@@ -379,7 +379,7 @@ class MatchingWidget(QuestionWidget):
                 self.sel_left = -1
                 self.sel_right = -1
             else:
-                self.questionAnswered.emit(False, False)
+                self.questionAnswered.emit(False, True)
                 self.unsel_buttons()
 
         # left is not selected
@@ -445,7 +445,7 @@ class WriteTheAnswerWidget(QuestionWidget):
 
     def submit_callback(self):
         text = self.ansBox.text()
-        self.questionAnswered.emit(text.casefold() == self.options["answer"].casefold(), True)
+        self.questionAnswered.emit(text.casefold() == self.options["answer"].casefold(), False)
     
     # sending key events to virtual keyboard to display key strokes
     def on_key(self, event):

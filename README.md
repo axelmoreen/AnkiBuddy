@@ -8,7 +8,7 @@ You can choose subsets to study cards you already know, new cards, cards you str
 
 This add-on does not aim to replace the core functionality of Anki in any way (it relies on you to complete your daily repetitions in order to have "learned" a card), nor has it been tested alongside SRS at-length, so your mileage may vary. It is something I made for myself simply for fun and to experiment with. Practice from multiple choice and matching can be great for drilling yourself, but I cannot guarantee any particular outcome. It is easier than remembering a full notecard. 
 
-This add-on also does not write to or modify your existing Anki data at all, it only reads the deck information. So it is safe to use. But keep in mind it is still under development, so issues may arise. 
+This add-on also does not write to or modify your existing Anki data at all, it only reads the deck information. So it is safe to use. But keep in mind it is still under development, so other issues in its usage may arise. 
 
 Issues can be directed to the [issue tracker] and contributions are always welcome!
 
@@ -29,7 +29,7 @@ Anki2/
 
 # Changelog
 
-## Planned Features
+# Planned 
 * ~~Hover over timer to see stats in Practice~~
 * Options wizard
     * Change correct/incorrect sound volume
@@ -46,7 +46,7 @@ Anki2/
 *~~ Practice: Add "Show Answer" after first incorrect~~
     * Be able to hover over answer to see a webview with the full card
 * ~~Fake random (avoid repeats if possible)~~
-* Return missed cards to try again 
+* ~~Return missed cards to try again ~~
 * Support for  furigana
 * ~~Re-implement list view hide front/ hide back ~~
 * Custom instructions to display with some questions (like, write the Kanji or write the Hiragana)
@@ -63,13 +63,14 @@ Anki2/
 * Profile / presets for the Questions Wizard. 
 * Keyboard shortcuts for matching / multiple-choice
 
-## Issues
-* Duplicate answers sometimes on multiple choice (not fixed?) 
+## Known Issues
+* ~~Duplicate answers sometimes on multiple choice (not fixed?) ~~
 * Fix updating Selected Templates after edit of a template
 * ~~Allow unselecting buttons in Matching~~
 * ~~Play sound button doesn't work~~
 * Fix ghost sounds being played sometimes on a new question (matching?)
 * Should fix MVC design of List class.
+* Handle multiple sounds trying to be played at once.
 * Move "Practice" View logic to its own controller.
 * Move Practice Summary dialog to its own class?
 * Clean up dialogs

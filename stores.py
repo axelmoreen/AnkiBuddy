@@ -136,7 +136,7 @@ class OptionStore:
         self._set_default(deck_name, "homework", "matching_answer_size", 20)
 
         # Write the answer defaults
-        self._set_default(deck_name, "homework", "write_show_keyboard",  True)
+        self._set_default(deck_name, "homework", "write_show_keyboard",  False)
         self._set_default(deck_name, "homework", "write_keyboard_type", 0)
         self._set_default(deck_name, "homework", "write_question_size", 30)
         self.save()
