@@ -3,7 +3,7 @@ from aqt import mw
 from PyQt5 import QtWidgets # fix....
 import random
 import aqt
-from .style import button_style, play_anchor_style, confirm_button_style
+from .style import button_style, play_anchor_style, confirm_button_style, button_style_custom_border 
 import re
 from .keyboards import KeyboardView, keyboard_american_qwerty, keyboard_japanese_hiragana
 
@@ -401,6 +401,46 @@ class MatchingWidget(QuestionWidget):
     def mousePressEvent(self, event):
         super().mousePressEvent(event)
         self.unsel_buttons()
+
+    def show_answer(self):
+        used_cols = []
+        for i in range(len(self.l_buttons)):
+            buttonL = self.l_buttons[i]
+            buttonR = self.r_buttons[self.order[i]]
+
+            # pick a color
+            r = lambda: random.randint(0,255)
+            # try to avoid similar colors...
+            d = lambda col1, col2, i: (col1[i]- col2[i]) ** 2  
+            su_sq = lambda col1, col2: d(col1,col2, 0) + d(col1,col2, 1) + d(col1, col2, 2)
+            min_sq_dist = 350
+            def valid_col(col, col_array):
+                for other in col_array:
+                    if su_sq(col, other) < min_sq_dist:
+                        return False
+                return True
+            col_pick = (r(),r(),r())
+            i = 0
+            while not valid_col(col_pick, used_cols):
+                col_pick = (r(), r(), r())
+                i += 1
+                if i > 50: break # don't know how else to prevent infinite recursion here..
+                    
+            used_cols.append(col_pick)
+            col = '#%02X%02X%02X' % col_pick
+            buttonL.setStyleSheet(button_style_custom_border % col)
+            buttonR.setStyleSheet(button_style_custom_border % col)
+            buttonL.setFlat(False)
+            buttonR.setFlat(False)
+            buttonL.setEnabled(True)
+            buttonR.setEnabled(True)
+            buttonL.clicked.disconnect()
+            buttonR.clicked.disconnect()
+            buttonL.setCheckable(False)
+            buttonR.setCheckable(False)
+            buttonL.setChecked(False)
+            buttonR.setChecked(False)
+
 
 # Write the answer widget
 # Shows a question at the top and you must write the answer in the line edit
