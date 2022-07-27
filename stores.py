@@ -100,7 +100,7 @@ class OptionStore:
             c[deck_name] = dict()
 
         ## options menu settings
-        self._set_default(deck_name, "decks", "show_answer_before_next", True)
+        self._set_default(deck_name, "decks", "show_answer_before_next", False)
         self._set_default(deck_name, "decks", "do_timer", False)
         self._set_default(deck_name, "decks", "timer_seconds", 60)
         self._set_default(deck_name, "decks", "lesson_size", 20)
