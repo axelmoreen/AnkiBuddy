@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>425</width>
-    <height>649</height>
+    <height>618</height>
    </rect>
   </property>
   <property name="maximumSize">
@@ -77,6 +77,9 @@
               </item>
               <item>
                <widget class="QCheckBox" name="gen_cbTimed">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Time yourself to see how many you can answer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
                 <property name="text">
                  <string>Timer (seconds)</string>
                 </property>
@@ -92,6 +95,9 @@
                   <width>0</width>
                   <height>0</height>
                  </size>
+                </property>
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How long the timer should last, in seconds.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="minimum">
                  <number>10</number>
@@ -148,7 +154,7 @@
                  </size>
                 </property>
                 <property name="toolTip">
-                 <string extracomment="The number of cards that is included in each group (if &quot;All&quot; is not pressed)"/>
+                 <string extracomment="The number of cards that is included in each group (if &quot;All&quot; is not pressed)">&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How many cards to review at a time.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                 <property name="whatsThis">
                  <string extracomment="The number of cards that is included in each group (if &quot;All&quot; is not pressed)"/>
@@ -169,6 +175,9 @@
               </item>
               <item>
                <widget class="QCheckBox" name="gen_doTrueRandom">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;True random = randomly choose cards for review&lt;/p&gt;&lt;p&gt;Fake random = optimize for breadth&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
                 <property name="text">
                  <string>True Random</string>
                 </property>
@@ -176,8 +185,11 @@
               </item>
               <item>
                <widget class="QCheckBox" name="gen_cbDoRevisit">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Repeat missed cards&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
                 <property name="text">
-                 <string>Revisit Wrong Answers</string>
+                 <string>Revisit Missed Cards</string>
                 </property>
                </widget>
               </item>
@@ -198,6 +210,9 @@
                   <width>0</width>
                   <height>0</height>
                  </size>
+                </property>
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;How many times to repeat missed cards&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                 </property>
                </widget>
               </item>
@@ -225,6 +240,9 @@
              <layout class="QVBoxLayout" name="genSoundsLayout">
               <item>
                <widget class="QCheckBox" name="gen_cbDoSounds">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Should play sounds when a question is answered.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
                 <property name="text">
                  <string>Play Correct / Incorrect Sounds</string>
                 </property>
@@ -277,7 +295,11 @@
                </widget>
               </item>
               <item>
-               <widget class="QComboBox" name="gen_sortByCb"/>
+               <widget class="QComboBox" name="gen_sortByCb">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Optional. Field to sort by, only matters when the deck is unordered by its subset (i.e. only matters when subset is All)&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QLabel" name="genFieldsLabel">
@@ -295,6 +317,9 @@
                     <horstretch>0</horstretch>
                     <verstretch>0</verstretch>
                    </sizepolicy>
+                  </property>
+                  <property name="toolTip">
+                   <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Change settings for individual fields, including an optional audio to play when the field is used.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
                   </property>
                  </widget>
                 </item>
@@ -371,10 +396,16 @@
                <verstretch>0</verstretch>
               </sizepolicy>
              </property>
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Field name&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
             </widget>
            </item>
            <item>
             <widget class="QPushButton" name="list_addButton">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Add a column to the List Preview&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Add</string>
              </property>
@@ -382,6 +413,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="list_removeButton">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Remove a column from the List Preview&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Remove</string>
              </property>
@@ -390,12 +424,19 @@
           </layout>
          </item>
          <item>
-          <widget class="QListWidget" name="list_list"/>
+          <widget class="QListWidget" name="list_list">
+           <property name="toolTip">
+            <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;List of columns in List Preview&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+           </property>
+          </widget>
          </item>
          <item>
           <layout class="QHBoxLayout" name="list_bottomLayout">
            <item>
             <widget class="QPushButton" name="list_moveUpButton">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Change the order of columns&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Move Up</string>
              </property>
@@ -403,6 +444,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="list_moveDownButton">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Change the order of columns&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Move Down</string>
              </property>
@@ -410,6 +454,9 @@
            </item>
            <item>
             <widget class="QPushButton" name="list_setFrontButton">
+             <property name="toolTip">
+              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Allows columns to be visible and hidden in List Preview&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             </property>
              <property name="text">
               <string>Set Front/Back</string>
              </property>
@@ -466,6 +513,9 @@
              <layout class="QVBoxLayout" name="mcBehaviorLayout">
               <item>
                <widget class="QCheckBox" name="mc_cbConfirm">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Press to confirm answer when in multiple choice. Defaults to true for audio fields.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
                 <property name="text">
                  <string>Always Confirm Answer</string>
                 </property>
@@ -495,7 +545,11 @@
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="mc_questionFontSize"/>
+               <widget class="QSpinBox" name="mc_questionFontSize">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Change question label's font size.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
               </item>
               <item>
                <widget class="QLabel" name="mc_answerFontSizeLabel">
@@ -505,7 +559,11 @@
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="mc_answerFontSize"/>
+               <widget class="QSpinBox" name="mc_answerFontSize">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Change answer button's font size.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
@@ -555,7 +613,11 @@
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="ma_answerFontSize"/>
+               <widget class="QSpinBox" name="ma_answerFontSize">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Change answer button's font size.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
@@ -599,8 +661,11 @@
              <layout class="QVBoxLayout" name="waInputLayout">
               <item>
                <widget class="QCheckBox" name="wr_cbKeyboard">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;(Experimental) Should show virtual keyboard. &lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
                 <property name="text">
-                 <string>Show virtual keyboard</string>
+                 <string>(Experimental) Show virtual keyboard</string>
                 </property>
                 <property name="checked">
                  <bool>true</bool>
@@ -616,6 +681,9 @@
               </item>
               <item>
                <widget class="QComboBox" name="wr_coKeyboardType">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Type of virtual keyboard to show.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
                 <item>
                  <property name="text">
                   <string>Japanese - Hiragana</string>
@@ -647,7 +715,11 @@
                </widget>
               </item>
               <item>
-               <widget class="QSpinBox" name="wr_questionFontSize"/>
+               <widget class="QSpinBox" name="wr_questionFontSize">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Change question label's font size.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
+               </widget>
               </item>
              </layout>
             </item>
