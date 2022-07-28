@@ -31,25 +31,25 @@ Anki2/
 
 # Planned 
 * ~~Hover over timer to see stats in Practice~~
-* Options wizard
+* ~~Options wizard~~
     * Change correct/incorrect sound volume
     * ~~Change timer length~~
     * ~~Change subset group size.~~
     * ~~Change field font / font-sizes~~
     * ~~Matching/multiple choice/written specific customization~~
-    * ~~Toggle to play card sound field on button press no matter what ~~
+    * ~~Toggle to play card sound field on button press no matter what~~
     * ~~Toggle-able feature to automatically move on from questions or to confirm answer.~~
-    * Toggle to show card information after answering when moving on 
-    * ~~Toggle virtual keyboard ~~
-    * Show field name
+    * ~~Toggle to show card information after answering when moving on~~
+    * ~~Toggle virtual keyboard~~
+    * Show field name (implemented, but not in options yet)
 * ~~Sound questions (plays sound from field, can repeat)~~
 *~~ Practice: Add "Show Answer" after first incorrect~~
-    * Be able to hover over answer to see a webview with the full card
+    * ~~Be able to hover over answer to see a webview with the full card (implemented differentyl)~~
 * ~~Fake random (avoid repeats if possible)~~
-* ~~Return missed cards to try again ~~
+* ~~Return missed cards to try again~~
 * Support for  furigana
-* ~~Re-implement list view hide front/ hide back ~~
-* Custom instructions to display with some questions (like, write the Kanji or write the Hiragana)
+* ~~Re-implement list view hide front/ hide back~~
+* ~~Custom instructions to display with some questions (like, write the Kanji or write the Hiragana) (solved with field hint)~~
 * Create custom subsets
 * Subsets from field, like Part of Speech
 * Rework subsets as "Filters" so you could use multiple at a time
@@ -70,10 +70,9 @@ Anki2/
 * ~~Play sound button doesn't work~~
 * Fix ghost sounds being played sometimes on a new question (matching?)
 * Should fix MVC design of List class.
-* Handle multiple sounds trying to be played at once.
+* In some cases, playing multiple sounds at the same time causes one to not be heard.
 * Move "Practice" View logic to its own controller.
 * Move Practice Summary dialog to its own class?
-* Clean up dialogs
 * Decrease font-size for longer questions/answers
 * Fix auto focus on virtual keyboard
 * Mac is missing spaces in labels?
