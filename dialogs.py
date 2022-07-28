@@ -249,20 +249,17 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         self.sub_group_ind = ind
 
     def preview_subset_sig(self):
-        self.listmodel = ListModel() #just dummy ....
-        self.listcontroller = ListController(self.listmodel) # same....
+        subset_text = self.subsets[self.curr_subset].get_subset_name() +" - " + ("All" if self.all_groups else "Group "+str(self.sub_group_ind))
+
         if self.all_groups:
             _subset = self.subsets[self.curr_subset].get_all_cards()
         else:
             _subset = self.subsets[self.curr_subset].get_cards(self.sub_group_ind)
-        self.list = ListView(self.notecard_store, self.options_store, self.listmodel, self.listcontroller,
-            do_subsets = False, subset = _subset, 
-            subset_text = self.subsets[self.curr_subset].get_subset_name() +" - "+ # TODO: yuck..
-            ("All" if self.all_groups else "Group "+str(self.sub_group_ind)
-            )
-        )
-        #self.list.setModal(True)
-        #self.list.setFocusPolicy(Qt.ClickFocus)
+        
+        model = ListModel(self.notecard_store, self.options_store, subset=_subset, subset_text=subset_text)
+        controller = ListController(model) 
+        
+        self.list = ListView(model, controller)
         self.list.exec_()
 
     def show_options_sig(self):

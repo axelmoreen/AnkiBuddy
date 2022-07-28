@@ -2,9 +2,8 @@ from sys import maxunicode
 from aqt import mw
 from aqt.qt import *
 
-from PyQt5.QtWidgets import QTableWidgetItem
 import random
-
+from .widgets import BTableWidgetItem
 from .forms.list import *
 from .forms.practice import *
 from .forms.summary import *
@@ -14,105 +13,52 @@ from .style import *
 # TODO: move datastore access to the ListModel
 class ListView(QDialog):
     # TODO: fix terrible naming scheme.. and document
-    def __init__(self, note_store, options_store, model, controller, do_subsets = True, subset = None, subset_text = None):
+    def __init__(self, model, controller):
         super().__init__()
-        self.note_store = note_store
-        self.options_store = options_store
+        
         self.controller = controller
         self.model = model
-        self.do_subsets = do_subsets
 
         #self.widget = widget = QWidget()
         self.ui = Ui_CardList()
         self.ui.setupUi(self)
-        self.setWindowTitle("List - "+note_store.deck_name)
+        self.setWindowTitle("List - "+self.model.note_store.deck_name)
         self.setWindowIcon(mw.windowIcon())
-        dConf = options_store.get_list_config(note_store.deck_name)
 
-        # check to see if there are no columns set in options yet
-        if "columns" not in dConf:
-            self._cancel()
-        if len(dConf["columns"]) == 0:
-            self._cancel()
+        if self.model.subset_text:
+                self.ui.lessonLabel.setText(self.model.subset_text)        
 
-        self.ui.tableWidget.setColumnCount(len(dConf["columns"]))
+        self.ui.tableWidget.setColumnCount(self.model.column_count)
         self.ui.tableWidget.setHorizontalHeaderLabels([None, None])
         self.ui.tableWidget.horizontalHeader().setStretchLastSection(True)
 
-        # load fonts
-        self.fonts = {}
-        #
-        #for item in dConf["fonts"]:
-        #    self.fonts[item[0]] = QFont(dConf["fonts"][item[0]])
+        self.ui.tableWidget.setRowCount(len(self.model.rows))
 
-        self.front = []
-        for item in dConf["front"]:
-            self.front.append(item)
+        for i in range(len(self.model.rows)):
+            row = self.model.rows[i]
+            for j in range(len(row)):
+                item = BTableWidgetItem(row[j])
+                self.handle_font(item, 20, self.model.columns[j])
+                self.ui.tableWidget.setCellWidget(i, j, item)
 
-        self.length = note_store.length()
-
-        if not subset:
-            i = 0
-            self.ui.tableWidget.setRowCount(note_store.length())
-            for notecard in note_store.notecards:
-                for j in range(0, len(dConf["columns"])):
-                    item = BTableWidgetItem(str(notecard.fields[
-                        dConf["columns"][j]
-                    ]))
-
-                    self.handle_font(item, 20, dConf["columns"][j])
-                    
-                    self.ui.tableWidget.setCellWidget(i, j, item)
-                i += 1
-        # manually set subset
-        else: # TODO really need to clean this up ....
-            i = 0
-            self.ui.tableWidget.setRowCount(len(subset))
-            self.length = len(subset)
-            if subset_text:
-                self.ui.lessonLabel.setText(subset_text)
-        
-            for ele in subset:
-                notecard = note_store.notecards[ele]
-
-                for j in range(0, len(dConf["columns"])):
-                    item = BTableWidgetItem(str(notecard.fields[
-                        dConf["columns"][j]
-                    ]))
-
-                    self.handle_font(item, 20, dConf["columns"][j])
-                    
-                    self.ui.tableWidget.setCellWidget(i, j, item)
-                i += 1
-            # will disable the subset widgets here. 
-            #self.ui.checkBox.setVisible(False)
-            #self.ui.checkBox_2.setVisible(False)
-            self.ui.checkBox_3.setVisible(False)
-            # TODO: will soon be defunct.... 
-            self.ui.pushButton_4.setVisible(False)
-            self.ui.pushButton_5.setVisible(False)
-            self.ui.pushButton.setVisible(False)
-            #self.ui.lessonLabel.setVisible(False)
-            
         self.ui.tableWidget.resizeColumnsToContents()
         self.ui.tableWidget.resizeRowsToContents()
+        
+        self.ui.checkBox_3.setVisible(False)
+        # TODO: remove from .ui 
+        self.ui.pushButton_4.setVisible(False)
+        self.ui.pushButton_5.setVisible(False)
+        self.ui.pushButton.setVisible(False)
 
-        # setup signals to model
+        # signals
+        self.model.show_cancel_dialog.connect(self._cancel)
         self.ui.checkBox.stateChanged.connect(self.controller.on_hide_back_changed)
         self.ui.checkBox_2.stateChanged.connect(self.controller.on_hide_front_changed)
-        self.ui.checkBox_3.stateChanged.connect(self.controller.on_all_lessons_changed)
-
-        self.ui.pushButton_4.clicked.connect(self.controller.on_forward)
-        self.ui.pushButton_5.clicked.connect(self.controller.on_backward)
-
-        self.ui.pushButton.clicked.connect(self.controller.on_options)
         self.ui.pushButton_6.clicked.connect(self.on_close)
 
         # setup signals from model
         self.model.hide_front_changed.connect(self.on_hide_front_changed)
         self.model.hide_back_changed.connect(self.on_hide_back_changed)
-        self.model.show_all_changed.connect(self.on_show_all_changed)
-        self.model.lesson_changed.connect(self.on_lesson_changed)
 
         self.show()
 
@@ -127,37 +73,27 @@ class ListView(QDialog):
         self.close()
 
     def on_hide_front_changed(self, value):
-        for i in range(len(self.front)):
-            for j in range(self.length):
-                if self.front[i]:
+        for i in range(len(self.model.front)):
+            for j in range(self.model.length):
+                if self.model.front[i]:
                     if value:
                         self.ui.tableWidget.cellWidget(j, i).hide_value()
                     else:
                         self.ui.tableWidget.cellWidget(j, i).show_value()
 
     def on_hide_back_changed(self, value):
-        for i in range(len(self.front)):
-            for j in range(self.length):
-                if not self.front[i]:
+        for i in range(len(self.model.front)):
+            for j in range(self.model.length):
+                if not self.model.front[i]:
                     if value:
                         self.ui.tableWidget.cellWidget(j, i).hide_value()
                     else:
                         self.ui.tableWidget.cellWidget(j, i).show_value()
 
-    # No longer supported
-    def on_show_all_changed(self, value):
-        pass
-    # No longer supported
-    def on_lesson_changed(self, value):
-        pass
-
-    # end signals
-
-    # TODO: copy pasted from widgets.py...
     def handle_font(self, ele, base_size, field_name):
         font = ele.font()
         size = base_size
-        field_opts = self.options_store.get_globals(self.note_store.deck_name)["field_settings"]
+        field_opts = self.model.options_store.get_globals(self.model.note_store.deck_name)["field_settings"]
         if field_name in field_opts:
             settings = field_opts[field_name]
             size += settings[1] # font size offset
@@ -165,7 +101,7 @@ class ListView(QDialog):
         font.setPointSize(size)
         ele.setFont(font)
 
-# TODO: move logic to the controller...
+
 class HomeworkView(QWidget):
     def __init__(self, model, controller):
         super().__init__()

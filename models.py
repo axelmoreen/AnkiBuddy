@@ -5,13 +5,50 @@ import random
 class ListModel(QObject):
     hide_front_changed = pyqtSignal(bool)
     hide_back_changed = pyqtSignal(bool)
-    show_all_changed = pyqtSignal(bool)
-    lesson_changed = pyqtSignal(int)
-
-    @property
-    def lesson(self):
-        return self._lesson
     
+    show_cancel_dialog = pyqtSignal()       
+
+    def __init__(self, note_store, options_store, subset = None, subset_text = None):
+        super().__init__()
+        self._hide_front = False
+        self._hide_back = False
+
+        self.note_store = note_store
+        self.options_store = options_store
+        self.subset = subset
+        self.subset_text = subset_text
+           
+        conf = options_store.get_list_config(note_store.deck_name)
+        # check to see if there are no columns set in options yet
+        if "columns" not in conf:
+            self.show_cancel_dialog.emit()
+        elif len(conf["columns"]) == 0:
+            self.show_cancel_dialog.emit()
+            
+        self.columns = conf["columns"]
+        self.column_count = len(self.columns)
+        
+        self.front = []
+        for item in conf["front"]:
+            self.front.append(item)
+
+        self.rows = []
+
+        def build_row(notecard):
+            row = []
+            for j in range(0, len(self.columns)):
+                row.append(str(notecard.fields[self.columns[j]]))
+            return tuple(row)
+
+        if not subset: # (defaults) to all notecards, but a subset should always be passed, so this shouldn't be executed.
+            self.length = note_store.length()
+            for notecard in note_store.notecards:
+                self.rows.append(build_row(notecard))
+        else: 
+            self.length = len(subset)
+            for ele in subset:
+                self.rows.append(build_row(note_store.notecards[ele]))
+
     @property
     def hide_front(self):
         return self._hide_front
@@ -20,15 +57,6 @@ class ListModel(QObject):
     def hide_back(self):
         return self._hide_back
 
-    @property
-    def show_all(self):
-        return self._show_all
-
-    @lesson.setter
-    def lesson(self, value):
-        self._lesson = value
-        self.lesson_changed.emit(self._lesson)
-    
     @hide_front.setter
     def hide_front(self, value):
         self._hide_front = value
@@ -38,19 +66,7 @@ class ListModel(QObject):
     def hide_back(self, value):
         self._hide_back = value
         self.hide_back_changed.emit(value)
-    
-    @show_all.setter
-    def show_all(self, value):
-        self._show_all = value
-        self.show_all_changed.emit(value)
 
-    def __init__(self):
-        super().__init__()
-        self._hide_front = False
-        self._hide_back = False
-        self._show_all = False
-        
-        self._lesson = 1
 
 # Homework Model
 # represents a "quizzer" window where the user is asked one question at a time.
@@ -59,7 +75,7 @@ class HomeworkModel(QObject):
     info_update = pyqtSignal()
     answer_pane_update = pyqtSignal(bool, int)
     new_question_update = pyqtSignal(QWidget)
-    
+
     def __init__(self, note_store, templates, options_store, subset=None, subset_group=-1):
         super().__init__()
 
