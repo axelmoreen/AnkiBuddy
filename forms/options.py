@@ -333,6 +333,7 @@ class Ui_OptionsDialog(object):
         _translate = QtCore.QCoreApplication.translate
         OptionsDialog.setWindowTitle(_translate("OptionsDialog", "Dialog"))
         self.genBehaviorBox.setTitle(_translate("OptionsDialog", "Behavior"))
+        self.gen_showAnswer.setToolTip(_translate("OptionsDialog", "<html><head/><body><p>Should pause after each question to show the answer.</p></body></html>"))
         self.gen_showAnswer.setText(_translate("OptionsDialog", "Show Answer Before Next Question"))
         self.gen_cbTimed.setText(_translate("OptionsDialog", "Timer (seconds)"))
         self.genAnswersBox.setTitle(_translate("OptionsDialog", "Cards"))

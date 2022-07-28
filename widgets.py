@@ -481,7 +481,10 @@ class WriteTheAnswerWidget(QuestionWidget):
         #self.set_font_size(self.ansBox, self.conf["write_question_size"])
         #self.handle_font(self.ansBox, self.conf["write_question_size"], 
         #    self.options["question_field"])
-
+        self.boxTypeLabel = QLabel(self.ansBox)
+        self.boxTypeLabel.setText("("+self.options["answer_field"]+")")
+        
+        self.set_font_size(self.boxTypeLabel, 9)
         self.ansSubmit = QtWidgets.QPushButton()
         self.ansSubmit.setFixedHeight(60)
         self.ansSubmit.setText("Submit")

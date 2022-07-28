@@ -67,6 +67,9 @@
              <layout class="QVBoxLayout" name="genBehaviorLayout">
               <item>
                <widget class="QCheckBox" name="gen_showAnswer">
+                <property name="toolTip">
+                 <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;Should pause after each question to show the answer.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+                </property>
                 <property name="text">
                  <string>Show Answer Before Next Question</string>
                 </property>
