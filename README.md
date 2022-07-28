@@ -69,7 +69,7 @@ Anki2/
 * ~~Allow unselecting buttons in Matching~~
 * ~~Play sound button doesn't work~~
 * Fix ghost sounds being played sometimes on a new question (matching?)
-* Should fix MVC design of List class.
+* ~~Should fix MVC design of List class.~~
 * In some cases, playing multiple sounds at the same time causes one to not be heard.
 *~~Move "Practice" View logic to its own controller.~~
 * Decrease font-size for longer questions/answers

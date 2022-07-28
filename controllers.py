@@ -10,14 +10,18 @@ class ListController(QObject):
         super().__init__()
         self.model = model
 
-    @pyqtSlot(int)
     def on_hide_front_changed(self, value):
         self.model.hide_front = bool(value)
 
-    @pyqtSlot(int)
     def on_hide_back_changed(self, value):
         self.model.hide_back = bool(value)
 
+    def cell_double_clicked(self, row, column):
+        card = self.model.cards[row]
+        self.cardview = SimpleCardView(card)
+        self.cardview.setWindowTitle("Card - "+ self.model.note_store.deck_name)
+        self.cardview.setWindowIcon(mw.windowIcon())
+        self.cardview.show()
 
 class HomeworkController(QObject):
     def __init__(self, model):
@@ -105,35 +109,7 @@ class HomeworkController(QObject):
     def do_cards_button(self):
         self.web_views = []
         for card in self.model.curr_cards:
-            view = AnkiWebView()
-            view.card = card.card
-
-            html = card.card.answer()
-            html = av_refs_to_play_icons(html)
-
-            # a weird way to fix a bug
-            # for some reason, to use the default pycmd (e.g. play:a:0) 
-            #   and setting separate bridge commands
-            # results in them all playing the same audio
-            # ONLY if the webviews are created in the same method scope 
-            # (i.e. after a Matching question)   
-            html= html.replace("play:a:0", "play:"+view.card.answer_av_tags()[0].filename)
-            html = html.replace("play:a:1", "play:"+view.card.answer_av_tags()[1].filename)
-
-            view.stdHtml(html,
-                css=["css/reviewer.css"],
-                js=[
-                    "js/mathjax.js",
-                    "js/vendor/mathjax/tex-chtml.js",
-                    "js/reviewer.js",
-                ]
-            )
-            def play_tag(inp):
-                play, tag = inp.split(":")
-                av_player.play_tags([SoundOrVideoTag(tag)])
-            
-            view.set_bridge_command(play_tag, view)
-
+            view = SimpleCardView(card.card)
             view.setWindowTitle("Card - "+ self.model.note_store.deck_name)
             view.setWindowIcon(mw.windowIcon())
             self.web_views.append(view)

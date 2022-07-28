@@ -51,14 +51,17 @@ class ListView(QDialog):
         self.ui.pushButton.setVisible(False)
 
         # signals
-        self.model.show_cancel_dialog.connect(self._cancel)
+        
         self.ui.checkBox.stateChanged.connect(self.controller.on_hide_back_changed)
         self.ui.checkBox_2.stateChanged.connect(self.controller.on_hide_front_changed)
         self.ui.pushButton_6.clicked.connect(self.on_close)
 
-        # setup signals from model
-        self.model.hide_front_changed.connect(self.on_hide_front_changed)
-        self.model.hide_back_changed.connect(self.on_hide_back_changed)
+        self.ui.tableWidget.cellDoubleClicked.connect(self.controller.cell_double_clicked)
+
+        self.model.show_cancel_dialog.connect(self._cancel)
+        self.model.hide_front_changed.connect(self.handle_hide_front_changed)
+        self.model.hide_back_changed.connect(self.handle_hide_back_changed)
+    
 
         self.show()
 
@@ -72,7 +75,7 @@ class ListView(QDialog):
     def on_close(self, value):
         self.close()
 
-    def on_hide_front_changed(self, value):
+    def handle_hide_front_changed(self, value):
         for i in range(len(self.model.front)):
             for j in range(self.model.length):
                 if self.model.front[i]:
@@ -81,7 +84,7 @@ class ListView(QDialog):
                     else:
                         self.ui.tableWidget.cellWidget(j, i).show_value()
 
-    def on_hide_back_changed(self, value):
+    def handle_hide_back_changed(self, value):
         for i in range(len(self.model.front)):
             for j in range(self.model.length):
                 if not self.model.front[i]:

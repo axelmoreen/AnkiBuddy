@@ -18,6 +18,7 @@ class ListModel(QObject):
         self.subset = subset
         self.subset_text = subset_text
            
+        self.cards = []
         conf = options_store.get_list_config(note_store.deck_name)
         # check to see if there are no columns set in options yet
         if "columns" not in conf:
@@ -44,10 +45,12 @@ class ListModel(QObject):
             self.length = note_store.length()
             for notecard in note_store.notecards:
                 self.rows.append(build_row(notecard))
+                self.cards.append(notecard.card)
         else: 
             self.length = len(subset)
             for ele in subset:
                 self.rows.append(build_row(note_store.notecards[ele]))
+                self.cards.append(note_store.notecards[ele].card)
 
     @property
     def hide_front(self):
