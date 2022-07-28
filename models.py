@@ -5,7 +5,6 @@ import random
 class ListModel(QObject):
     hide_front_changed = pyqtSignal(bool)
     hide_back_changed = pyqtSignal(bool)
-    
     show_cancel_dialog = pyqtSignal()       
 
     def __init__(self, note_store, options_store, subset = None, subset_text = None):

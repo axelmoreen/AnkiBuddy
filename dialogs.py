@@ -40,9 +40,6 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         self.templates = []
         self.sel_templates = []
 
-        # subsets box
-        # todo: make more generic to reuse code in list / assessment
-        # "model"
         self.subsets = []
         self.all_groups = True
         self.curr_subset = 0
@@ -78,10 +75,7 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
             self.curr_subset = self.options_store.get_homework_config(notecard_store.deck_name)["last_subset"]
             self.subsetBox.setCurrentIndex(self.curr_subset)
     
-    def do_accept(self):
-
-        # TODO: change default behaviour to handle incorrect configs / when to not exit this dialog from the OK button.
-        
+    def do_accept(self):        
         # to pass: 
         # self.sel_templates = list of templates (dicts)
         ### template schema:
@@ -117,7 +111,6 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         self.templates.append(templ)
         # update UI
         self.templatesList.addItem(self.get_template_string(templ))
-        
 
         # auto-add to selected templates
         row = len(self.templates) - 1
@@ -264,7 +257,16 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
 
     def show_options_sig(self):
         self.options_dialog = OptionsDialog(self.notecard_store, self.options_store)
-        self.options_dialog.show()
+        self.options_dialog.exec_()
+        self.update_from_options()
+
+    def update_from_options(self):
+        lesson_size = self.options_store.get_globals(self.notecard_store.deck_name)["lesson_size"]
+        for subset in self.subsets:
+            subset.lesson_size = lesson_size
+
+        self.updateSubsetUI()
+
 # Template Dialog - create and edit templates to be used in the Questions dialog. 
 # saves templates to configuration for convenience
 #

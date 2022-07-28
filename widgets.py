@@ -417,7 +417,7 @@ class MatchingWidget(QuestionWidget):
             # try to avoid similar colors...
             d = lambda col1, col2, i: (col1[i]- col2[i]) ** 2  
             su_sq = lambda col1, col2: d(col1,col2, 0) + d(col1,col2, 1) + d(col1, col2, 2)
-            min_sq_dist = 8000 # sqrt(8000) ~= 89, so about 30 diff per color. 
+            min_sq_dist = 11000 # sqrt(11000) ~= 100, so like +- 30 diff per color.
             def valid_col(col, col_array):
                 for other in col_array:
                     if su_sq(col, other) < min_sq_dist:
@@ -510,7 +510,7 @@ class WriteTheAnswerWidget(QuestionWidget):
                 mw._bKeyboard.showNormal()
             mw._bKeyboard.link_field(self.ansBox)
 
-        QTimer.singleShot(0, lambda: self.ansBox.setFocus(True))
+        QTimer.singleShot(0, lambda: self.ansBox.setFocus(True)) # ez hack to make the ans box auto-focus.
 
     def submit_callback(self):
         text = self.ansBox.text()
@@ -551,6 +551,7 @@ class SimpleCardView(AnkiWebView):
         # (i.e. after a Matching question)   
 
         # unknown if this still exists after breaking out this code to its own class.
+        # regardless, just putting the av tag into the pycmd directly here.
         for i in range(len(card.answer_av_tags())):
             html = html.replace("play:a:"+str(i), "play:"+card.answer_av_tags()[i].filename)
 
