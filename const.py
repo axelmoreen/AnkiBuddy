@@ -27,5 +27,4 @@ class NotecardStoreManager:
 
 
 options = OptionStore(__name__)
-
 notecards = NotecardStoreManager()

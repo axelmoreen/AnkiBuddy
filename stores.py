@@ -27,7 +27,9 @@ class NotecardStore:
             note = mw.col.get_note(c.nid)
             
             notecard = Notecard(dict(note.items()), c.id,  c.nid, note.mid, c.reps, c.lapses)
-            
+            # TODO: we will see if this has a performance impact
+            notecard.card = c
+            notecard.note = note
             self.notecards.append(notecard)
         
         # store deck info

@@ -2,6 +2,13 @@ from sys import maxunicode
 from aqt import mw
 from aqt.qt import *
 import aqt
+
+import copy
+import time
+
+from aqt.webview import AnkiWebView
+from aqt.sound import av_refs_to_play_icons, play_clicked_audio, av_player
+from anki.sound import SoundOrVideoTag
 from PyQt5.QtWidgets import QTableWidgetItem
 import random
 
@@ -181,13 +188,15 @@ class HomeworkView(QWidget):
         self.ui.pushButton.hide()
         self.ui.pushButton.clicked.connect(self.accept_wait)
         self.ui.pushButton.setStyleSheet(incorrect_button_style)
+        self.ui.cardsButton.setStyleSheet(incorrect_button_style)
+        self.ui.cardsButton.clicked.connect(self.do_cards_button)
         self.next_question()
 
         font = self.ui.labelLeft.font()
         font.setPointSize(14)
         self.ui.labelLeft.setFont(font)
         self.ui.labelRight.setFont(font)
-        font.setPointSize(20)
+        font.setPointSize(16) # Note: answer gets made this size currently
         self.ui.label.setFont(font)
 
         self.ui.labelRight.setText("--:--:--")
@@ -284,6 +293,7 @@ class HomeworkView(QWidget):
                 self.ui.label.setText("Correct")
                 self.ui.horizontalWidget.show()
                 self.ui.pushButton.show()
+                self.ui.cardsButton.show()
                 self.widget.show_answer()
                 self.model.corrected = True
 
@@ -294,6 +304,7 @@ class HomeworkView(QWidget):
                 self.ui.pushButton.setText("Show Answer")
                 self.ui.label.setText("Incorrect!")
                 self.model.corrected = False
+                self.ui.cardsButton.hide()
                 self.ui.horizontalWidget.show()
                 self.ui.pushButton.show()
         
@@ -305,8 +316,49 @@ class HomeworkView(QWidget):
             self.ui.label.setText(self.model.answer)
             self.widget.show_answer()
             self.model.corrected = True
+            self.ui.cardsButton.show()
             self.ui.pushButton.setText("Continue")
 
+    def do_cards_button(self):
+        self.web_views = []
+        for card in self.model.curr_cards:
+            view = AnkiWebView()
+            view.card = copy.copy(card.card)
+
+            html = card.card.answer()
+            html = av_refs_to_play_icons(html)
+
+            # a weird way to fix a bug
+            # for some reason, to use the default pycmd (e.g. play:a:0) 
+            #   and setting separate bridge commands
+            # results in them all playing the same audio
+            # ONLY if the webviews are created in the same method scope 
+            # (i.e. after a Matching question)   
+            html= html.replace("play:a:0", "play:"+view.card.answer_av_tags()[0].filename)
+            html = html.replace("play:a:1", "play:"+view.card.answer_av_tags()[1].filename)
+
+            view.stdHtml(html,
+                css=["css/reviewer.css"],
+                js=[
+                    "js/mathjax.js",
+                    "js/vendor/mathjax/tex-chtml.js",
+                    "js/reviewer.js",
+                ]
+            )
+            def play_tag(inp):
+                play, tag = inp.split(":")
+                av_player.play_tags([SoundOrVideoTag(tag)])
+            
+            view.set_bridge_command(play_tag, view)
+
+            view.setWindowTitle("Card - "+ self.model.note_store.deck_name)
+            view.setWindowIcon(mw.windowIcon())
+            self.web_views.append(view)
+            
+        for v in self.web_views:
+            v.show()
+            
+            
     def on_timeout(self):
         if self.model.timed_mode > 0:
             self.model.time -= 1

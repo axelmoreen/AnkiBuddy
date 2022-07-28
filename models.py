@@ -115,6 +115,8 @@ class HomeworkModel(QObject):
 
         self.to_revisit = []
 
+        self.curr_cards = []
+
     def next_template(self):
         return self.templates[random.randrange(len(self.templates))]
 
@@ -148,6 +150,7 @@ class HomeworkModel(QObject):
         self.answer_card = None
         self.curr_question_type = q_type = templ["type_ind"]
         self.curr_question.clear()
+        self.curr_cards.clear()
         self.curr_question["type"] = templ["type"]
         if q_type == 0 : # multiple choice 
             # TODO: fix bug : card sometimes repeats in answers or from question to answers
@@ -193,6 +196,8 @@ class HomeworkModel(QObject):
             self.curr_question["question_card_ind"] = ind
             self.curr_question["answer_cards_ind"] = ans_cards_inds
 
+            self.curr_cards.append(quest)
+
         elif q_type == 1: # matching
             # TODO: fix bug : sometimes on core2k set, kana and kanji will be the same - so check if question and answer are the same before using
             quest = []
@@ -222,6 +227,8 @@ class HomeworkModel(QObject):
             self.curr_question["cards"] = cards
             self.curr_question["cards_inds"] = cards_inds
 
+            self.curr_cards.extend(cards)
+
         elif q_type == 2: #write the answer
             card, _ind = self.next_card()
             while card.fields[templ["answer"]].casefold() == card.fields[templ["question"]]: card,ind = self.next_card()
@@ -241,6 +248,8 @@ class HomeworkModel(QObject):
 
             self.curr_question["card"] = card
             self.curr_question["card_ind"] = _ind
+
+            self.curr_cards.append(card)
             
 
     def _has_card(self, card_arr, new_card, check_field):

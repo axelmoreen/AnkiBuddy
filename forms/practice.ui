@@ -117,6 +117,13 @@
        </spacer>
       </item>
       <item>
+       <widget class="QPushButton" name="cardsButton">
+        <property name="text">
+         <string>Card(s)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
        <widget class="QPushButton" name="pushButton">
         <property name="text">
          <string>OK</string>

@@ -351,8 +351,6 @@ class MatchingWidget(QuestionWidget):
             self.model.last_card = self.options["cards_inds"][i]
             if self.order[self.sel_right] == i: # correct
                 self.answered.append(i)
-                self.questionAnswered.emit(True, len(self.answered) < self.size)
-
                 button2 = self.r_buttons[self.sel_right]
                 button.setFlat(True)
                 button2.setFlat(True)
@@ -360,6 +358,8 @@ class MatchingWidget(QuestionWidget):
                 button2.setEnabled(False)
                 self.sel_left = -1
                 self.sel_right = -1
+
+                self.questionAnswered.emit(True, len(self.answered) < self.size)
                 
             else:
                 self.questionAnswered.emit(False, True)
@@ -380,7 +380,6 @@ class MatchingWidget(QuestionWidget):
             self.model.last_card = self.options["cards_inds"][self.order[i]]
             if self.order[i] == self.sel_left: # correct
                 self.answered.append(self.sel_left)
-                self.questionAnswered.emit(True, len(self.answered) < self.size)
                 button2 = self.l_buttons[self.sel_left]
                 button.setFlat(True)
                 button2.setFlat(True)
@@ -388,6 +387,8 @@ class MatchingWidget(QuestionWidget):
                 button2.setEnabled(False)
                 self.sel_left = -1
                 self.sel_right = -1
+
+                self.questionAnswered.emit(True, len(self.answered) < self.size)
             else:
                 self.questionAnswered.emit(False, True)
                 self.unsel_buttons()
@@ -403,31 +404,44 @@ class MatchingWidget(QuestionWidget):
         self.unsel_buttons()
 
     def show_answer(self):
-        used_cols = []
+        used_bgcols = []
+        used_fgcols = []
         for i in range(len(self.l_buttons)):
             buttonL = self.l_buttons[self.order[i]]
             buttonR = self.r_buttons[i]
-
+            # bg col
             # pick a color
             r = lambda: random.randint(0,255)
             # try to avoid similar colors...
             d = lambda col1, col2, i: (col1[i]- col2[i]) ** 2  
             su_sq = lambda col1, col2: d(col1,col2, 0) + d(col1,col2, 1) + d(col1, col2, 2)
-            min_sq_dist = 1200 # sqrt(1000) ~= 31, so about 10 diff per color. 
+            min_sq_dist = 8000 # sqrt(8000) ~= 89, so about 30 diff per color. 
             def valid_col(col, col_array):
                 for other in col_array:
                     if su_sq(col, other) < min_sq_dist:
                         return False
                 return True
-            col_pick = (r(),r(),r())
+            bgcol_pick = (r(),r(),r())
             i = 0
-            while not valid_col(col_pick, used_cols):
-                col_pick = (r(), r(), r())
+            while not valid_col(bgcol_pick, used_bgcols):
+                bgcol_pick = (r(), r(), r())
                 i += 1
+                min_sq_dist -= 100
                 if i > 50: break # don't know how else to prevent infinite recursion here..
-                    
-            used_cols.append(col_pick)
-            col = '#%02X%02X%02X' % col_pick
+            """"
+            r2 = lambda: random.randint(120, 220)
+            fgcol_pick = (r2(), r2(), r2())
+            j = 0
+            while not valid_col(fgcol_pick, used_fgcols):
+                fgcol_pick = (r2(), r2(), r2())
+                j += 1
+                if j > 50: break
+            used_fgcols.append(fgcol_pick)
+            col2 = '#%02X%02X%02X' % fgcol_pick
+            """
+            used_bgcols.append(bgcol_pick)
+            col = '#%02X%02X%02X' % bgcol_pick
+            
             buttonL.setStyleSheet(button_style_custom_border % col)
             buttonR.setStyleSheet(button_style_custom_border % col)
             buttonL.setFlat(False)
