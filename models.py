@@ -56,7 +56,9 @@ class ListModel(QObject):
 # represents a "quizzer" window where the user is asked one question at a time.
 # quiz settings are set in the Questions Wizard beforehand and passed to the homework model
 class HomeworkModel(QObject):
-    render_next_question = pyqtSignal()
+    info_update = pyqtSignal()
+    answer_pane_update = pyqtSignal(bool, int)
+    new_question_update = pyqtSignal(QWidget)
     
     def __init__(self, note_store, templates, options_store, subset=None, subset_group=-1):
         super().__init__()

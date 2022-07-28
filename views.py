@@ -1,24 +1,15 @@
 from sys import maxunicode
 from aqt import mw
 from aqt.qt import *
-import aqt
 
-import copy
-import time
-
-from aqt.webview import AnkiWebView
-from aqt.sound import av_refs_to_play_icons, play_clicked_audio, av_player
-from anki.sound import SoundOrVideoTag
 from PyQt5.QtWidgets import QTableWidgetItem
 import random
 
 from .forms.list import *
 from .forms.practice import *
 from .forms.summary import *
-from .widgets import *
-from .style import *
 
-from os.path import join, dirname
+from .style import *
 
 # TODO: move datastore access to the ListModel
 class ListView(QDialog):
@@ -176,7 +167,7 @@ class ListView(QDialog):
 
 # TODO: move logic to the controller...
 class HomeworkView(QWidget):
-    def __init__(self, model):
+    def __init__(self, model, controller):
         super().__init__()
 
         self.ui = Ui_Practice()
@@ -184,13 +175,15 @@ class HomeworkView(QWidget):
         self.setWindowTitle("Practice - "+model.note_store.deck_name)
         self.setWindowIcon(mw.windowIcon())
         self.model = model
+        self.controller = controller
+
         self.ui.horizontalWidget.hide()
         self.ui.pushButton.hide()
-        self.ui.pushButton.clicked.connect(self.accept_wait)
+        self.ui.pushButton.clicked.connect(self.controller.accept_wait)
         self.ui.pushButton.setStyleSheet(incorrect_button_style)
         self.ui.cardsButton.setStyleSheet(incorrect_button_style)
-        self.ui.cardsButton.clicked.connect(self.do_cards_button)
-        self.next_question()
+        self.ui.cardsButton.clicked.connect(self.controller.do_cards_button)
+        
 
         font = self.ui.labelLeft.font()
         font.setPointSize(14)
@@ -203,10 +196,7 @@ class HomeworkView(QWidget):
         self.ui.labelLeft.setText(self.model.subset.get_subset_name() +" - "+
             ("All" if self.model.subset_group == -1 else "Group "+str(self.model.subset_group))
         )
-        self.timer = QTimer(self)
-        self.timer.timeout.connect(self.on_timeout)
-        self.timer.start(1000)
-
+        
         self.info_menu = QMenu(self)
         self.correctAction = QAction("Score: ")
         self.accuracyAction = QAction("Accuracy: ")
@@ -220,182 +210,74 @@ class HomeworkView(QWidget):
         self.info_menu.addAction(self.correctAction)
         self.info_menu.addAction(self.accuracyAction)
         self.info_menu.addAction(self.cardsAction)
-        self.answer = None
+
         self.ui.toolButton.setMenu(self.info_menu)
 
-    def keyPressEvent(self, event):
-        super().keyPressEvent(event)
+        self.model.info_update.connect(self.info_update_handler)
+        self.model.answer_pane_update.connect(self.answer_pane_handler)
+        self.model.new_question_update.connect(self.new_question_handler)
+
+        self.controller.next_question()
     
-    def mousePressEvent(self, event):
-        super().mousePressEvent(event)
-
-    def next_question(self):
-        # hide virtual keyboard to next question
-        #if hasattr(mw, "_bKeyboard"):
-            #mw._bKeyboard.showMinimized()
-        self.model.load_new_question()
-        self.ui.pushButton.hide()
-        self.ui.pushButton.setFocusPolicy(Qt.NoFocus)
-        self.ui.horizontalWidget.hide()
-        self.model.corrected = False # for show answer to work properly
-        self.model.has_answered = False
-        #self.ui.labelLeft.setText(self.model.curr_question["type"])
-        if self.model.curr_question_type == 0:
-            newQuestionWidget = MultipleChoiceQuestionWidget(self.model.curr_question, self.model)
-        elif self.model.curr_question_type == 1:
-            newQuestionWidget = MatchingWidget(self.model.curr_question, self.model)
-        elif self.model.curr_question_type == 2:
-            newQuestionWidget = WriteTheAnswerWidget(self.model.curr_question, self.model)
-
-        oldQuestionWidget = self.ui.verticalLayout.itemAt(0)
-        oldQuestionWidget.widget().deleteLater()
-        newQuestionWidget.questionAnswered.connect(self.question_answered)
-        self.widget = newQuestionWidget
-        #self.keypress = newQuestionWidget.on_key
-        self.model.answer = newQuestionWidget.get_answer()
-        self.ui.verticalLayout.replaceWidget(oldQuestionWidget.widget(), newQuestionWidget)
-        # refocus window
-        #self.setFocus(Qt.ActiveWindowFocusReason)
-
-    
-    def question_answered(self, correct, multi_answer):
-        med_dir = join(dirname(__file__), "resources")
-        # handle counting
-        if not self.model.has_answered:
-            self.model.total_answered += 1
-            if correct:
-                self.model.total_correct += 1
-            
-            if not multi_answer: 
-                self.model.has_answered = True # 
-
-        # handle sounds
-        if self.model.play_sounds and not self.model.corrected:
-            if correct:
-                aqt.sound.av_player.play_file("{}/correct.mp3".format(med_dir))
-            else:
-                aqt.sound.av_player.play_file("{}/incorrect.mp3".format(med_dir))
-
-        # handle revisits
-        if not correct and self.model.do_revisit and not self.model.has_answered:
-            for i in range(self.model.revisit_steps):
-                self.model.to_revisit.append(self.model.last_card)
-
-        # allow you to press resubmit (Write the answer) to move to the next question
-        if correct and self.model.corrected:
-            self.next_question()
-            return
-
-        # handle ui changes
-        if not multi_answer:
-            if self.model.wait_wrong and correct:
-                self.ui.pushButton.setText("Continue")
-                self.ui.label.setText("Correct")
-                self.ui.horizontalWidget.show()
-                self.ui.pushButton.show()
-                self.ui.cardsButton.show()
-                self.widget.show_answer()
-                self.model.corrected = True
-
-            elif not self.model.wait_wrong and correct: 
-                self.next_question()
-
-            else: # not correct, should stay on UI no matter what
-                self.ui.pushButton.setText("Show Answer")
-                self.ui.label.setText("Incorrect!")
-                self.model.corrected = False
-                self.ui.cardsButton.hide()
-                self.ui.horizontalWidget.show()
-                self.ui.pushButton.show()
-        
-    def accept_wait(self):
-        if self.model.corrected:
-            self.next_question()
-
-        else: # show answer
-            self.ui.label.setText(self.model.answer)
-            self.widget.show_answer()
-            self.model.corrected = True
-            self.ui.cardsButton.show()
-            self.ui.pushButton.setText("Continue")
-
-    def do_cards_button(self):
-        self.web_views = []
-        for card in self.model.curr_cards:
-            view = AnkiWebView()
-            view.card = copy.copy(card.card)
-
-            html = card.card.answer()
-            html = av_refs_to_play_icons(html)
-
-            # a weird way to fix a bug
-            # for some reason, to use the default pycmd (e.g. play:a:0) 
-            #   and setting separate bridge commands
-            # results in them all playing the same audio
-            # ONLY if the webviews are created in the same method scope 
-            # (i.e. after a Matching question)   
-            html= html.replace("play:a:0", "play:"+view.card.answer_av_tags()[0].filename)
-            html = html.replace("play:a:1", "play:"+view.card.answer_av_tags()[1].filename)
-
-            view.stdHtml(html,
-                css=["css/reviewer.css"],
-                js=[
-                    "js/mathjax.js",
-                    "js/vendor/mathjax/tex-chtml.js",
-                    "js/reviewer.js",
-                ]
-            )
-            def play_tag(inp):
-                play, tag = inp.split(":")
-                av_player.play_tags([SoundOrVideoTag(tag)])
-            
-            view.set_bridge_command(play_tag, view)
-
-            view.setWindowTitle("Card - "+ self.model.note_store.deck_name)
-            view.setWindowIcon(mw.windowIcon())
-            self.web_views.append(view)
-            
-        for v in self.web_views:
-            v.show()
-            
-            
-    def on_timeout(self):
-        if self.model.timed_mode > 0:
-            self.model.time -= 1
-        else:
-            self.model.time += 1
-        self.ui.labelRight.setText( (
-            "-" if self.model.timed_mode > 0 else ""
-        ) + 
-            _sec2Time(self.model.time))
-
-        # update tooltip
-        # TODO: fix duplicate code with Summary Dialog.
-        self.correctAction.setText("Score: "+
-        "{}/{}".format(self.model.total_correct, self.model.total_answered))
-        self.accuracyAction.setText("Accuracy: "+ "{:d}%".format(int(100 * self.model.total_correct/max(1,self.model.total_answered))))  
-        self.cardsAction.setText("{} cards visited".format(len(self.model.card_history)))
-
-        if self.model.time < 0:
-            # TODO: play sound
-            self.timer.stop()
-            self.model.time = 0
-            self.ui.labelRight.setText("Time's Up!")
-            #TODO: instead of self.close(), simply just pause the screen and open dialog.
-            self.close()
-    
+    # QT override
     def closeEvent(self, event):
         # TODO: display practice summary 
         dial = SummaryDialog()
         dial.load(self.model)
         dial.show()
 
+    def info_update_handler(self):
+        self.correctAction.setText("Score: "+
+        "{}/{}".format(self.model.total_correct, self.model.total_answered))
+        self.accuracyAction.setText("Accuracy: "+ "{:d}%".format(int(100 * self.model.total_correct/max(1,self.model.total_answered))))  
+        self.cardsAction.setText("{} cards visited".format(len(self.model.card_history)))
+
+        self.ui.labelRight.setText( (
+            "-" if self.model.timed_mode > 0 else ""
+        ) + 
+            _sec2Time(self.model.time))
+
+        if self.model.time < 0:
+            self.ui.labelRight.setText("Time's Up!")
+            #TODO: instead of self.close(), simply just pause the screen and open dialog.
+            self.close()
+
+    # CORRECT: 0 = wrong, 1 = right, 2 = show answer not a boolean
+    def answer_pane_handler(self, show_pane, correct):
+        if show_pane:
+            self.ui.horizontalWidget.show()
+            if correct == 0:
+                self.ui.pushButton.setText("Show Answer")
+                self.ui.label.setText("Incorrect!")
+                self.ui.cardsButton.hide()
+                self.ui.pushButton.show()
+            elif correct == 1:
+                self.ui.pushButton.setText("Continue")
+                self.ui.label.setText("Correct")
+                self.ui.pushButton.show()
+                self.ui.cardsButton.show()
+            else: # correct == 2
+                self.ui.label.setText(self.model.answer)
+                self.ui.cardsButton.show()
+                self.ui.pushButton.setText("Continue")
+        else:
+            self.ui.horizontalWidget.hide()
+    
+    def new_question_handler(self, widget):
+        self.ui.pushButton.hide()
+        self.ui.pushButton.setFocusPolicy(Qt.NoFocus)
+        self.ui.horizontalWidget.hide()
+
+        oldQuestionWidget = self.ui.verticalLayout.itemAt(0)
+        oldQuestionWidget.widget().deleteLater()
+
+        self.ui.verticalLayout.replaceWidget(oldQuestionWidget.widget(), widget)
+
 class SummaryDialog(QDialog, Ui_Summary):
     def __init__(self):
         super(SummaryDialog, self).__init__()
         self.setupUi(self)
-        #self.tableWidget.setColumnCount(2)
-        #self.tableWidget.setRowCount(3)
+
     def load(self, hwmodel):
         self.correctLabel.setText("{}/{}".format(hwmodel.total_correct, hwmodel.total_answered))
         self.accuracyLabel.setText( "{:d}%".format(int(100 * hwmodel.total_correct/max(1,hwmodel.total_answered))))
@@ -404,6 +286,7 @@ class SummaryDialog(QDialog, Ui_Summary):
             self.timeLabel.setText(_sec2Time(hwmodel.timed_mode * 60 - hwmodel.time))
         else:
             self.timeLabel.setText(_sec2Time(hwmodel.time))
+
     def show(self):
         return self.exec_()
 

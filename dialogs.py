@@ -109,7 +109,8 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
             model = HomeworkModel(self.notecard_store, templs, self.options_store, subset=self.subsets[self.curr_subset], subset_group = -1)
         else:
             model = HomeworkModel(self.notecard_store, templs, self.options_store, subset=self.subsets[self.curr_subset], subset_group = self.sub_group_ind)
-        mw._hwView = HomeworkView(model)
+        controller = HomeworkController(model)
+        mw._hwView = HomeworkView(model, controller)
         mw._hwView.show()
 
     def add_template(self, templ):
@@ -203,8 +204,6 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
              
             # add to ui
             self.selectedList.addItem(self.get_template_string(self.templates[row]))
-
-            
 
     def remove_sel_template_sig(self):
         if self.selectedList.currentRow() < 0: return
