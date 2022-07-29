@@ -11,6 +11,8 @@ from aqt.qt import (
 )
 
 import random
+
+from widgets.question_widget import QuestionWidget
 from .widgets import BTableWidgetItem
 from .forms.list import *
 from .forms.practice import *
@@ -22,6 +24,15 @@ from .style import *
 
 class ListView(QDialog):
     def __init__(self, model: ListModel, controller: ListController):
+        """Creates a window that simply shows the notecards in a tabular format, for manual review.
+        Has a hide front / hide back feature for quick and easy practice.
+
+        Note: Currently requires columns be set in the option store, which means manually using the options
+            dialog for setup.
+        Args:
+            model (ListModel): instance of ListModel to load data from
+            controller (ListController): instance of ListController to handle logic
+        """
         super().__init__()
         
         self.controller = controller
@@ -73,6 +84,9 @@ class ListView(QDialog):
         self.show()
 
     def _cancel(self):
+        """Tell the user that the list has not been set up
+                in the options dialog yet.
+        """
         self._cancelMsg = QMessageBox()
         self._cancelMsg.setText("Please set-up List view in Options first.")
         self._cancelMsg.exec_() # modal popup
@@ -80,9 +94,16 @@ class ListView(QDialog):
     ######
     # signals
     def on_close(self):
+        """Handle signal from the "Close" button.
+        """
         self.close()
 
     def handle_hide_front_changed(self, value: bool):
+        """Handle signal from the model to hide/show the front columns.
+
+        Args:
+            value (bool): True if should hide the front columns.
+        """         
         for i in range(len(self.model.front)):
             for j in range(self.model.length):
                 if self.model.front[i]:
@@ -92,6 +113,11 @@ class ListView(QDialog):
                         self.ui.tableWidget.cellWidget(j, i).show_value()
 
     def handle_hide_back_changed(self, value: bool):
+        """Handle signal form the model to hide/show the back columns.
+
+        Args:
+            value (bool): True if should hide the back columns.
+        """
         for i in range(len(self.model.front)):
             for j in range(self.model.length):
                 if not self.model.front[i]:
@@ -101,6 +127,14 @@ class ListView(QDialog):
                         self.ui.tableWidget.cellWidget(j, i).show_value()
 
     def handle_font(self, ele: QWidget, base_size: int, field_name: str):
+        """Internal method to set a QWidget's font based on the field-specific options 
+        set in the Options dialog
+
+        Args:
+            ele (QWidget): Element whose font to modify
+            base_size (int): Base (recommended) size for this element
+            field_name (str): Name of the model's field to get options for
+        """
         font = ele.font()
         size = base_size
         field_opts = self.model.options_store.get_globals(self.model.note_store.deck_name)["field_settings"]
@@ -114,6 +148,12 @@ class ListView(QDialog):
 
 class HomeworkView(QWidget):
     def __init__(self, model: HomeworkModel, controller: HomeworkController):
+        """Initialize homework (practice) view.
+
+        Args:
+            model (HomeworkModel): Homework model class for data
+            controller (HomeworkController): Homework controller class for logic
+        """
         super().__init__()
 
         self.ui = Ui_Practice()
@@ -165,14 +205,20 @@ class HomeworkView(QWidget):
 
         self.controller.next_question()
     
-    # QT override
     def closeEvent(self, event: QCloseEvent):
-        # TODO: display practice summary 
+        """Override QT's default window close behavior.
+
+        Args:
+            event (QCloseEvent): Qt's close event
+        """
         dial = SummaryDialog()
         dial.load(self.model)
         dial.show()
 
     def info_update_handler(self):
+        """Update progress summary with information from the model such as time and score. 
+        This is connected to a signal from the model. 
+        """
         self.correctAction.setText("Score: "+
         "{}/{}".format(self.model.total_correct, self.model.total_answered))
         self.accuracyAction.setText("Accuracy: "+ "{:d}%".format(int(100 * self.model.total_correct/max(1,self.model.total_answered))))  
@@ -190,6 +236,26 @@ class HomeworkView(QWidget):
 
     # CORRECT: 0 = wrong, 1 = right, 2 = show answer
     def answer_pane_handler(self, show_pane: bool, correct: int):
+        """Handle the bottom bar answer pane with feedback for the user
+        if they answered correctly / incorrectly.
+
+        The three main states of the answer pane, and what they should display:
+        0. Incorrect - Show Answer [they tried to answer and got it wrong, 
+            so show a "Show Answer" button or let them try again]
+        1. Correct - Continue [they answered correctly and program should pause,
+            so show a "Continue" button to move on]
+        2. Shown Answer - Continue [they pressed Show Answer and program will pause,
+            show a "Continue" button to move on]
+
+        By default, the add-on should move on to the next question (i.e. not show the Continue button) unless:
+        1. Pausing before the next question is enabled in the options
+        2. There is an audio field present in the Answers
+        3. The user got the question wrong
+
+        Args:
+            show_pane (bool): True if there is a message to display below question, False to hide.
+            correct (int): Integer from 0-2 containing state of the answer pane. See the example in this docstring.
+        """
         if show_pane:
             self.ui.horizontalWidget.show()
             if correct == 0:
@@ -209,7 +275,13 @@ class HomeworkView(QWidget):
         else:
             self.ui.horizontalWidget.hide()
     
-    def new_question_handler(self, widget: QWidget):
+    def new_question_handler(self, widget: QuestionWidget):
+        """Replace the old question widget with a new one in the layout. 
+        Called from the model when a new question has started.   
+
+        Args:
+            widget (QuestionWidget): An (already instantiated) QuestionWidget to place in the layout.
+        """
         self.ui.pushButton.hide()
         self.ui.pushButton.setFocusPolicy(Qt.NoFocus)
         self.ui.horizontalWidget.hide()
@@ -221,12 +293,19 @@ class HomeworkView(QWidget):
 
 class SummaryDialog(QDialog, Ui_Summary):
     def __init__(self):
+        """Initialize the summary dialog. 
+        """
         super(SummaryDialog, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("Practice Summary")
         self.setWindowIcon(mw.windowIcon())
 
     def load(self, hwmodel: HomeworkModel):
+        """Loads the practice session's information into the summary dialog.
+
+        Args:
+            hwmodel (HomeworkModel): Homework (practice) model instance
+        """
         self.correctLabel.setText("{}/{}".format(hwmodel.total_correct, hwmodel.total_answered))
         self.accuracyLabel.setText( "{:d}%".format(int(100 * hwmodel.total_correct/max(1,hwmodel.total_answered))))
         self.cardsLabel.setText("{} cards".format(len(hwmodel.card_history)))
@@ -236,11 +315,23 @@ class SummaryDialog(QDialog, Ui_Summary):
             self.timeLabel.setText(_sec2Time(hwmodel.time))
 
     def show(self):
+        """Override show() dialog behavior in favor of a modal dialog. 
+        """
         return self.exec_()
 
-def _sec2Time(sec):
-        hrs = sec // 3600
-        sec2 = sec - 3600 * hrs
-        mins = sec2 // 60
-        sec3 = sec - 60 * mins  - 3600 * hrs
-        return "{:02d}:{:02d}:{:02d}".format(hrs, mins, sec3)
+def _sec2Time(sec: int) -> str:
+    """Simple utility method for displaying time in a HH:MM:SS format.
+    
+    Note: this may be moved in the future.   
+
+    Args:
+        sec (int): Time in seconds
+
+    Returns:
+        str: Time formatted string
+    """
+    hrs = sec // 3600
+    sec2 = sec - 3600 * hrs
+    mins = sec2 // 60
+    sec3 = sec - 60 * mins  - 3600 * hrs
+    return "{:02d}:{:02d}:{:02d}".format(hrs, mins, sec3)
