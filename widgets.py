@@ -18,9 +18,12 @@ from aqt.sound import av_refs_to_play_icons, av_player
 # - Can hide and show text without changing the layout of the table. 
 class BTableWidgetItem(QLabel):
     def __init__(self, text):
+        text = text.strip()
         super().__init__(text)
         self._text = text
         self._isBlank = False
+
+        self.setTextFormat(Qt.RichText)
         
     def hide_value(self):
         self._isBlank = True
@@ -125,6 +128,7 @@ class AnswerButton(QPushButton):
     
     def setFont(self, font):
         self.__lbl.setFont(font)
+        self.updateGeometry()
         self.sizeHint()
 
     def sizeHint(self):

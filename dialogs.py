@@ -257,9 +257,9 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
 
     def show_options_sig(self):
         self.options_dialog = OptionsDialog(self.notecard_store, self.options_store)
-        self.options_dialog.exec_()
-        self.update_from_options()
-
+        self.options_dialog.buttonBox.accepted.connect(self.update_from_options)
+        #self.update_from_options()
+        self.options_dialog.show()
     def update_from_options(self):
         lesson_size = self.options_store.get_globals(self.notecard_store.deck_name)["lesson_size"]
         for subset in self.subsets:
