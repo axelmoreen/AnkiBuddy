@@ -6,6 +6,7 @@ from ..controllers import ListController, HomeworkController
 from ..views import ListView, HomeworkView
 
 from .options_dialog import OptionsDialog
+from .template_dialog import TemplateDialog
 
 from aqt.qt import QDialog
 from aqt import mw
@@ -120,6 +121,11 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
     def edit_template(self, index, templ):
         self.templates[index] = templ
         self.templatesList.item(index).setText(self.get_template_string(templ))
+        try:
+            sel_pos = self.sel_templates.index(index)
+            self.selectedList.item(sel_pos).setText(self.get_template_string(templ))
+        except:
+            pass # not in selected templates
         self.update_options()
 
     def update_options(self):

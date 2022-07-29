@@ -1,6 +1,6 @@
 from ..forms.options import *
 from ..forms.field_options import *
-from aqt.qt import QDialog
+from aqt.qt import QDialog, QListWidgetItem
 from aqt import mw
 
 class OptionsDialog(Ui_OptionsDialog, QDialog):

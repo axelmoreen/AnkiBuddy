@@ -65,7 +65,7 @@ Anki2/
 
 ## Known Issues
 * ~~Duplicate answers sometimes on multiple choice (not fixed?) ~~
-* Fix updating Selected Templates after edit of a template
+* ~~Fix updating Selected Templates after edit of a template~~
 * ~~Allow unselecting buttons in Matching~~
 * ~~Play sound button doesn't work~~
 * Fix ghost sounds being played sometimes on a new question (matching?)
