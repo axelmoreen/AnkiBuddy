@@ -2,7 +2,7 @@ from .question_widget import QuestionWidget
 from .event_line_edit import EventLineEdit
 from .question_label import QuestionLabel
 
-from ..keyboards import KeyboardView, keyboard_japanese_hiragana
+from ..keyboards import KeyboardView, KB_JAPANESE_HIRAGANA
 
 from aqt.qt import (
     QVBoxLayout,
@@ -10,7 +10,9 @@ from aqt.qt import (
     Qt,
     QLabel,
     QPushButton,
-    QTimer
+    QTimer,
+    QKeyEvent,
+    QInputMethodEvent,
 )
 from aqt import mw
 
@@ -61,7 +63,7 @@ class WriteTheAnswerWidget(QuestionWidget):
         if self.show_keyboard:
             if not hasattr(mw, "_bKeyboard"):
                 if self.conf["write_keyboard_type"] == 0:
-                    mw._bKeyboard = KeyboardView(translation=keyboard_japanese_hiragana)
+                    mw._bKeyboard = KeyboardView(translation=KB_JAPANESE_HIRAGANA)
                 
             if not mw._bKeyboard.isVisible():
                 mw._bKeyboard.showNormal()
@@ -74,18 +76,18 @@ class WriteTheAnswerWidget(QuestionWidget):
         self.questionAnswered.emit(text.casefold() == self.options["answer"].casefold(), False)
     
     # sending key events to virtual keyboard to display key strokes
-    def on_key(self, event):
+    def on_key(self, event: QKeyEvent):
         if self.show_keyboard:
             # TODO: support caps shift etc
             if len(event.text()) > 0:
                 mw._bKeyboard.on_key(event.text())
 
     # sending ime events to virtual keyboard to display key strokes
-    def inputMethodEvent(self, event):
+    def inputMethodEvent(self, event: QInputMethodEvent):
         if self.show_keyboard:
             mw._bKeyboard.on_key(event.preeditString()[-1:])
 
-    def keyPressEvent(self, event):
+    def keyPressEvent(self, event: QKeyEvent):
         self.on_key(event)
 
     def get_answer(self):

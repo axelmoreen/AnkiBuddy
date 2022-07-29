@@ -64,7 +64,7 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
             
         self.vlayout.addLayout(self.gridLayout)
 
-    def answer_callback(self, button_ind):
+    def answer_callback(self, button_ind: int):
         self.last_clicked = button_ind
         if not self.confirm_answer:
             ansind = int(self.options["correct_answer"])

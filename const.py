@@ -4,11 +4,11 @@ class NotecardStoreManager:
     def __init__(self):
         self.stores = {}
 
-    def has_store(self, did):
+    def has_store(self, did: int):
         if did in self.stores:
             return True
     
-    def get(self, did):
+    def get(self, did: int):
         if self.has_store(did):
             return self.stores[did]
         else:

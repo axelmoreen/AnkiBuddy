@@ -47,7 +47,7 @@ Anki2/
     * ~~Be able to hover over answer to see a webview with the full card (implemented differentyl)~~
 * ~~Fake random (avoid repeats if possible)~~
 * ~~Return missed cards to try again~~
-* Support for  furigana
+* Convert furigana brackets to ruby tags
 * ~~Re-implement list view hide front/ hide back~~
 * ~~Custom instructions to display with some questions (like, write the Kanji or write the Hiragana) (solved with field hint)~~
 * Create custom subsets
@@ -68,7 +68,7 @@ Anki2/
 * ~~Fix updating Selected Templates after edit of a template~~
 * ~~Allow unselecting buttons in Matching~~
 * ~~Play sound button doesn't work~~
-* Fix ghost sounds being played sometimes on a new question (matching?)
+* ~~Fix ghost sounds being played sometimes on a new question (matching?)~~
 * ~~Should fix MVC design of List class.~~
 * In some cases, playing multiple sounds at the same time causes one to not be heard.
 *~~Move "Practice" View logic to its own controller.~~

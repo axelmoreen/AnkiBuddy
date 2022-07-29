@@ -3,7 +3,10 @@ from aqt.qt import (
     QSizePolicy, 
     Qt,
     QLabel,
-    QHBoxLayout
+    QHBoxLayout,
+    QWidget,
+    QFont,
+    QKeyEvent
 )
 from aqt.sound import av_player
 
@@ -12,7 +15,7 @@ import re
 # Answer Button - can display rich text and handle sound tags
 # adapted from https://stackoverflow.com/questions/2990060/qt-qpushbutton-text-formatting
 class AnswerButton(QPushButton):
-    def __init__(self, parent=None, text=None):
+    def __init__(self, parent: QWidget=None, text: str=None):
         if parent is not None:
             super().__init__(parent)
         else:
@@ -39,7 +42,8 @@ class AnswerButton(QPushButton):
         self.handle_sound(text)
 
     # TODO: fix duplicate [sound] tag code with QuestionLabel.?
-    def handle_sound(self, text):
+    def handle_sound(self, text: str):
+
         self.sound = None
         self._isSound = False
         m = re.search('\[sound:[\w.\-]{0,}\]', text)
@@ -49,12 +53,12 @@ class AnswerButton(QPushButton):
             self.sound = m.group(0)[7:-1]
             self._isSound = True
             
-    def setText(self, text):
+    def setText(self, text: str):
         self.__lbl.setText(text)
         self.handle_sound(text)
         self.updateGeometry()
 
-    def set_sound(self, sound_field_text):
+    def set_sound(self, sound_field_text: str):
         m = re.search('\[sound:[\w.\-]{0,}\]', sound_field_text)
         if m:            
             self.sound = m.group(0)[7:-1]
@@ -66,7 +70,7 @@ class AnswerButton(QPushButton):
     def font(self):
         return self.__lbl.font()
     
-    def setFont(self, font):
+    def setFont(self, font: QFont):
         self.__lbl.setFont(font)
         self.updateGeometry()
         self.sizeHint()
@@ -78,7 +82,7 @@ class AnswerButton(QPushButton):
         s.setHeight(w.height())
         return s
     
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, event: QKeyEvent):
         if self._isSound:
             av_player.play_file(self.sound)
         super().mousePressEvent(event)

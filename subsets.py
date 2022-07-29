@@ -1,3 +1,4 @@
+from .stores import NotecardStore
 # Subset represents subsets of notecards for studying
 # each subset here - is a "group" of actual subsets!, not just one subset!
 # for example, for an evenly spaced group of subsets, such as
@@ -17,20 +18,20 @@ class Subset:
     # get the name of this subset (group)
     def get_subset_name(self):
         pass
-    def get_cards(self, index):
+    def get_cards(self, index: int):
         pass
     def get_all_cards(self):
         pass
     def get_max_index(self):
         pass
-    def get_group_text(self, index):
+    def get_group_text(self, index: int):
         return "Group "+ str(index + 1) +" / "+str(self.get_max_index() + 1)
 
 # linear subset = evenly spaced group of cards for grouping into lessons
 # notecard_store is a reference to the current deck.
 # lesson_size is the number of cards that should be present in one lesson.
 class LinearSubset(Subset):
-    def __init__(self, notecard_store, lesson_size = 20):
+    def __init__(self, notecard_store: NotecardStore, lesson_size: int=20):
         self.notecard_store = notecard_store
         self.lesson_size = lesson_size
         
@@ -39,7 +40,7 @@ class LinearSubset(Subset):
     def get_subset_name(self):
         return "All"
     
-    def get_cards(self, index):
+    def get_cards(self, index: int):
         return self.full_arr[self.lesson_size * index:
             min((self.lesson_size * ( index + 1)),
             len(self.full_arr))]
@@ -51,15 +52,16 @@ class LinearSubset(Subset):
         return len(self.full_arr) // self.lesson_size
 
 class LearnedSubset(Subset):
-    def __init__(self, notecard_store, lesson_size = 20):
+    def __init__(self, notecard_store:NotecardStore, lesson_size: int=20):
         self.notecard_store = notecard_store
         self.lesson_size = lesson_size
         self.arr = [i for i in range(len(notecard_store.notecards)) if notecard_store.notecards[i].reps > 0]
         self.arr.reverse() # make most recently learned first.
+
     def get_subset_name(self):
         return "Learned"
     
-    def get_cards(self, index):
+    def get_cards(self, index: int):
         return self.arr[self.lesson_size * index :min((self.lesson_size  * (index+ 1)), len(self.arr)) ]
     
     def get_all_cards(self):
@@ -70,7 +72,7 @@ class LearnedSubset(Subset):
 
 
 class LapsedSubset(Subset):
-    def __init__(self, notecard_store, lesson_size = 20):
+    def __init__(self, notecard_store: NotecardStore, lesson_size: int=20):
         self.notecard_store = notecard_store
         self.lesson_size = lesson_size
         for i in range(len(notecard_store.notecards)):
@@ -81,7 +83,7 @@ class LapsedSubset(Subset):
     def get_subset_name(self):
         return "Lapsed"
     
-    def get_cards(self, index):
+    def get_cards(self, index: int):
         return self.arr[self.lesson_size * index:min((self.lesson_size *  (index+1)), len(self.arr)) ]
     
     def get_all_cards(self):
@@ -91,7 +93,7 @@ class LapsedSubset(Subset):
         return len(self.arr) // self.lesson_size
     
 class NewSubset(Subset):
-    def __init__(self, notecard_store, lesson_size = 20):
+    def __init__(self, notecard_store: NotecardStore, lesson_size: int=20):
         self.notecard_store = notecard_store
         self.lesson_size = lesson_size
         self.arr = [i for i in range(len(notecard_store.notecards)) if notecard_store.notecards[i].reps == 0]
@@ -99,7 +101,7 @@ class NewSubset(Subset):
     def get_subset_name(self):
         return "Unlearned"
     
-    def get_cards(self, index):
+    def get_cards(self, index: int):
         return self.arr[self.lesson_size * index :min((self.lesson_size  * (index+ 1)), len(self.arr)) ]
     
     def get_all_cards(self):

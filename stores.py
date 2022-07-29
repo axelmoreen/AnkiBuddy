@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import Dict
+from typing import Any, Dict
 
 from aqt import mw
 from anki.cards import Card
@@ -60,27 +60,27 @@ class Notecard:
     
 # bridge to options
 class OptionStore:
-    def __init__(self, name):
+    def __init__(self, name: str):
         self.name = name
         self.config = mw.addonManager.getConfig(name)
     
-    def get_globals(self, deck_name):
+    def get_globals(self, deck_name: str):
         if not deck_name in self.config["decks"]:
             self.write_global_defaults(deck_name)
         return self.config["decks"][deck_name]
     
-    def get_list_config(self, deck_name):
+    def get_list_config(self, deck_name: str):
         if not deck_name in self.config["list"]:
             self.write_list_defaults(deck_name)
         return self.config["list"][deck_name]
     
-    def get_homework_config(self, deck_name):
+    def get_homework_config(self, deck_name: str):
         if not deck_name in self.config["homework"]:
             self.write_homework_defaults(deck_name)
         return self.config["homework"][deck_name]
 
     # not yet supported
-    def get_test_config(self, deck_name):
+    def get_test_config(self, deck_name: str):
         if not deck_name in self.config["test"]:
             self.write_test_defaults(deck_name)
         return self.config["test"][deck_name]
@@ -90,13 +90,13 @@ class OptionStore:
     
     # Defaults
     ####################################
-    def write_all_defaults(self, deck_name):
+    def write_all_defaults(self, deck_name: str):
         self.write_global_defaults(deck_name)
         self.write_list_defaults(deck_name)
         self.write_homework_defaults(deck_name)
         self.write_test_defaults(deck_name)
 
-    def write_global_defaults(self, deck_name):
+    def write_global_defaults(self, deck_name: str):
         c = self.config["decks"]
         if not deck_name in c:
             c[deck_name] = dict()
@@ -115,7 +115,7 @@ class OptionStore:
         
         self.save()
 
-    def write_list_defaults(self, deck_name):
+    def write_list_defaults(self, deck_name: str):
         c = self.config["list"]
         if not deck_name in c:
             c[deck_name] = dict()
@@ -124,7 +124,7 @@ class OptionStore:
         self._set_default(deck_name, "list", "front", list())
         self.save()
     
-    def write_homework_defaults(self, deck_name):
+    def write_homework_defaults(self, deck_name: str):
         c = self.config["homework"]
         if not deck_name in c:
             c[deck_name] = dict()
@@ -143,14 +143,14 @@ class OptionStore:
         self._set_default(deck_name, "homework", "write_question_size", 30)
         self.save()
 
-    def write_test_defaults(self, deck_name):
+    def write_test_defaults(self, deck_name: str):
         c = self.config["test"]
         if not deck_name in c:
             c[deck_name] = dict()
 
         self.save()
     
-    def _set_default(self, deck_name, cat, name, val):
+    def _set_default(self, deck_name: str, cat: str, name: str, val: Any):
         if not name in self.config[cat][deck_name]:
             self.config[cat][deck_name][name] = val
             

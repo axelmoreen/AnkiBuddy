@@ -1,32 +1,39 @@
 from sys import maxunicode
 from aqt import mw
-from aqt.qt import *
+from aqt.qt import (
+    QDialog, 
+    QWidget,
+    QMessageBox,
+    QMenu,
+    QAction,
+    QCloseEvent,
+    Qt
+)
 
 import random
 from .widgets import BTableWidgetItem
 from .forms.list import *
 from .forms.practice import *
 from .forms.summary import *
+from .models import ListModel, HomeworkModel
+from .controllers import ListController, HomeworkController
 
 from .style import *
 
-# TODO: move datastore access to the ListModel
 class ListView(QDialog):
-    # TODO: fix terrible naming scheme.. and document
-    def __init__(self, model, controller):
+    def __init__(self, model: ListModel, controller: ListController):
         super().__init__()
         
         self.controller = controller
         self.model = model
 
-        #self.widget = widget = QWidget()
         self.ui = Ui_CardList()
         self.ui.setupUi(self)
         self.setWindowTitle("List - "+self.model.note_store.deck_name)
         self.setWindowIcon(mw.windowIcon())
 
         if self.model.subset_text:
-                self.ui.lessonLabel.setText(self.model.subset_text)        
+            self.ui.lessonLabel.setText(self.model.subset_text)        
 
         self.ui.tableWidget.setColumnCount(self.model.column_count)
         self.ui.tableWidget.setHorizontalHeaderLabels([None, None])
@@ -72,10 +79,10 @@ class ListView(QDialog):
         
     ######
     # signals
-    def on_close(self, value):
+    def on_close(self):
         self.close()
 
-    def handle_hide_front_changed(self, value):
+    def handle_hide_front_changed(self, value: bool):
         for i in range(len(self.model.front)):
             for j in range(self.model.length):
                 if self.model.front[i]:
@@ -84,7 +91,7 @@ class ListView(QDialog):
                     else:
                         self.ui.tableWidget.cellWidget(j, i).show_value()
 
-    def handle_hide_back_changed(self, value):
+    def handle_hide_back_changed(self, value: bool):
         for i in range(len(self.model.front)):
             for j in range(self.model.length):
                 if not self.model.front[i]:
@@ -93,7 +100,7 @@ class ListView(QDialog):
                     else:
                         self.ui.tableWidget.cellWidget(j, i).show_value()
 
-    def handle_font(self, ele, base_size, field_name):
+    def handle_font(self, ele: QWidget, base_size: int, field_name: str):
         font = ele.font()
         size = base_size
         field_opts = self.model.options_store.get_globals(self.model.note_store.deck_name)["field_settings"]
@@ -106,7 +113,7 @@ class ListView(QDialog):
 
 
 class HomeworkView(QWidget):
-    def __init__(self, model, controller):
+    def __init__(self, model: HomeworkModel, controller: HomeworkController):
         super().__init__()
 
         self.ui = Ui_Practice()
@@ -159,7 +166,7 @@ class HomeworkView(QWidget):
         self.controller.next_question()
     
     # QT override
-    def closeEvent(self, event):
+    def closeEvent(self, event: QCloseEvent):
         # TODO: display practice summary 
         dial = SummaryDialog()
         dial.load(self.model)
@@ -181,8 +188,8 @@ class HomeworkView(QWidget):
             #TODO: instead of self.close(), simply just pause the screen and open dialog.
             self.close()
 
-    # CORRECT: 0 = wrong, 1 = right, 2 = show answer not a boolean
-    def answer_pane_handler(self, show_pane, correct):
+    # CORRECT: 0 = wrong, 1 = right, 2 = show answer
+    def answer_pane_handler(self, show_pane: bool, correct: int):
         if show_pane:
             self.ui.horizontalWidget.show()
             if correct == 0:
@@ -202,7 +209,7 @@ class HomeworkView(QWidget):
         else:
             self.ui.horizontalWidget.hide()
     
-    def new_question_handler(self, widget):
+    def new_question_handler(self, widget: QWidget):
         self.ui.pushButton.hide()
         self.ui.pushButton.setFocusPolicy(Qt.NoFocus)
         self.ui.horizontalWidget.hide()
@@ -219,7 +226,7 @@ class SummaryDialog(QDialog, Ui_Summary):
         self.setWindowTitle("Practice Summary")
         self.setWindowIcon(mw.windowIcon())
 
-    def load(self, hwmodel):
+    def load(self, hwmodel: HomeworkModel):
         self.correctLabel.setText("{}/{}".format(hwmodel.total_correct, hwmodel.total_answered))
         self.accuracyLabel.setText( "{:d}%".format(int(100 * hwmodel.total_correct/max(1,hwmodel.total_answered))))
         self.cardsLabel.setText("{} cards".format(len(hwmodel.card_history)))

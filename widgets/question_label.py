@@ -1,4 +1,9 @@
-from aqt.qt import Qt, QLabel
+from aqt.qt import (
+    Qt, 
+    QLabel, 
+    QWidget,
+    QMouseEvent,
+)
 from aqt.sound import av_player
 import re
 
@@ -8,7 +13,7 @@ import re
 # regex pattern: \[sound:[\w.\-]{0,}\]
 class QuestionLabel(QLabel):
         
-    def __init__(self, parent):
+    def __init__(self, parent: QWidget):
         super().__init__(parent)
         self._isSound = False
         self.sound = None
@@ -16,7 +21,7 @@ class QuestionLabel(QLabel):
         self.linkActivated.connect(self.click_handler)
         self.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
 
-    def click_handler(self, link):
+    def click_handler(self, link: str):
         av_player.play_file(self.sound)
 
     def setText(self, text):
@@ -33,6 +38,7 @@ class QuestionLabel(QLabel):
             av_player.play_file(self.sound)
         else:
             super().setText(text)
+
     # TODO: add sound as an option for some fields here. i.e., optionally listening to the question in multiple choice
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, event: QMouseEvent):
         super().mousePressEvent(event)

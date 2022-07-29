@@ -1,3 +1,4 @@
+from typing import Tuple
 from aqt import gui_hooks
 import aqt
 
@@ -9,19 +10,32 @@ from .const import *
 from .dialogs import *
 from .style import button_style
 
-#from . import notecards, options
-
-# do all patches to aqt
 def patch_all():
-    # Overview page injection (buddy buttons)
-    #overview links?
     gui_hooks.webview_will_set_content.append(inject_overview)
-    # Pycmd listener (to respond on button clicks)
     gui_hooks.webview_did_receive_js_message.append(receive_pycmd)
 
-############################################
-# Overview page injection 
-############################################
+def inject_overview(web_content: aqt.webview.WebContent, context: Any):
+    if not isinstance(context, aqt.overview.OverviewBottomBar):
+        return
+    web_content.head += overview_css
+    web_content.body += overview_content
+
+def receive_pycmd(handled: Tuple[bool,Any], message: str, context: Any):
+
+    if message == "BuddyWizard":
+        curr_did = mw.col.decks.current()["id"]
+        nstore = notecards.get(curr_did)
+
+        mw._bHwView = wiz = QuestionsDialog(nstore, options)
+        wiz.deck = curr_did
+        wiz.notecard_store = nstore
+        wiz.show()
+
+        return (True, None)
+
+    return handled
+
+
 overview_content = """
 <div style="position: absolute; bottom: 15px; right: 15px;">
 <button id="buddybutton" style="background: transparent; min-height: 20px; border: 5px solid #32a3fa; border-radius: 8px;" onclick="pycmd(\'BuddyWizard\')">Study Buddy</button>
@@ -43,47 +57,3 @@ overview_css = """
 }
 </style>
 """
-
-############################################
-# Inject our Study Buddy button 
-# Uses webview hook and check for the bottom bar
-#  - that way it can be seen when the deck is complete for the day.   
-############################################
-def inject_overview(web_content, context):
-    if not isinstance(context, aqt.overview.OverviewBottomBar):
-        return
-    web_content.head += overview_css
-    web_content.body += overview_content
-
-
-############################################
-# Pycmd listener for overview page
-############################################
-def receive_pycmd(handled, message, context):
-
-    """    
-if message == "BuddyList":
-        curr_did = mw.col.decks.current()["id"]
-        nstore = notecards.get(curr_did)
-        model = ListModel()
-        controller = ListController(model)
-        
-        view = ListView(nstore, options, model, controller)
-        mw._bListView = view
-
-        return (True, None) 
-    """
-    if message == "BuddyWizard":
-        curr_did = mw.col.decks.current()["id"]
-        nstore = notecards.get(curr_did)
-
-        # show questions wizard
-        mw._bHwView = wiz = QuestionsDialog(nstore, options)
-        wiz.deck = curr_did
-        wiz.notecard_store = nstore
-        wiz.show()
-    return handled
-
-
-
-

@@ -1,9 +1,10 @@
 from aqt.webview import AnkiWebView
 from anki.sound import SoundOrVideoTag
 from aqt.sound import av_refs_to_play_icons, av_player
+from anki.cards import Card
 
 class SimpleCardView(AnkiWebView):
-    def __init__(self, card):
+    def __init__(self, card: Card):
         super().__init__()
 
         self.card = card

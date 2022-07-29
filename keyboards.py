@@ -1,11 +1,18 @@
+from typing import List, Tuple
 from .forms.keyboard import Ui_Keyboard
-from aqt.qt import *
+from aqt.qt import (
+    QDialog,
+    QWidget,
+    QTimer,
+    QPushButton,
+    QKeyEvent
+)
 from aqt import mw
 
 import unicodedata
 
 class KeyboardView(QDialog, Ui_Keyboard):
-    def __init__(self, translation=None):
+    def __init__(self, translation: List[Tuple]=None):
         super(KeyboardView, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("Virtual Keyboard")
@@ -19,10 +26,10 @@ class KeyboardView(QDialog, Ui_Keyboard):
         
         self.caps = False
         
-    def link_field(self, field):
+    def link_field(self, field: QWidget):
         self.field_entry = field
 
-    def _link_button(self, button, ind=-1):
+    def _link_button(self, button: QPushButton, ind: int=-1):
         self.buttons.append(
             (button, ind)
         )
@@ -37,8 +44,8 @@ class KeyboardView(QDialog, Ui_Keyboard):
         button.setAutoDefault(False)
         button.clicked.connect(lambda: self._run_command(button, ind))
 
-    # TODO: use translation, rather than button text..
-    def _run_command(self, button, ind=None):
+    # TODO: use translation, rather than button text
+    def _run_command(self, button: QPushButton):
         # check for dakutens, can put this somewhere better in the future
         if button.text() == "◌゙":
             self._dakuten()
@@ -90,7 +97,7 @@ class KeyboardView(QDialog, Ui_Keyboard):
         self.field_entry.setFocus()
         
     # han: false for regular dakuten, true for handakuten
-    def _dakuten(self, han=False): # support for japanese dakuten, may be a better way to do this
+    def _dakuten(self, han: bool=False): # support for japanese dakuten, may be a better way to do this
 
         pos = self.field_entry.cursorPosition()
         if pos == 0: return
@@ -160,8 +167,7 @@ class KeyboardView(QDialog, Ui_Keyboard):
         self._link_button(self.pushButton_32, 38)
         self._link_button(self.pushButton_31, 39)
         
-
-        # TODO add return...
+        # TODO add return
         # self._link_button(self.pushButton_30, 40)
         self.pushButton_30.setAutoDefault(False)
 
@@ -198,11 +204,11 @@ class KeyboardView(QDialog, Ui_Keyboard):
         self.pushButton_60.clicked.connect(self._space)
         self.pushButton_60.setAutoDefault(False)
 
-    def keyPressEvent(self, event):
+    def keyPressEvent(self, event: QKeyEvent):
         self.on_key(event.text())
     
     # key is given as a string of the character that is being used for entry (ime event limitation, i think)
-    def on_key(self, key):
+    def on_key(self, key: str):
         # TODO: use a map
         ind = -1
         for i in range(len(self.translation)):
@@ -219,7 +225,7 @@ class KeyboardView(QDialog, Ui_Keyboard):
                 QTimer.singleShot(200, lambda: button[0].setChecked(False))
 
 # KEYBOARDS (add more in the future..)
-keyboard_american_qwerty = [
+KB_AMERICAN_QWERTY = [
 # ROW 1
 ("`", "~"), # 0 
 ("1", "!"), # 1
@@ -287,7 +293,7 @@ keyboard_american_qwerty = [
 (None) # 59 (Ctrl)
 ]
 
-keyboard_japanese_hiragana = [
+KB_JAPANESE_HIRAGANA = [
 # ROW 1
 ("ろ"), # 0 
 ("ぬ"), # 1

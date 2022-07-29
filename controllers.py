@@ -1,21 +1,26 @@
-from aqt.qt import *
+from aqt.qt import (
+    QObject,
+    QTimer
+)
+from aqt import mw
 import aqt
 from .widgets import *
 from os.path import join, dirname
+from .models import ListModel, HomeworkModel
 
 
 class ListController(QObject):
-    def __init__(self, model):
+    def __init__(self, model: ListModel):
         super().__init__()
         self.model = model
 
-    def on_hide_front_changed(self, value):
+    def on_hide_front_changed(self, value: bool):
         self.model.hide_front = bool(value)
 
-    def on_hide_back_changed(self, value):
+    def on_hide_back_changed(self, value: bool):
         self.model.hide_back = bool(value)
 
-    def cell_double_clicked(self, row, column):
+    def cell_double_clicked(self, row: int, column: int):
         card = self.model.cards[row]
         self.cardview = SimpleCardView(card)
         self.cardview.setWindowTitle("Card - "+ self.model.note_store.deck_name)
@@ -23,7 +28,7 @@ class ListController(QObject):
         self.cardview.show()
 
 class HomeworkController(QObject):
-    def __init__(self, model):
+    def __init__(self, model: HomeworkModel):
         super().__init__()
         self.model = model
 
@@ -51,7 +56,7 @@ class HomeworkController(QObject):
         self.model.answer = newQuestionWidget.get_answer()
         self.model.new_question_update.emit(self.widget)
         
-    def question_answered(self, correct, multi_answer):
+    def question_answered(self, correct: bool, multi_answer: bool):
         med_dir = join(dirname(__file__), "resources")
         # handle counting
         if not self.model.has_answered:

@@ -3,7 +3,7 @@ from aqt.qt import Qt, QLabel
 # Table widget (originally used to subclass QWidgetItem, but moved to QLabel for rich text)
 # - Can hide and show text without changing the layout of the table. 
 class BTableWidgetItem(QLabel):
-    def __init__(self, text):
+    def __init__(self, text: str):
         text = text.strip()
         super().__init__(text)
         self._text = text

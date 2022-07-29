@@ -1,13 +1,22 @@
-from email.policy import strict
-from aqt.qt import *
+from typing import Any, Dict, List
+from aqt.qt import (
+    pyqtSignal, 
+    QObject, 
+    QWidget,
+)
 import random
+from .stores import Notecard, NotecardStore, OptionStore
+from .subsets import Subset
 
-class ListModel(QObject):
+class Model(QObject):
+    pass
+
+class ListModel(Model):
     hide_front_changed = pyqtSignal(bool)
     hide_back_changed = pyqtSignal(bool)
     show_cancel_dialog = pyqtSignal()       
 
-    def __init__(self, note_store, options_store, subset = None, subset_text = None):
+    def __init__(self, note_store: NotecardStore, options_store: OptionStore, subset: Subset=None, subset_text: str=None):
         super().__init__()
         self._hide_front = False
         self._hide_back = False
@@ -60,12 +69,12 @@ class ListModel(QObject):
         return self._hide_back
 
     @hide_front.setter
-    def hide_front(self, value):
+    def hide_front(self, value: bool):
         self._hide_front = value
         self.hide_front_changed.emit(value)
     
     @hide_back.setter
-    def hide_back(self, value):
+    def hide_back(self, value: bool):
         self._hide_back = value
         self.hide_back_changed.emit(value)
 
@@ -73,12 +82,12 @@ class ListModel(QObject):
 # Homework Model
 # represents a "quizzer" window where the user is asked one question at a time.
 # quiz settings are set in the Questions Wizard beforehand and passed to the homework model
-class HomeworkModel(QObject):
+class HomeworkModel(Model):
     info_update = pyqtSignal()
     answer_pane_update = pyqtSignal(bool, int)
     new_question_update = pyqtSignal(QWidget)
 
-    def __init__(self, note_store, templates, options_store, subset=None, subset_group=-1):
+    def __init__(self, note_store: NotecardStore, templates: List[Dict[str, Any]], options_store: OptionStore, subset: Subset=None, subset_group: int=-1):
         super().__init__()
 
         self.note_store = note_store
@@ -142,7 +151,7 @@ class HomeworkModel(QObject):
 
     # TODO: optimize fake random by not moving index every call. this had to be done to avoid some infinite recurrences by accident
     # If not using true random, use a separate (shuffled) deck to order the cards properly
-    def next_card(self, move_ind = True, revisit = True):
+    def next_card(self, move_ind: bool=True, revisit: bool=True):
         if revisit and len(self.to_revisit) > 0 and random.random() < 0.4: # roll the dice...
             card_ind = self.to_revisit[random.randrange(len(self.to_revisit))]
             return self.note_store.notecards[
@@ -163,7 +172,7 @@ class HomeworkModel(QObject):
                     self.cards[ind]
                 ], ind
 
-
+    # TODO: shorten this function:)
     def load_new_question(self):
         #self.wait_wrong = False
         templ = self.next_template()
@@ -272,7 +281,7 @@ class HomeworkModel(QObject):
             self.curr_cards.append(card)
             
 
-    def _has_card(self, card_arr, new_card, check_field):
+    def _has_card(self, card_arr: List[Notecard], new_card: Notecard, check_field: str):
         for stri in card_arr:
             if new_card.fields[check_field] == stri: return True
         return False

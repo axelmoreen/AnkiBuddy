@@ -4,7 +4,8 @@ from .answer_button import AnswerButton
 from aqt.qt import (
     QVBoxLayout, 
     QGridLayout,
-    Qt
+    Qt,
+    QMouseEvent
 )
 
 import random
@@ -69,7 +70,7 @@ class MatchingWidget(QuestionWidget):
             buttonR.setEnabled(True)
             self.sel_right = -1  
 
-    def left_callback(self, i):
+    def left_callback(self, i: int):
         button = self.l_buttons[i]
         button.setEnabled(False)
         # try match first
@@ -98,7 +99,7 @@ class MatchingWidget(QuestionWidget):
                 self.l_buttons[self.sel_left].setEnabled(True)
             self.sel_left = i
             
-    def right_callback(self, i):
+    def right_callback(self, i: int):
         button = self.r_buttons[i]
         button.setEnabled(False)
         # try match
@@ -126,7 +127,7 @@ class MatchingWidget(QuestionWidget):
                 self.r_buttons[self.sel_right].setEnabled(True)
             self.sel_right = i
     # use mouse-clicks that are unhandled by a child widget to clear current selection
-    def mousePressEvent(self, event):
+    def mousePressEvent(self, event: QMouseEvent):
         super().mousePressEvent(event)
         self.unsel_buttons()
 
