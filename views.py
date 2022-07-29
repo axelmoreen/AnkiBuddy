@@ -216,6 +216,8 @@ class SummaryDialog(QDialog, Ui_Summary):
     def __init__(self):
         super(SummaryDialog, self).__init__()
         self.setupUi(self)
+        self.setWindowTitle("Practice Summary")
+        self.setWindowIcon(mw.windowIcon())
 
     def load(self, hwmodel):
         self.correctLabel.setText("{}/{}".format(hwmodel.total_correct, hwmodel.total_answered))

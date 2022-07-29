@@ -1,4 +1,6 @@
 from aqt import gui_hooks
+import aqt
+
 from .views import *
 from .stores import *
 from .models import *

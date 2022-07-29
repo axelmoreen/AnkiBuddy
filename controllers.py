@@ -1,9 +1,8 @@
 from aqt.qt import *
+import aqt
 from .widgets import *
 from os.path import join, dirname
-from aqt.webview import AnkiWebView
-from anki.sound import SoundOrVideoTag
-from aqt.sound import av_refs_to_play_icons, av_player
+
 
 class ListController(QObject):
     def __init__(self, model):
