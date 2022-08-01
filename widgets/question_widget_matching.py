@@ -15,6 +15,8 @@ from ..style import button_style, button_style_custom_border
 # Shows two columns of buttons to match
 class MatchingWidget(QuestionWidget):
     def load(self):
+        """Load the matching widget. 
+        """
         self.conf = self.model.options_store.get_homework_config(self.model.note_store.deck_name)
         self.left_layout = QVBoxLayout()
         self.right_layout = QVBoxLayout()
@@ -61,6 +63,8 @@ class MatchingWidget(QuestionWidget):
         self.answered = []
 
     def unsel_buttons(self):
+        """Helper method to "reset" the buttons so nothing is selected.
+        """
         if self.sel_left > -1:
             buttonL = self.l_buttons[self.sel_left]      
             buttonL.setEnabled(True)
@@ -71,6 +75,11 @@ class MatchingWidget(QuestionWidget):
             self.sel_right = -1  
 
     def left_callback(self, i: int):
+        """Callback for the left side of buttons to compare with the right.
+        The button index increases down the left side from 0 -> number of answers.
+        Args:
+            i (int): The button index that was pressed.
+        """
         button = self.l_buttons[i]
         button.setEnabled(False)
         # try match first
@@ -100,6 +109,11 @@ class MatchingWidget(QuestionWidget):
             self.sel_left = i
             
     def right_callback(self, i: int):
+        """Callback for the right side of buttons to compare with the left.
+        The button index increases down the right side from 0 -> number of answers.
+        Args:
+            i (int): The button index that was pressed.
+        """
         button = self.r_buttons[i]
         button.setEnabled(False)
         # try match
@@ -126,12 +140,26 @@ class MatchingWidget(QuestionWidget):
             if self.sel_right > -1:
                 self.r_buttons[self.sel_right].setEnabled(True)
             self.sel_right = i
-    # use mouse-clicks that are unhandled by a child widget to clear current selection
+
     def mousePressEvent(self, event: QMouseEvent):
+        """Mouse press event, use this to clear the current selection of buttons.
+        Since the event is called here, it must have not been handled by one of the child widgets
+        (i.e. it wasn't handled by a button). 
+        """
         super().mousePressEvent(event)
         self.unsel_buttons()
 
     def show_answer(self):
+        """Visually display the correct answers for matching by
+        making the left and right button the same color. 
+        
+        Currently, this uses random colors some distance apart,
+        which may not be optimal or color-blind friendly at all. There is also
+        no guarantee that the color may not accidentally blend in with the parent layout's background, etc. 
+
+        This behavior is "fine" for now, but it could be improved significantly. Perhaps
+        drawing lines from button to button would be the most color-friendly improvement. 
+        """
         used_bgcols = []
         used_fgcols = []
         for i in range(len(self.l_buttons)):

@@ -1,6 +1,8 @@
 from __future__ import annotations
 from typing import Any
 
+from ..stores import NotecardStore, OptionStore
+
 from ..forms.template_wizard import *
 
 from aqt.qt import (
@@ -13,7 +15,14 @@ from aqt import mw
 # should just be called by QuestionsDialog
 class TemplateDialog(QDialog, Ui_TemplateDialog):
     # set templ for edit card dialog, otherwise leave as None to create new card
-    def __init__(self, notecard_store, options_store, templ=None):
+    def __init__(self, notecard_store: NotecardStore, options_store: OptionStore, templ: dict[str,Any]=None):
+        """Create template dialog. 
+
+        Args:
+            notecard_store (NotecardStore): Instance of notecard store to pull cards from.
+            options_store (OptionStore): Option store to use for config.
+            templ (dict[str,Any], optional): Template to edit. Pass none, if creating new template. Defaults to None.
+        """
         super(TemplateDialog, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("Template - "+notecard_store.deck_name)
@@ -64,6 +73,11 @@ class TemplateDialog(QDialog, Ui_TemplateDialog):
         self.label_7.setVisible(False)
 
     def getResults(self) -> dict[str, Any]:
+        """Get the results of the template dialog.
+
+        Returns:
+            dict[str, Any]: Returns dict representing the template.
+        """
         if self.exec_() == QDialog.Accepted:
             res = {}
             res["type_ind"] = self.stackedWidget.currentIndex()
@@ -94,7 +108,8 @@ class TemplateDialog(QDialog, Ui_TemplateDialog):
             return res
         return None
 
-    # signal for changing Question Type combobox
-    # changes the StackedWidget below. 
     def change_type(self, val):
+        """Connected to the "Question Type" combobox signal,
+        this changes which frame to show in the StackedWidget.
+        """
         self.stackedWidget.setCurrentIndex(val)

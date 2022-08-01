@@ -14,6 +14,8 @@ import re
 class QuestionLabel(QLabel):
         
     def __init__(self, parent: QWidget):
+        """Load question label.
+        """
         super().__init__(parent)
         self._isSound = False
         self.sound = None
@@ -22,10 +24,24 @@ class QuestionLabel(QLabel):
         self.setTextInteractionFlags(Qt.LinksAccessibleByMouse)
 
     def click_handler(self, link: str):
-        av_player.play_file(self.sound)
+        """Handle button clicks. It is connected to the self.linkActivated signal. 
+        The link itself does not matter, because the link will always be meant to play the sound. 
+        """
+        if self.sound:
+            av_player.play_file(self.sound)
 
     def setText(self, text):
-        
+        """Override QLabel setText() to handle sound tags.  
+
+        The sound gets auto-played here, since it will be run when the question is loaded anyway. 
+
+        If it is a sound, then the text will be replaced with a link so that the user can re-play the sound if needed.
+
+        If it is not a sound, the text just gets set as normal. 
+
+        Args:
+            text (_type_): Text (or sound tag) for the label to handle.  
+        """
         self._text = text
 
         m = re.search('\[sound:[\w.\-]{0,}\]', text)
@@ -39,6 +55,3 @@ class QuestionLabel(QLabel):
         else:
             super().setText(text)
 
-    # TODO: add sound as an option for some fields here. i.e., optionally listening to the question in multiple choice
-    def mousePressEvent(self, event: QMouseEvent):
-        super().mousePressEvent(event)

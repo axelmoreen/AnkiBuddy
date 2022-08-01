@@ -1,11 +1,12 @@
-from typing import List, Tuple
+from __future__ import annotations
 from .forms.keyboard import Ui_Keyboard
 from aqt.qt import (
     QDialog,
     QWidget,
     QTimer,
     QPushButton,
-    QKeyEvent
+    QKeyEvent,
+    QLineEdit
 )
 from aqt import mw
 
@@ -13,6 +14,11 @@ import unicodedata
 
 class KeyboardView(QDialog, Ui_Keyboard):
     def __init__(self, translation: List[Tuple]=None):
+        """Initialize the keyboard view. 
+
+        Args:
+            translation (List[Tuple], optional): Keyboard type to load. See the definitions at the bottom of keyboards.py. Defaults to None.
+        """
         super(KeyboardView, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("Virtual Keyboard")
@@ -26,10 +32,23 @@ class KeyboardView(QDialog, Ui_Keyboard):
         
         self.caps = False
         
-    def link_field(self, field: QWidget):
+    def link_field(self, field: QLineEdit):
+        """Link an input field (LineEdit) to the output
+        of this virtual keyboard. 
+
+        Args:
+            field (QLineEdit): input field to link.
+        """
         self.field_entry = field
 
     def _link_button(self, button: QPushButton, ind: int=-1):
+        """Internal method to link a button to an index in the translation, as
+        well as set some other setup.
+
+        Args:
+            button (QPushButton): Button to link.
+            ind (int, optional): Index in the translation list. Defaults to -1.
+        """
         self.buttons.append(
             (button, ind)
         )
@@ -44,9 +63,19 @@ class KeyboardView(QDialog, Ui_Keyboard):
         button.setAutoDefault(False)
         button.clicked.connect(lambda: self._run_command(button, ind))
 
-    # TODO: use translation, rather than button text
     def _run_command(self, button: QPushButton):
-        # check for dakutens, can put this somewhere better in the future
+        """Signal callback for qpushbutton. 
+
+        Note: Currently, this method actually looks at
+        the button text to determine what to 'type', eventually it would be better
+        to look up what the translation should be based on the button that
+        has already been linked. 
+
+        This method also has hard-coded support for Japanese dakutens. 
+
+        Args:
+            button (QPushButton): Button that was pressed in the clicked signal.
+        """
         if button.text() == "◌゙":
             self._dakuten()
             return
@@ -65,15 +94,22 @@ class KeyboardView(QDialog, Ui_Keyboard):
         self._update_char_buttons()
 
     def _shift(self):
+        """Signal callback for the Shift buttons.
+        """
         self.shift = not self.shift
         self._update_shift_buttons()
         self._update_char_buttons()
 
     def _update_shift_buttons(self):
+        """Helper method to update both of the shift buttons.
+        """
         self.pushButton_54.setChecked(self.shift)
         self.pushButton_43.setChecked(self.shift)
 
     def _update_char_buttons(self):
+        """Helper method to update all the keyboard buttons based
+        on whether or not shift or caps is pressed.
+        """
         if not self.translation: return
         for pair in self.buttons:
             if pair[1]: # has ind
@@ -81,23 +117,40 @@ class KeyboardView(QDialog, Ui_Keyboard):
                     pair[0].setText(self.translation[pair[1]][int(self._is_caps())])
 
     def _caps(self):
+        """Signal callback to toggle Caps lock.
+        """
         self.caps = not self.caps
         self.pushButton_34.setChecked(self.caps)
         self._update_char_buttons()
 
-    def _is_caps(self):
+    def _is_caps(self) -> bool:
+        """Helper method to get if a letter should be outputted as caps,
+        so the OR of caps and shift.
+
+        Returns:
+            bool: True if next letter should be capitalized, False if not.
+        """
         return self.caps or self.shift
 
     def _backspace(self):
+        """Signal callback for backspace.
+        """
         self.field_entry.backspace()
 
     def _space(self):
-        
+        """Signal callback for space.
+        """
         self.field_entry.insert(" ")
         self.field_entry.setFocus()
         
     # han: false for regular dakuten, true for handakuten
     def _dakuten(self, han: bool=False): # support for japanese dakuten, may be a better way to do this
+        """Helper method to insert dakutens. It will act on the character before the cursor
+        in the linked field entry, if it is possible.
+
+        Args:
+            han (bool, optional): True if it is a handakuten, False if it is a dakuten. Defaults to False.
+        """
 
         pos = self.field_entry.cursorPosition()
         if pos == 0: return
@@ -111,6 +164,10 @@ class KeyboardView(QDialog, Ui_Keyboard):
         self.field_entry.setText(_text)
 
     def setup_button_commands(self):
+        """Link all the buttons to the translation, and set some options.
+
+        The naming scheme could be improved. :)
+        """
         # `1234567890-=
         self._link_button(self.pushButton_3, 0)
         self._link_button(self.pushButton_7, 1)
@@ -205,11 +262,26 @@ class KeyboardView(QDialog, Ui_Keyboard):
         self.pushButton_60.setAutoDefault(False)
 
     def keyPressEvent(self, event: QKeyEvent):
+        """Handle the Key Press Event from QT.
+
+        This event won't actually be called too frequently, since other windows / the linked line edit will 
+            get focus, but this will handle the events if the keyboard window is what's focused.
+        """
         self.on_key(event.text())
     
-    # key is given as a string of the character that is being used for entry (ime event limitation, i think)
     def on_key(self, key: str):
-        # TODO: use a map
+        """Handle the input of a character key, displaying that the button is pressed on the virtual keyboard.
+        
+        A string key instead of QtKey is used currently because the QInputMethodEvent must also be handled
+            for foreign languages, and getting the most recent text from that returns a string.
+
+        This is written really poorly right now, as it loops over the entire keyboard (twice!) to check which 
+        button should be virtually pressed. This should be updated to make this O(1). However since the number
+        of buttons on the keyboard is rather small, perhaps this doesn't have much impact on performance at all.   
+
+        Args:
+            key (str): String of the key that was pressed. 
+        """
         ind = -1
         for i in range(len(self.translation)):
             if not self.translation[i]: continue
@@ -218,7 +290,6 @@ class KeyboardView(QDialog, Ui_Keyboard):
                 break
         if ind < 0: return
         
-        # TODO: okay really, use a map?...
         for button in self.buttons:
             button[0].setChecked(button[1] == ind)
             if button[1] == ind:

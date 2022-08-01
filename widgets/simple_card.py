@@ -5,6 +5,22 @@ from anki.cards import Card
 
 class SimpleCardView(AnkiWebView):
     def __init__(self, card: Card):
+        """Creates a window with Anki "Card" object instance that 
+        will show a simplified back of the card, including sounds. 
+
+        This is used for viewing cards that were used in questions,
+        without creating an entire Reviewer. 
+
+        The window must be made visible with .show(), and like other windows,
+            it has to be set as a field of a parent class connected to aqt.mw
+            so it doesn't get garbage collected.   
+
+        Should play audio tags correctly, but it has only been tested with the
+            Core2k deck.
+
+        Args:
+            card (Card): Instance of anki.cards.Card to create the view from.
+        """
         super().__init__()
 
         self.card = card

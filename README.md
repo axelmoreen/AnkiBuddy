@@ -64,7 +64,7 @@ Anki2/
 * Keyboard shortcuts for matching / multiple-choice
 * Check your own answer for Write the Answer ("i was right" button)
 * Add API for question type for other developers to add custom ones
-
+* List view: export .csv 
 ## Known Issues
 * ~~Duplicate answers sometimes on multiple choice (not fixed?) ~~
 * ~~Fix updating Selected Templates after edit of a template~~

@@ -11,16 +11,32 @@ from .models import ListModel, HomeworkModel
 
 class ListController(QObject):
     def __init__(self, model: ListModel):
+        """Initialize List Controller for handling logic from the ListView.
+
+        Args:
+            model (ListModel): Instance of ListModel to use for data.
+        """
         super().__init__()
         self.model = model
 
     def on_hide_front_changed(self, value: bool):
+        """Connected to view's "Hide Front" checkbox. 
+        """
         self.model.hide_front = bool(value)
 
     def on_hide_back_changed(self, value: bool):
+        """Connected to view's "Hide Back" checkbox.
+        """
         self.model.hide_back = bool(value)
 
     def cell_double_clicked(self, row: int, column: int):
+        """Connected to view's main table. Handles if a cell was double-clicked,
+        and then will allow the user to view the corresponding Anki card. 
+
+        Args:
+            row (int): row that was clicked
+            column (int): column that was clicked
+        """
         card = self.model.cards[row]
         self.cardview = SimpleCardView(card)
         self.cardview.setWindowTitle("Card - "+ self.model.note_store.deck_name)
@@ -29,6 +45,11 @@ class ListController(QObject):
 
 class HomeworkController(QObject):
     def __init__(self, model: HomeworkModel):
+        """Initialize Homework Controller for handling logic from the HomeworkView.
+
+        Args:
+            model (HomeworkModel): Instance of HomeworkModel to use for data.
+        """
         super().__init__()
         self.model = model
 
@@ -39,6 +60,10 @@ class HomeworkController(QObject):
         self.answer = None
 
     def next_question(self):
+        """Called by self (in question_answered()) to generate a new question.
+        Asks the model for a new question, instantiates the QuestionWidget here, and sends it
+        to the View for rendering.
+        """
         self.model.load_new_question()
         
         self.model.corrected = False # for show answer to work properly
@@ -57,6 +82,21 @@ class HomeworkController(QObject):
         self.model.new_question_update.emit(self.widget)
         
     def question_answered(self, correct: bool, multi_answer: bool):
+        """Connected to the current QuestionWidget to handle the user response.
+        Handles the overall logic for questions such as history, sounds, revisits.
+
+        Depends on self.model.wait_wrong whether or not to automatically move onto the next
+            question, or to pause each time and let the user press Continue or view the Card(s).
+            The wait_wrong value is set either by options, if there is an audio
+            field in the answers, or if the question was wrong.
+
+        Args:
+            correct (bool): True if the answer was correct, False if it was not.
+            multi_answer (bool): True if the view should stay on the current question widget
+                (e.g. for matching), False if the user should move onto the next question (e.g. multiple choice,
+                or the last answer in matching).
+        """
+        # TODO: move to const
         med_dir = join(dirname(__file__), "resources")
         # handle counting
         if not self.model.has_answered:
@@ -101,6 +141,10 @@ class HomeworkController(QObject):
         self.model.info_update.emit()
         
     def accept_wait(self):
+        """Connected to the "Continue/Show Answer" button that is shown
+        when the question is wrong, or when the question is correct
+        and self.model.wait_wrong == True. 
+        """
         if self.model.corrected:
             self.next_question()
 
@@ -111,6 +155,9 @@ class HomeworkController(QObject):
             
 
     def do_cards_button(self):
+        """Connected to the "Card(s)" button press to review 
+        the cards that were in the question.
+        """
         self.web_views = []
         for card in self.model.curr_cards:
             view = SimpleCardView(card.card)
@@ -123,6 +170,10 @@ class HomeworkController(QObject):
             
             
     def on_timeout(self):
+        """Connected to the timer every second.
+        Will change the display, and also stop the
+        practice during timed mode. 
+        """
         if self.model.timed_mode > 0:
             self.model.time -= 1
         else:

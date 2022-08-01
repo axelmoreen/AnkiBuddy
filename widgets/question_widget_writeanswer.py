@@ -23,6 +23,8 @@ from ..style import confirm_button_style
 # - planned pinyin support
 class WriteTheAnswerWidget(QuestionWidget):
     def load(self):
+        """Load this question widget.
+        """
         self.conf = self.model.options_store.get_homework_config(self.model.note_store.deck_name)
         self.layout = QVBoxLayout(self)
         self.questionLabel = QuestionLabel(self)
@@ -72,11 +74,15 @@ class WriteTheAnswerWidget(QuestionWidget):
         QTimer.singleShot(0, lambda: self.ansBox.setFocus(True)) # ez hack to make the ans box auto-focus.
 
     def submit_callback(self):
+        """Return was pressed or the submit button was pressed.
+        """
         text = self.ansBox.text()
         self.questionAnswered.emit(text.casefold() == self.options["answer"].casefold(), False)
     
     # sending key events to virtual keyboard to display key strokes
     def on_key(self, event: QKeyEvent):
+        """Handle key event.
+        """
         if self.show_keyboard:
             # TODO: support caps shift etc
             if len(event.text()) > 0:
@@ -84,11 +90,19 @@ class WriteTheAnswerWidget(QuestionWidget):
 
     # sending ime events to virtual keyboard to display key strokes
     def inputMethodEvent(self, event: QInputMethodEvent):
+        """Handle IME events.
+        """
         if self.show_keyboard:
             mw._bKeyboard.on_key(event.preeditString()[-1:])
 
     def keyPressEvent(self, event: QKeyEvent):
+        """Handle key event.
+
+        #TODO: get rid of QuestionWidget.on_key() entirely?
+        """
         self.on_key(event)
 
     def get_answer(self) -> str:
+        """Return answer string.
+        """
         return self.options["answer"]

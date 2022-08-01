@@ -1,4 +1,4 @@
-from stores import NotecardStore, OptionStore
+from ..stores import NotecardStore, OptionStore
 from ..forms.options import *
 from ..forms.field_options import *
 from aqt.qt import (
@@ -12,6 +12,12 @@ from aqt import mw
 
 class OptionsDialog(Ui_OptionsDialog, QDialog):
     def __init__(self, notecard_store: NotecardStore, options_store: OptionStore):
+        """Setup the options dialog. 
+
+        Args:
+            notecard_store (NotecardStore): Instance of notecard store to load the model from.
+            options_store (OptionStore): Option store to modify and save config with.
+        """
         super(OptionsDialog, self).__init__()
         self.setupUi(self)
 
@@ -54,9 +60,14 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
         self.gen_SoundVolumeLabel.setVisible(False)
         
     def do_accept(self):
+        """Connected to the accepted button box.
+        """
         self.save_values()
 
     def load_values(self):
+        """Load all the values from the option store, that can be modified, 
+        into their respective widgets in the options dialog.  
+        """
         g = self.options_store.get_globals(self.notecard_store.deck_name)
         l = self.options_store.get_list_config(self.notecard_store.deck_name)
         h = self.options_store.get_homework_config(self.notecard_store.deck_name)
@@ -120,6 +131,9 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
         self.wr_questionFontSize.setValue(h["write_question_size"])
         
     def save_values(self):
+        """Save all the values from the option dialog's widgets, into the
+        option store dicts, and then save that to a file.  
+        """
         g = self.options_store.get_globals(self.notecard_store.deck_name)
         l = self.options_store.get_list_config(self.notecard_store.deck_name)
         h = self.options_store.get_homework_config(self.notecard_store.deck_name)
@@ -173,37 +187,58 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
 
         self.options_store.save()
 
-    # general method for checkbox signals to enable/disable widgets
     def _bind_enabled_widget(self, val: int, widget: QWidget):
+        """Handle checkbox signal to enable or disable another widget.
+
+        Args:
+            val (int): Checkbox value (passed from checkbox signal)
+            widget (QWidget): Widget to modify.
+        """
         widget.setEnabled(bool(val))
 
     def _load_notecard_fields(self, combobox: QComboBox):
+        """Load all the field names from the notecard store's model,
+        into the combobox. Ignores combobox items that are already present.
+
+        Args:
+            combobox (QComboBox): Combobox to load into
+        """
         for field in self.notecard_store.model["flds"]:
             combobox.addItem(field["name"])
 
     # list_list : list widget 
     # list_fieldSelCo : combobox with fields
     def _list_add_btn(self):
+        """Handler for the Add button, under the List tab.
+        """
         self.list_list.addItem(self.list_fieldSelCo.currentText())
 
     def _list_remove_btn(self):
+        """Handler for the Remove button, under the List tab.
+        """
         if not self.list_list.currentItem():
             return 
         self.list_list.takeItem(self.list_list.currentRow())
 
     def _list_move_up_btn(self):
+        """Handler for the Move Up button, under the List tab.
+        """
         row = self.list_list.currentRow()
         if row <= 0: return
         item = self.list_list.takeItem(row)
         self.list_list.insertItem(row - 1, item)
 
     def _list_move_down_btn(self):
+        """Handler for the Move Down button, under the List tab.
+        """
         row = self.list_list.currentRow()
         if row >= self.list_list.count() -1: return
         item = self.list_list.takeItem(row)
         self.list_list.insertItem(row + 1, item)
 
     def _list_front_back_btn(self):
+        """Handler for the Set Front/Back button, under the List tab.
+        """
         item = self.list_list.currentItem()
         if not item: return
         font = item.font()
@@ -217,14 +252,24 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
         self.list_list.setCurrentItem(item)
 
     def _edit_field_btn(self):
+        """Handler for the Edit... button in the General tab. 
+        Opens up a secondary dialog to edit the field options, using
+        the field that is selected in the gen_fieldsCb combobox. 
+        """
         self._fieldopts = FieldOptionsDialog(self.options_store, 
             self.notecard_store, 
             self.gen_fieldsCb.currentText())
         self._fieldopts.show()
 
 class FieldOptionsDialog(QDialog, Ui_FieldOptions):
-    # set templ for edit card dialog, otherwise leave as None to create new card
     def __init__(self, options_store: OptionStore, note_store: NotecardStore, field: str):
+        """Load the field options dialog..
+
+        Args:
+            options_store (OptionStore): instance of option store to write config.
+            note_store (NotecardStore): instance of notecard store to get card model.
+            field (str): model field to edit options for. 
+        """
         super(FieldOptionsDialog, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("Field Options - "+note_store.deck_name)
@@ -255,6 +300,8 @@ class FieldOptionsDialog(QDialog, Ui_FieldOptions):
         self.buttonBox.accepted.connect(self.do_accept)
     
     def do_accept(self):
+        """Connected to buttonBox. Set field options, and save to config file. 
+        """
         self.field_settings[0] = self.fontTypeBox.currentFont().family()
         self.field_settings[1] = self.fontSizeOffsetBox.value()
         self.field_settings[2] = self.fieldAudioBox.currentText()

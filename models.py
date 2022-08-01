@@ -19,6 +19,14 @@ class ListModel(Model):
     show_cancel_dialog = pyqtSignal()       
 
     def __init__(self, note_store: NotecardStore, options_store: OptionStore, subset: Subset=None, subset_text: str=None):
+        """Initialize a list model for use with the ListView. 
+
+        Args:
+            note_store (NotecardStore): instance of notecard store to pull cards from.
+            options_store (OptionStore): instance of options store to use config.
+            subset (Subset, optional): An instance of Subset with cards loaded to use instead of full deck. Defaults to None.
+            subset_text (str, optional): Text to display with this subset. Defaults to None.
+        """
         super().__init__()
         self._hide_front = False
         self._hide_back = False
@@ -64,19 +72,39 @@ class ListModel(Model):
 
     @property
     def hide_front(self) -> bool:
+        """Getter.
+
+        Returns:
+            bool: True if the View should hide the "front" column(s).
+        """
         return self._hide_front
     
     @property
     def hide_back(self) -> bool:
+        """Getter.
+
+        Returns:
+            bool: True if the View should hide the "back" column(s).
+        """
         return self._hide_back
 
     @hide_front.setter
     def hide_front(self, value: bool):
+        """Setter.
+
+        Args:
+            value (bool): Set True if the View should hide the "front" column(s), else False to show them.
+        """
         self._hide_front = value
         self.hide_front_changed.emit(value)
     
     @hide_back.setter
     def hide_back(self, value: bool):
+        """Setter.
+
+        Args:
+            value (bool): Set True if the View should hide the "back" column(s), else False to show them.
+        """
         self._hide_back = value
         self.hide_back_changed.emit(value)
 
@@ -90,6 +118,15 @@ class HomeworkModel(Model):
     new_question_update = pyqtSignal(QWidget)
 
     def __init__(self, note_store: NotecardStore, templates: List[Dict[str, Any]], options_store: OptionStore, subset: Subset=None, subset_group: int=-1):
+        """Initialize the homework model, for use with HomeworkView. 
+
+        Args:
+            note_store (NotecardStore): notecard store instance to pull cards from.
+            templates (List[Dict[str, Any]]): question templates to build questions from.
+            options_store (OptionStore): option store instance for config.`
+            subset (Subset, optional): instance of Subset with cards list. If none, will use entire deck. Defaults to None.
+            subset_group (int, optional): group for the subset to use (between [-1, subset.get_max_index()).). -1 will use the entire subset. Defaults to -1.
+        """
         super().__init__()
 
         self.note_store = note_store
@@ -149,16 +186,47 @@ class HomeworkModel(Model):
         self.curr_cards = []
 
     def next_template(self) -> dict[str, Any]:
+        """Get a random template to use (for the next question).
+
+        Returns:
+            dict[str, Any]: Template dict representing a question type.
+        """
         return self.templates[random.randrange(len(self.templates))]
 
-    # TODO: optimize fake random by not moving index every call. this had to be done to avoid some infinite recurrences by accident
-    # If not using true random, use a separate (shuffled) deck to order the cards properly
     def next_card(self, move_ind: bool=True, revisit: bool=True) -> Notecard:
+        """Get random card to use (for the next question.)
+        This method either gets a card as the next one in a balanced/shuffled deck (default setting) or 
+            it gets a card randomly from the deck (if True Random is set in the options dialog.)
+        
+        Also, this method implements "card revisiting." If the user gets a question wrong
+            (i.e. misses a card), then if Card Revisits are enabled in options the card will 
+            return for N revisit steps (set in Options). This method will randomly try to insert cards that
+            need revisiting. However, since next_card() may be rejected by load_new_question() (see below),
+            card revisits are only satisfied and removed from the array self.to_revisit[] in that method.
+
+        Note:
+            Currently, load_new_question() always uses move_ind true to move the shuffled deck index on every call.
+            This is sub-optimal because since load_new_question() sometimes rejects next_card(), some cards will
+            be skipped over the pass of the subset/deck as a result, and will not re-appear until looping over the cards.
+            This may be avoided by re-ordering the deck when a card is rejected, i.e. moving rejected cards
+            after the index where they can be visited.  
+
+            Of course, using True Random is unaffected by this, but that method comes with its own shortcomings. 
+
+        Args:
+            move_ind (bool, optional): Used for shuffled deck (balanced) random to move onto the next card. 
+                If true, increase shuffled index. Defaults to True.
+            revisit (bool, optional): If True, do card revisits. Defaults to True.
+
+        Returns:
+            Notecard: instance of the Notecard data-class to use for the next question.
+        """
         if revisit and len(self.to_revisit) > 0 and random.random() < 0.4: # roll the dice...
             card_ind = self.to_revisit[random.randrange(len(self.to_revisit))]
             return self.note_store.notecards[
                 self.cards[card_ind]
                 ], card_ind
+
         if self.true_random:
             ind = random.randrange(len(self.cards))
             return self.note_store.notecards[
@@ -176,14 +244,32 @@ class HomeworkModel(Model):
 
     # TODO: shorten this function:)
     def load_new_question(self):
-        #self.wait_wrong = False
+        """Load the next question. Called when the user is going to move on
+        to the next question, before the view is going to be displayed.
+
+        Currently, this method should be improved. It
+            may be best to have a simple API for loading question-models and 
+            corresponding question-widgets so that it is easy 
+            to add new custom question types (even from another add-on).
+            As it stands, having three question models hard-coded in this 
+            method is not versatile at all, but it exists for now.
+
+        This method does everything in preparation of the next question. It
+            gets a new question template, then based on the type (multiple choice,
+            matching, write the answer) it will populate a dict in the model called
+            self.curr_question with information for the View to use. So, it creates
+            a question model within a dict for the question widget.
+        This method also adds cards to the list self.curr_cards for viewing the Card(s) with 
+            SimpleCardView later. 
+        """
         templ = self.next_template()
         self.answer_card = None
         self.curr_question_type = q_type = templ["type_ind"]
         self.curr_question.clear()
         self.curr_cards.clear()
         self.curr_question["type"] = templ["type"]
-        if q_type == 0 : # multiple choice 
+        ######### Multiple Choice
+        if q_type == 0 : 
             quest, ind = self.next_card()
             while quest.fields[templ["answer"]].casefold() == quest.fields[templ["question"]]: quest,ind = self.next_card()
             self.answer_card = quest 
@@ -224,8 +310,8 @@ class HomeworkModel(Model):
             self.curr_question["answer_cards_ind"] = ans_cards_inds
 
             self.curr_cards.append(quest)
-
-        elif q_type == 1: # matching
+        ######### Matching
+        elif q_type == 1: 
             quest = []
             ans = []
 
@@ -253,8 +339,8 @@ class HomeworkModel(Model):
             self.curr_question["cards_inds"] = cards_inds
 
             self.curr_cards.extend(cards)
-
-        elif q_type == 2: #write the answer
+        ######### Write the Answer
+        elif q_type == 2: 
             card, _ind = self.next_card()
             while card.fields[templ["answer"]].casefold() == card.fields[templ["question"]]: card,ind = self.next_card()
 
@@ -275,7 +361,20 @@ class HomeworkModel(Model):
 
             self.curr_cards.append(card)
             
-    def _has_card(self, card_arr: list[Notecard], new_card: Notecard, check_field: str) -> bool:
+    def _has_card(self, card_arr: list[str], new_card: Notecard, check_field: str) -> bool:
+        """Helper method to check if an array contains a card, by comparison of a field. 
+        Since this is used to validate/reject cards based on what the question template needs,
+        a list of strings here is passed in card_arr. Returns true if new_cards.field[check_field] 
+        is in this array.       
+
+        Args:
+            card_arr (list[Notecard]): String list to check.
+            new_card (Notecard): Notecard to check.
+            check_field (str): Check if this field in the notecard is in card_arr.
+
+        Returns:
+            bool: True if the array has the card, False if not.
+        """
         for stri in card_arr:
             if new_card.fields[check_field] == stri: return True
         return False

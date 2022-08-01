@@ -319,7 +319,7 @@ class SummaryDialog(QDialog, Ui_Summary):
         return self.exec_()
 
 def _sec2Time(sec: int) -> str:
-    """Simple utility method for displaying time in a HH:MM:SS format.
+    """Simple utility function for displaying time in a HH:MM:SS format.
     
     Note: this may be moved in the future.   
 

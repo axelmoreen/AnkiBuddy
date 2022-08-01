@@ -1,5 +1,6 @@
-from dataclasses import dataclass
 from __future__ import annotations
+from dataclasses import dataclass
+
 from typing import Any
 
 from aqt import mw
@@ -251,7 +252,7 @@ class OptionStore:
         self.save()
     
     def _set_default(self, deck_name: str, cat: str, name: str, val: Any):
-        """Internal helper function to write an individual default.
+        """Internal function to write an individual default.
         """
         if not name in self.config[cat][deck_name]:
             self.config[cat][deck_name][name] = val

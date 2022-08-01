@@ -12,6 +12,8 @@ from ..style import button_style, confirm_button_style
 # Shows a Question and then a # of answer buttons to press 
 class MultipleChoiceQuestionWidget(QuestionWidget):
     def load(self):
+        """Load the multiple choice widget.
+        """
         self.conf = self.model.options_store.get_homework_config(self.model.note_store.deck_name)
 
         self.vlayout = QVBoxLayout(self)
@@ -65,6 +67,11 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
         self.vlayout.addLayout(self.gridLayout)
 
     def answer_callback(self, button_ind: int):
+        """Callback when one of the answer buttons was pressed.
+
+        Args:
+            button_ind (int): The index of the button that was pressed.
+        """
         self.last_clicked = button_ind
         if not self.confirm_answer:
             ansind = int(self.options["correct_answer"])
@@ -73,17 +80,29 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
             # show as selected, unselect rest
             for i in range(len(self.buttons)):
                 self.buttons[i].setChecked(i == button_ind)
+
     def confirm_callback(self):
+        """Callback when the Confirm answer button is pressed.
+        This button is only shown when there's an audio field, or when
+        "Always Confirm Answer" is enabled in the options.
+        """
         if self.last_clicked == -1:
             return
         ansind = int(self.options["correct_answer"])
         self.questionAnswered.emit(self.last_clicked == ansind, False)
 
     def get_answer(self) -> str:
+        """Get the string for the correct answer.
+
+        Returns:
+            str: Correct answer.
+        """
         return self.options["answers"][self.options["correct_answer"]]
     
     def show_answer(self):
-        # highlight the button that is correct
+        """Visually show which button was the correct one by disabling/flattening
+        the others. Called by the parent controller.
+        """
         for i in range(len(self.buttons)):
             self.buttons[i].setEnabled(i == self.options["correct_answer"])
             self.buttons[i].setFlat(i != self.options["correct_answer"])
