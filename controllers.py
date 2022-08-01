@@ -20,8 +20,7 @@ class ListController(QObject):
         self.model = model
 
     def on_hide_front_changed(self, value: bool):
-        """Connected to view's "Hide Front" checkbox. 
-        """
+        """Connected to view's "Hide Front" checkbox.         """
         self.model.hide_front = bool(value)
 
     def on_hide_back_changed(self, value: bool):

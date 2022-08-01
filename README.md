@@ -75,5 +75,6 @@ Anki2/
 * In some cases, playing multiple sounds at the same time causes one to not be heard.
 *~~Move "Practice" View logic to its own controller.~~
 * Decrease font-size for longer questions/answers
-* Fix auto focus on virtual keyboard
+* Fix auto focus on virtual keyboard pyqt5
 * Mac is missing spaces in labels?
+* Keyboard button sdon't unfocus on pyqt6

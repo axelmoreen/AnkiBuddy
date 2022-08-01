@@ -63,7 +63,7 @@ class KeyboardView(QDialog, Ui_Keyboard):
         button.setAutoDefault(False)
         button.clicked.connect(lambda: self._run_command(button, ind))
 
-    def _run_command(self, button: QPushButton):
+    def _run_command(self, button: QPushButton, ind: int):
         """Signal callback for qpushbutton. 
 
         Note: Currently, this method actually looks at
@@ -75,6 +75,7 @@ class KeyboardView(QDialog, Ui_Keyboard):
 
         Args:
             button (QPushButton): Button that was pressed in the clicked signal.
+            ind (int): Unused currently.
         """
         if button.text() == "◌゙":
             self._dakuten()

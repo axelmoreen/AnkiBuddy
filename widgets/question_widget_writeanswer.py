@@ -71,7 +71,7 @@ class WriteTheAnswerWidget(QuestionWidget):
                 mw._bKeyboard.showNormal()
             mw._bKeyboard.link_field(self.ansBox)
 
-        QTimer.singleShot(0, lambda: self.ansBox.setFocus(True)) # ez hack to make the ans box auto-focus.
+        QTimer.singleShot(0, lambda: self.ansBox.setFocus()) # ez hack to make the ans box auto-focus.
 
     def submit_callback(self):
         """Return was pressed or the submit button was pressed.
