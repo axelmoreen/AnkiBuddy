@@ -1,4 +1,6 @@
-from typing import Any, Dict, List
+from __future__ import annotations
+from typing import Any
+
 from aqt.qt import (
     pyqtSignal, 
     QObject, 
@@ -61,11 +63,11 @@ class ListModel(Model):
                 self.cards.append(note_store.notecards[ele].card)
 
     @property
-    def hide_front(self):
+    def hide_front(self) -> bool:
         return self._hide_front
     
     @property
-    def hide_back(self):
+    def hide_back(self) -> bool:
         return self._hide_back
 
     @hide_front.setter
@@ -146,12 +148,12 @@ class HomeworkModel(Model):
 
         self.curr_cards = []
 
-    def next_template(self):
+    def next_template(self) -> dict[str, Any]:
         return self.templates[random.randrange(len(self.templates))]
 
     # TODO: optimize fake random by not moving index every call. this had to be done to avoid some infinite recurrences by accident
     # If not using true random, use a separate (shuffled) deck to order the cards properly
-    def next_card(self, move_ind: bool=True, revisit: bool=True):
+    def next_card(self, move_ind: bool=True, revisit: bool=True) -> Notecard:
         if revisit and len(self.to_revisit) > 0 and random.random() < 0.4: # roll the dice...
             card_ind = self.to_revisit[random.randrange(len(self.to_revisit))]
             return self.note_store.notecards[
@@ -182,17 +184,14 @@ class HomeworkModel(Model):
         self.curr_cards.clear()
         self.curr_question["type"] = templ["type"]
         if q_type == 0 : # multiple choice 
-            # TODO: fix bug : card sometimes repeats in answers or from question to answers
             quest, ind = self.next_card()
             while quest.fields[templ["answer"]].casefold() == quest.fields[templ["question"]]: quest,ind = self.next_card()
-            # TODO: move card history code to its own method (repeats)
             self.answer_card = quest 
             self.card_history.add(ind)
 
             if ind in self.to_revisit:
                 self.to_revisit.remove(ind)
 
-            #self.card_i += 1
             ans = []
             ans_cards = []
             ans_cards_inds = []
@@ -202,7 +201,6 @@ class HomeworkModel(Model):
                 while card.fields[templ["question"]].casefold() == quest.fields[templ["question"]]: card, _ind = self.next_card(revisit=False) # avoiding duplicating question
                 #while self._has_card(ans, card, templ["question"]): card, _ind = self.next_card() 
                 while self._has_card(ans, card, templ["answer"]): card, _ind = self.next_card(revisit=False)
-                #self.card_i += 1
                 ans.append(card.fields[templ["answer"]])
                 ans_cards.append(card)
                 ans_cards_inds.append(_ind)
@@ -228,7 +226,6 @@ class HomeworkModel(Model):
             self.curr_cards.append(quest)
 
         elif q_type == 1: # matching
-            # TODO: fix bug : sometimes on core2k set, kana and kanji will be the same - so check if question and answer are the same before using
             quest = []
             ans = []
 
@@ -246,7 +243,6 @@ class HomeworkModel(Model):
                 ans.append(card.fields[templ["answer"]])
                 cards.append(card)
                 cards_inds.append(_ind)
-                #self.card_i += 1
             self.curr_question["questions"] = quest
             self.curr_question["answers"] = ans
 
@@ -266,7 +262,6 @@ class HomeworkModel(Model):
             self.card_history.add(_ind)
             if _ind in self.to_revisit:
                 self.to_revisit.remove(_ind)
-            #self.card_i += 1
             quest = card.fields[templ["question"]]
             ans = card.fields[templ["answer"]]
             self.curr_question["question"] = quest
@@ -280,8 +275,7 @@ class HomeworkModel(Model):
 
             self.curr_cards.append(card)
             
-
-    def _has_card(self, card_arr: List[Notecard], new_card: Notecard, check_field: str):
+    def _has_card(self, card_arr: list[Notecard], new_card: Notecard, check_field: str) -> bool:
         for stri in card_arr:
             if new_card.fields[check_field] == stri: return True
         return False

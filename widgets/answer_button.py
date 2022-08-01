@@ -6,7 +6,8 @@ from aqt.qt import (
     QHBoxLayout,
     QWidget,
     QFont,
-    QKeyEvent
+    QKeyEvent,
+    QSize
 )
 from aqt.sound import av_player
 
@@ -64,10 +65,10 @@ class AnswerButton(QPushButton):
             self.sound = m.group(0)[7:-1]
             self._isSound = True
 
-    def is_sound(self):
+    def is_sound(self) -> bool:
         return self._isSound
     
-    def font(self):
+    def font(self) -> QFont:
         return self.__lbl.font()
     
     def setFont(self, font: QFont):
@@ -75,7 +76,7 @@ class AnswerButton(QPushButton):
         self.updateGeometry()
         self.sizeHint()
 
-    def sizeHint(self):
+    def sizeHint(self) -> QSize:
         s = QPushButton.sizeHint(self)
         w = self.__lbl.sizeHint()
         s.setWidth(w.width())

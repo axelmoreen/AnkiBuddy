@@ -12,8 +12,7 @@ from aqt.qt import (
 
 import random
 
-from widgets.question_widget import QuestionWidget
-from .widgets import BTableWidgetItem
+from .widgets import BTableWidgetItem, QuestionWidget 
 from .forms.list import *
 from .forms.practice import *
 from .forms.summary import *

@@ -79,7 +79,7 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
         ansind = int(self.options["correct_answer"])
         self.questionAnswered.emit(self.last_clicked == ansind, False)
 
-    def get_answer(self):
+    def get_answer(self) -> str:
         return self.options["answers"][self.options["correct_answer"]]
     
     def show_answer(self):

@@ -1,10 +1,17 @@
+from stores import NotecardStore, OptionStore
 from ..forms.options import *
 from ..forms.field_options import *
-from aqt.qt import QDialog, QListWidgetItem
+from aqt.qt import (
+    QDialog, 
+    QListWidgetItem,
+    QWidget,
+    QComboBox,
+    QFont,
+)
 from aqt import mw
 
 class OptionsDialog(Ui_OptionsDialog, QDialog):
-    def __init__(self, notecard_store, options_store):
+    def __init__(self, notecard_store: NotecardStore, options_store: OptionStore):
         super(OptionsDialog, self).__init__()
         self.setupUi(self)
 
@@ -45,6 +52,7 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
         ### hidden widgets (unsupported currently) 
         self.gen_soundVolume.setVisible(False)
         self.gen_SoundVolumeLabel.setVisible(False)
+        
     def do_accept(self):
         self.save_values()
 
@@ -166,10 +174,10 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
         self.options_store.save()
 
     # general method for checkbox signals to enable/disable widgets
-    def _bind_enabled_widget(self, val, widget):
+    def _bind_enabled_widget(self, val: int, widget: QWidget):
         widget.setEnabled(bool(val))
 
-    def _load_notecard_fields(self, combobox):
+    def _load_notecard_fields(self, combobox: QComboBox):
         for field in self.notecard_store.model["flds"]:
             combobox.addItem(field["name"])
 
@@ -216,7 +224,7 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
 
 class FieldOptionsDialog(QDialog, Ui_FieldOptions):
     # set templ for edit card dialog, otherwise leave as None to create new card
-    def __init__(self, options_store, note_store, field):
+    def __init__(self, options_store: OptionStore, note_store: NotecardStore, field: str):
         super(FieldOptionsDialog, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("Field Options - "+note_store.deck_name)
@@ -233,7 +241,6 @@ class FieldOptionsDialog(QDialog, Ui_FieldOptions):
         if field in self.all_settings: # load from settings present
             self.field_settings = self.all_settings[field]
 
-        # TODO: fix duplicate code
         for f in self.note_store.model["flds"]:
             self.fieldAudioBox.addItem(f["name"])
 

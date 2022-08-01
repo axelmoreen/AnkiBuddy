@@ -8,7 +8,7 @@ class NotecardStoreManager:
         if did in self.stores:
             return True
     
-    def get(self, did: int):
+    def get(self, did: int) -> NotecardStore:
         if self.has_store(did):
             return self.stores[did]
         else:

@@ -47,7 +47,7 @@ class QuestionWidget(QWidget):
     def on_key(self, event: QKeyEvent): # event passed from parent
         pass
 
-    def get_answer(self):
+    def get_answer(self) -> str:
         return None
 
     def show_answer(self):

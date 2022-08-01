@@ -1,3 +1,6 @@
+from __future__ import annotations
+from typing import Any
+
 from ..forms.questions_wizard import *
 from ..subsets import *
 
@@ -8,6 +11,8 @@ from ..views import ListView, HomeworkView
 from .options_dialog import OptionsDialog
 from .template_dialog import TemplateDialog
 
+from ..stores import NotecardStore, OptionStore
+
 from aqt.qt import QDialog
 from aqt import mw
 
@@ -17,7 +22,7 @@ from aqt import mw
 # use getResults() to show the dialog 
 # state is managed internally and does not rely on a model
 class QuestionsDialog(QDialog, Ui_QuestionsWizard):
-    def __init__(self, notecard_store, options_store):
+    def __init__(self, notecard_store: NotecardStore, options_store: OptionStore):
         super(QuestionsDialog, self).__init__()
         self.setupUi(self)
 
@@ -105,7 +110,7 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         mw._hwView = HomeworkView(model, controller)
         mw._hwView.show()
 
-    def add_template(self, templ):
+    def add_template(self, templ: dict[str, Any]):
         self.templates.append(templ)
         # update UI
         self.templatesList.addItem(self.get_template_string(templ))
@@ -118,7 +123,7 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         # update options store
         self.update_options()
 
-    def edit_template(self, index, templ):
+    def edit_template(self, index: int, templ: dict[str, Any]):
         self.templates[index] = templ
         self.templatesList.item(index).setText(self.get_template_string(templ))
         try:
@@ -133,9 +138,8 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         self.options_store.get_homework_config(self.notecard_store.deck_name)["selected_templates"] = self.sel_templates
         self.options_store.save()
 
-    def get_template_string(self, templ):
+    def get_template_string(self, templ: dict[str, Any]) -> str:
         return templ["type"] +" - " + templ["question"] +" / " + templ["answer"] + (" (+reverse) "if templ["include_reverse"] else "")
-
 
     # Signals
     def new_template_sig(self):
@@ -208,7 +212,7 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         del self.sel_templates[row]
         self.selectedList.takeItem(row)
 
-    def addSubset(self, subset):
+    def addSubset(self, subset: Subset):
         self.subsets.append(subset)
         self.subsetBox.addItem(subset.get_subset_name())
 
@@ -225,7 +229,7 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
 
         
     # fired by changing the subset combo box.
-    def subset_index_sig(self, ind):
+    def subset_index_sig(self, ind: int):
         self.curr_subset = ind
         self.sub_group_ind = 0
         self.group_index_box.setValue(0)
@@ -236,12 +240,12 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         self.options_store.save()
 
     # fired by changing the "All Groups" checkbox.
-    def allgroups_sig(self, val):
+    def allgroups_sig(self, val: int):
         self.all_groups = bool(val)
         self.updateSubsetUI()
 
     # fired by changing the group number spinbox
-    def group_index_sig(self, ind):
+    def group_index_sig(self, ind: int):
         self.sub_group_ind = ind
 
     def preview_subset_sig(self):
@@ -263,6 +267,7 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         self.options_dialog.buttonBox.accepted.connect(self.update_from_options)
         #self.update_from_options()
         self.options_dialog.show()
+        
     def update_from_options(self):
         lesson_size = self.options_store.get_globals(self.notecard_store.deck_name)["lesson_size"]
         for subset in self.subsets:

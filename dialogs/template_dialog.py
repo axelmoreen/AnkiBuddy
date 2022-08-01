@@ -1,6 +1,11 @@
+from __future__ import annotations
+from typing import Any
+
 from ..forms.template_wizard import *
 
-from aqt.qt import *
+from aqt.qt import (
+    QDialog
+)
 from aqt import mw
 # Template Dialog - create and edit templates to be used in the Questions dialog. 
 # saves templates to configuration for convenience
@@ -57,7 +62,8 @@ class TemplateDialog(QDialog, Ui_TemplateDialog):
         # extra bank unsupported yet
         self.extrabank.setVisible(False)
         self.label_7.setVisible(False)
-    def getResults(self):
+
+    def getResults(self) -> dict[str, Any]:
         if self.exec_() == QDialog.Accepted:
             res = {}
             res["type_ind"] = self.stackedWidget.currentIndex()

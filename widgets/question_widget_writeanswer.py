@@ -90,5 +90,5 @@ class WriteTheAnswerWidget(QuestionWidget):
     def keyPressEvent(self, event: QKeyEvent):
         self.on_key(event)
 
-    def get_answer(self):
+    def get_answer(self) -> str:
         return self.options["answer"]

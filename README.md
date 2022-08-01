@@ -62,6 +62,8 @@ Anki2/
 * Test mode
 * Profile / presets for the Questions Wizard. 
 * Keyboard shortcuts for matching / multiple-choice
+* Check your own answer for Write the Answer ("i was right" button)
+* Add API for question type for other developers to add custom ones
 
 ## Known Issues
 * ~~Duplicate answers sometimes on multiple choice (not fixed?) ~~

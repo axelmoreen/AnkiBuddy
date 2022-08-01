@@ -1,4 +1,4 @@
-from typing import List
+from __future__ import annotations
 from .stores import NotecardStore
 # Subset represents subsets of notecards for studying
 # each subset here - is a "group" of actual subsets!, not just one subset!
@@ -23,7 +23,7 @@ class Subset:
             str: Name of the subset.
         """
         return None
-    def get_cards(self, index: int) -> List[int]:
+    def get_cards(self, index: int) -> list[int]:
         """Get list of cards under subgroup "index". See class docstring for more info.
 
         Args:
@@ -33,7 +33,7 @@ class Subset:
             List[int]: list of indices corresponding to subgroup's cards in the notecard store. 
         """
         return []
-    def get_all_cards(self) -> List[int]:
+    def get_all_cards(self) -> list[int]:
         """Get all cards under all subgroups. See class docstring for more info.
 
         Returns:
@@ -80,14 +80,14 @@ class LinearSubset(Subset):
         """
         return "All"
     
-    def get_cards(self, index: int) -> List[int]:
+    def get_cards(self, index: int) -> list[int]:
         """See super-class.
         """
         return self.full_arr[self.lesson_size * index:
             min((self.lesson_size * ( index + 1)),
             len(self.full_arr))]
 
-    def get_all_cards(self) -> List[int]:
+    def get_all_cards(self) -> list[int]:
         """See super-class.
         """
         return self.full_arr
@@ -117,12 +117,12 @@ class LearnedSubset(Subset):
         """
         return "Learned"
     
-    def get_cards(self, index: int) -> List[int]:
+    def get_cards(self, index: int) -> list[int]:
         """See super-class.
         """
         return self.arr[self.lesson_size * index :min((self.lesson_size  * (index+ 1)), len(self.arr)) ]
     
-    def get_all_cards(self) -> List[int]:
+    def get_all_cards(self) -> list[int]:
         """See super-class.
         """
         return self.arr
@@ -155,12 +155,12 @@ class LapsedSubset(Subset):
         """
         return "Lapsed"
     
-    def get_cards(self, index: int) -> List[int]:
+    def get_cards(self, index: int) -> list[int]:
         """See super-class.
         """
         return self.arr[self.lesson_size * index:min((self.lesson_size *  (index+1)), len(self.arr)) ]
     
-    def get_all_cards(self) -> List[int]:
+    def get_all_cards(self) -> list[int]:
         """See super-class.
         """
         return self.arr
@@ -188,12 +188,12 @@ class NewSubset(Subset):
         """
         return "Unlearned"
     
-    def get_cards(self, index: int) -> List[int]:
+    def get_cards(self, index: int) -> list[int]:
         """See super-class.
         """
         return self.arr[self.lesson_size * index :min((self.lesson_size  * (index+ 1)), len(self.arr)) ]
     
-    def get_all_cards(self) -> List[int]:
+    def get_all_cards(self) -> list[int]:
         """See super-class.
         """
         return self.arr

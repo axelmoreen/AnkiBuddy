@@ -10,6 +10,7 @@ class EventLineEdit(QLineEdit):
         if self.parentWidget():
             self.parentWidget().keyPressEvent(event)
         super().keyPressEvent(event)
+        
     def inputMethodEvent(self, event: QInputMethodEvent):
         if self.parentWidget():
             self.parentWidget().inputMethodEvent(event)

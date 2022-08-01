@@ -1,4 +1,6 @@
-from typing import Tuple
+from __future__ import annotations
+from typing import Any
+
 from aqt import gui_hooks
 import aqt
 
@@ -20,8 +22,7 @@ def inject_overview(web_content: aqt.webview.WebContent, context: Any):
     web_content.head += overview_css
     web_content.body += overview_content
 
-def receive_pycmd(handled: Tuple[bool,Any], message: str, context: Any):
-
+def receive_pycmd(handled: tuple[bool,Any], message: str, context: Any) -> tuple[bool, Any]:
     if message == "BuddyWizard":
         curr_did = mw.col.decks.current()["id"]
         nstore = notecards.get(curr_did)
@@ -42,7 +43,7 @@ overview_content = """
 </div>
 """
 
-# note the :hover css doesn't seem to work :()
+# note the :hover css doesn't seem to work :(
 overview_css = """
 <style>
 #buddybutton{
