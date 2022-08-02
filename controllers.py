@@ -1,12 +1,15 @@
 from aqt.qt import (
     QObject,
-    QTimer
+    QTimer,
+    QFileDialog,
 )
 from aqt import mw
 import aqt
 from .widgets import *
 from os.path import join, dirname
 from .models import ListModel, HomeworkModel
+from pathlib import Path
+import unicodedata
 
 
 class ListController(QObject):
@@ -41,7 +44,60 @@ class ListController(QObject):
         self.cardview.setWindowTitle("Card - "+ self.model.note_store.deck_name)
         self.cardview.setWindowIcon(mw.windowIcon())
         self.cardview.show()
+    
+    def _to_csv(self) -> str:
+        """Get a CSV string from the current data in the list model.
 
+        Returns:
+            str: CSV string
+        """
+        return "\n".join([",".join(row) for row in self.model.rows])
+
+    def _to_txt(self) -> str:
+        """Get a string from the current data in the list model.
+        
+        Note: Maybe it will be possible to make this output prettier in the future.
+
+        Returns:
+            str: Text representation of list
+        """
+        out = []
+        for row in self.model.rows:
+            row_front = []
+            row_back = []
+            for i in range(len(self.model.columns)):
+                if self.model.front[i]:
+                    row_front.append(row[i])
+                else:
+                    row_back.append(row[i])
+            row_str = ", ".join(row_front) + " → " + "(" + ", ".join(row_back)+")"
+            out.append(row_str)
+        return "\n".join(out)
+
+
+    def on_export_button(self):
+        """Connected to the export button. Will
+        prompt the user to save a file with the contents of the
+        list view.
+        """
+        fname, type = QFileDialog.getSaveFileName(mw, "Save List", str(Path.home()), "Comma delimited (*.csv);;Text File (*.txt)")
+        print(self._to_txt())
+        # check string is not empty
+        if not fname:
+            return
+        
+        # valid type
+        if type.startswith("Text"):
+            out = self._to_txt()
+        elif type.startswith("Comma"):
+            out = self._to_csv()
+        else:
+            return    
+       
+        # write file
+        with open(fname, "w", encoding="utf-8") as out_file:
+            out_file.write(out)      
+          
 class HomeworkController(QObject):
     def __init__(self, model: HomeworkModel):
         """Initialize Homework Controller for handling logic from the HomeworkView.

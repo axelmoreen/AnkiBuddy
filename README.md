@@ -2,6 +2,7 @@
 AnkiBuddy is an add-on for Anki 2.1 that gives you study lists, multiple choice, and matching questions to learn from outside of your regular notecard review.
 This add-on aims to be a Quizlet-clone / Duolingo-clone to give you quizzing or timed practice from your Anki decks with alternative formats.
 You can choose subsets to study cards you already know, new cards, cards you struggle most with. This add-on tries to be as customizable as possible, as it allows you to create question templates for each deck based on their model. 
+Supports PyQt5 and PyQt6. For best results, use Anki 2.1.54.
 
 # Features
 
@@ -58,7 +59,7 @@ Anki2/
     * Implment Return properly on keyboard
     * Show shift/caps on display
     * Restyle keyboard so "Checked" buttons are easier to see
-* Personal Leaderboard for Timed Mode 
+* Personal Leaderboard for Timed Mode?
 * Test mode
 * Profile / presets for the Questions Wizard. 
 * Keyboard shortcuts for matching / multiple-choice
@@ -77,4 +78,5 @@ Anki2/
 * Decrease font-size for longer questions/answers
 * Fix auto focus on virtual keyboard pyqt5
 * Mac is missing spaces in labels?
-* Keyboard button sdon't unfocus on pyqt6
+* Keyboard buttons don't unfocus on pyqt6
+* ~~Removing selected templates from questions wizard does not save~~

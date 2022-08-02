@@ -54,4 +54,46 @@ class QuestionLabel(QLabel):
             av_player.play_file(self.sound)
         else:
             super().setText(text)
+            self.handle_cloze()
+            #self.handle_furigana()
+    
+    def handle_furigana(self):
+        """Replace bracket notation in the parent label with html ruby tags.
+
+        See: https://github.com/obynio/anki-japanese-furigana/blob/master/reading.py#L84
+        """
+        text = super().text()
+        print("Before: "+text)
+        if "[" not in text: return 
+
+        to_replace = []
+
+        for word in text.split(" "):
+            match = re.match(r"(.+)\[(.*)\]", word)
+            if not match:
+                continue
+            (kanji, reading) = match.groups()
+            print(word)
+            print("match: ", kanji, reading)
+            #if kanji == reading:
+            #    to_replace.append(
+            #        (word, kanji))
+            # find where kanji starts and ends
+            line = "<ruby><rb>{}</rb><rt>{}</rt></ruby>"
+            to_replace.append(
+                (word, 
+                line.format(kanji, reading)))
+
+        for group in to_replace:
+            text = text.replace(group[0], group[1])
+        print("after: "+text)
+        super().setText(text) 
+    
+    def handle_cloze(self):
+        """Handles Core2k's cloze format. 
+        """
+        text = super().text()
+        text = text.replace("（　）", "____")
+        super().setText(text)
+
 

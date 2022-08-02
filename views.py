@@ -79,6 +79,7 @@ class ListView(QDialog):
         self.model.hide_front_changed.connect(self.handle_hide_front_changed)
         self.model.hide_back_changed.connect(self.handle_hide_back_changed)
     
+        self.ui.exportButton.clicked.connect(self.controller.on_export_button)
 
         self.show()
 
@@ -143,6 +144,8 @@ class ListView(QDialog):
             font.setFamily(settings[0])
         font.setPointSize(size)
         ele.setFont(font)
+
+    
 
 
 class HomeworkView(QWidget):

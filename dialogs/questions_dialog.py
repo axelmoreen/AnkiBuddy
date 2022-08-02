@@ -251,6 +251,8 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
              
             # add to ui
             self.selectedList.addItem(self.get_template_string(self.templates[row]))
+        
+        self.update_options()
 
     def remove_sel_template_sig(self):
         """Connected to the (left arrow) button to unselect a template for practice.
@@ -260,6 +262,8 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
 
         del self.sel_templates[row]
         self.selectedList.takeItem(row)
+
+        self.update_options()
 
     def add_subset(self, subset: Subset):
         """Internal method. Add a subset for use within the add-on.
