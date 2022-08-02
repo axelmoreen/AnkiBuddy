@@ -10,10 +10,6 @@ QPushButton:flat{
     border: 0px;
     color: rgba(1.0,1.0,1.0,0.1);
 }
-QPushButton:hover{
-    background: rgba(100.0,100.0,100.0,0.01);
-    border: 5px solid #32a3fa;
-}
 QPushButton:checked{
     border: 5px solid #32a3fa;
 }

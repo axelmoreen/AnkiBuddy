@@ -57,7 +57,6 @@ overview_content = """
 </div>
 """
 
-# note the :hover css doesn't seem to work :(
 overview_css = """
 <style>
 #buddybutton{
@@ -65,10 +64,6 @@ overview_css = """
     min-height: 20px; 
     border: 5px solid #555; 
     border-radius: 8px;
-}
-#buddybutton:hover{
-    border: 5px solid #32a3fa; 
-    background: rgba(250.0,250.0,250.0,0.03);
 }
 </style>
 """

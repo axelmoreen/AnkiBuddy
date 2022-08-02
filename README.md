@@ -44,11 +44,11 @@ Anki2/
     * ~~Toggle virtual keyboard~~
     * Show field name (implemented, but not in options yet)
 * ~~Sound questions (plays sound from field, can repeat)~~
-*~~ Practice: Add "Show Answer" after first incorrect~~
+*~~Practice: Add "Show Answer" after first incorrect~~
     * ~~Be able to hover over answer to see a webview with the full card (implemented differentyl)~~
 * ~~Fake random (avoid repeats if possible)~~
 * ~~Return missed cards to try again~~
-* Convert furigana brackets to ruby tags
+* ~~Convert furigana brackets to ruby tags~~
 * ~~Re-implement list view hide front/ hide back~~
 * ~~Custom instructions to display with some questions (like, write the Kanji or write the Hiragana) (solved with field hint)~~
 * Create custom subsets
@@ -65,7 +65,7 @@ Anki2/
 * Keyboard shortcuts for matching / multiple-choice
 * Check your own answer for Write the Answer ("i was right" button)
 * Add API for question type for other developers to add custom ones
-* List view: export .csv 
+* ~~List view: export .csv~~
 ## Known Issues
 * ~~Duplicate answers sometimes on multiple choice (not fixed?) ~~
 * ~~Fix updating Selected Templates after edit of a template~~
@@ -74,6 +74,8 @@ Anki2/
 * ~~Fix ghost sounds being played sometimes on a new question (matching?)~~
 * ~~Should fix MVC design of List class.~~
 * In some cases, playing multiple sounds at the same time causes one to not be heard.
+* Can't Edit template with just the Selected templates selection.
+* QOL: remove templates from the left box, once they are in the right box.
 *~~Move "Practice" View logic to its own controller.~~
 * Decrease font-size for longer questions/answers
 * Fix auto focus on virtual keyboard pyqt5

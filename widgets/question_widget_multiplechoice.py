@@ -18,13 +18,14 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
 
         self.vlayout = QVBoxLayout(self)
         self.questionLabel = QuestionLabel(self)
-        self.questionLabel.setText(self.options["question"])
-        #self.set_font_size(self.questionLabel, self.conf["choice_question_size"])
         self.handle_font(self.questionLabel, 
             self.conf["choice_question_size"], self.options["question_field"])
-        self.questionLabel.setAlignment(Qt.AlignCenter)
+        self.questionLabel.setText(self.options["question"])
+        #self.set_font_size(self.questionLabel, self.conf["choice_question_size"])
         
-        self.questionLabel.setTextFormat(Qt.RichText)
+        #self.questionLabel.setAlignment(Qt.AlignCenter)
+        
+        #self.questionLabel.setTextFormat(Qt.RichText)
         self.vlayout.addWidget(self.questionLabel)
         self.gridLayout = QGridLayout()
         
@@ -76,6 +77,8 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
         if not self.confirm_answer:
             ansind = int(self.options["correct_answer"])
             self.questionAnswered.emit(button_ind == ansind, False)
+            for i in range(len(self.buttons)):
+                self.buttons[i].setChecked(False)
         else:
             # show as selected, unselect rest
             for i in range(len(self.buttons)):

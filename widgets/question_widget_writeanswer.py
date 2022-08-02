@@ -28,13 +28,14 @@ class WriteTheAnswerWidget(QuestionWidget):
         self.conf = self.model.options_store.get_homework_config(self.model.note_store.deck_name)
         self.layout = QVBoxLayout(self)
         self.questionLabel = QuestionLabel(self)
-        self.questionLabel.setText(self.options["question"])
-        self.questionLabel.setAlignment(Qt.AlignCenter)
-        self.questionLabel.setTextFormat(Qt.RichText)
-
-        #self.set_font_size(self.questionLabel, 30)
         self.handle_font(self.questionLabel, self.conf["write_question_size"],
             self.options["question_field"])
+        self.questionLabel.setText(self.options["question"])
+        #self.questionLabel.setAlignment(Qt.AlignCenter)
+        #self.questionLabel.setTextFormat(Qt.RichText)
+
+        #self.set_font_size(self.questionLabel, 30)
+        
         self.ansLayout = QHBoxLayout()
         self.ansBox = EventLineEdit()
         self.ansBox.setFixedHeight(60)
