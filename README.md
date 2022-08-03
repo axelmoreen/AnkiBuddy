@@ -75,7 +75,7 @@ TODO: move this to the issue tracker
 * Check your own answer for Write the Answer ("i was right" button)
 * Add API for question type for other developers to add custom ones
 * Better cloze mode (instead of just using the field, use the difference of two)
-* Move everything away from QT layouts to WebView for better handling of furigana / better layouts.
+* Move everything away from QT layouts to WebView for better handling of furigana / more complicated layouts.
 
 ## Known Issues
 * In some cases, playing multiple sounds at the same time causes one to not be heard.
