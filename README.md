@@ -45,6 +45,7 @@ Until the add-on is published on the Anki website, you may install it by cloning
 Anki2/
 ├─ addons21/
 │  ├─ AnkiBuddy/
+│  │  ├─ dialogs/
 │  │  ├─ forms/
 │  │  ├─ resources/
 │  │  ├─ (files go here)
