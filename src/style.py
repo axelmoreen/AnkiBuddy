@@ -29,7 +29,7 @@ QPushButton{
     padding: 15px;
 }
 """
-confirm_button_style= """
+confirm_button_style = """
 QPushButton{
     background-color: #32a3fa;
     padding: 10px;
@@ -38,7 +38,7 @@ QPushButton{
     color: #111;
 }
 """
-incorrect_button_style="""
+incorrect_button_style = """
 QPushButton{
     background-color: transparent;
     border-radius: 8px;
@@ -49,6 +49,5 @@ QPushButton{
 """
 play_anchor_style = """
 .b_playButton{
-    
 }
 """

@@ -19,4 +19,3 @@ from .question_widget import QuestionWidget
 from .question_widget_multiplechoice import MultipleChoiceQuestionWidget
 from .question_widget_matching import MatchingWidget
 from .question_widget_writeanswer import WriteTheAnswerWidget
-

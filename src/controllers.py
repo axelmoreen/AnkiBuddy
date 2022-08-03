@@ -22,6 +22,7 @@ from os.path import join, dirname
 from .models import ListModel, HomeworkModel
 from pathlib import Path
 
+
 class ListController(QObject):
     def __init__(self, model: ListModel):
         """Initialize List Controller for handling logic from the ListView.
@@ -33,17 +34,16 @@ class ListController(QObject):
         self.model = model
 
     def on_hide_front_changed(self, value: bool):
-        """Connected to view's "Hide Front" checkbox.         """
+        """Connected to view's "Hide Front" checkbox."""
         self.model.hide_front = bool(value)
 
     def on_hide_back_changed(self, value: bool):
-        """Connected to view's "Hide Back" checkbox.
-        """
+        """Connected to view's "Hide Back" checkbox."""
         self.model.hide_back = bool(value)
 
     def cell_double_clicked(self, row: int, column: int):
         """Connected to view's main table. Handles if a cell was double-clicked,
-        and then will allow the user to view the corresponding Anki card. 
+        and then will allow the user to view the corresponding Anki card.
 
         Args:
             row (int): row that was clicked
@@ -51,10 +51,10 @@ class ListController(QObject):
         """
         card = self.model.cards[row]
         self.cardview = SimpleCardView(card)
-        self.cardview.setWindowTitle("Card - "+ self.model.note_store.deck_name)
+        self.cardview.setWindowTitle("Card - " + self.model.note_store.deck_name)
         self.cardview.setWindowIcon(mw.windowIcon())
         self.cardview.show()
-    
+
     def _to_csv(self) -> str:
         """Get a CSV string from the current data in the list model.
 
@@ -65,7 +65,7 @@ class ListController(QObject):
 
     def _to_txt(self) -> str:
         """Get a string from the current data in the list model.
-        
+
         Note: Maybe it will be possible to make this output prettier in the future.
 
         Returns:
@@ -80,34 +80,39 @@ class ListController(QObject):
                     row_front.append(row[i])
                 else:
                     row_back.append(row[i])
-            row_str = ", ".join(row_front) + " → " + "(" + ", ".join(row_back)+")"
+            row_str = ", ".join(row_front) + " → " + "(" + ", ".join(row_back) + ")"
             out.append(row_str)
         return "\n".join(out)
-
 
     def on_export_button(self):
         """Connected to the export button. Will
         prompt the user to save a file with the contents of the
         list view.
         """
-        fname, type = QFileDialog.getSaveFileName(mw, "Save List", str(Path.home()), "Comma delimited (*.csv);;Text File (*.txt)")
+        fname, type = QFileDialog.getSaveFileName(
+            mw,
+            "Save List",
+            str(Path.home()),
+            "Comma delimited (*.csv);;Text File (*.txt)",
+        )
         print(self._to_txt())
         # check string is not empty
         if not fname:
             return
-        
+
         # valid type
         if type.startswith("Text"):
             out = self._to_txt()
         elif type.startswith("Comma"):
             out = self._to_csv()
         else:
-            return    
-       
+            return
+
         # write file
         with open(fname, "w", encoding="utf-8") as out_file:
-            out_file.write(out)      
-          
+            out_file.write(out)
+
+
 class HomeworkController(QObject):
     def __init__(self, model: HomeworkModel):
         """Initialize Homework Controller for handling logic from the HomeworkView.
@@ -130,22 +135,26 @@ class HomeworkController(QObject):
         to the View for rendering.
         """
         self.model.load_new_question()
-        
-        self.model.corrected = False # for show answer to work properly
+
+        self.model.corrected = False  # for show answer to work properly
         self.model.has_answered = False
 
         if self.model.curr_question_type == 0:
-            newQuestionWidget = MultipleChoiceQuestionWidget(self.model.curr_question, self.model)
+            newQuestionWidget = MultipleChoiceQuestionWidget(
+                self.model.curr_question, self.model
+            )
         elif self.model.curr_question_type == 1:
             newQuestionWidget = MatchingWidget(self.model.curr_question, self.model)
         elif self.model.curr_question_type == 2:
-            newQuestionWidget = WriteTheAnswerWidget(self.model.curr_question, self.model)
+            newQuestionWidget = WriteTheAnswerWidget(
+                self.model.curr_question, self.model
+            )
 
         newQuestionWidget.questionAnswered.connect(self.question_answered)
         self.widget = newQuestionWidget
         self.model.answer = newQuestionWidget.get_answer()
         self.model.new_question_update.emit(self.widget)
-        
+
     def question_answered(self, correct: bool, multi_answer: bool):
         """Connected to the current QuestionWidget to handle the user response.
         Handles the overall logic for questions such as history, sounds, revisits.
@@ -168,9 +177,9 @@ class HomeworkController(QObject):
             self.model.total_answered += 1
             if correct:
                 self.model.total_correct += 1
-            
-            if not multi_answer: 
-                self.model.has_answered = True # 
+
+            if not multi_answer:
+                self.model.has_answered = True  #
 
         # handle sounds
         if self.model.play_sounds and not self.model.corrected:
@@ -196,54 +205,52 @@ class HomeworkController(QObject):
                 self.widget.show_answer()
                 self.model.corrected = True
 
-            elif not self.model.wait_wrong and correct: 
+            elif not self.model.wait_wrong and correct:
                 self.next_question()
 
-            else: # not correct, should stay on UI no matter what
+            else:  # not correct, should stay on UI no matter what
                 self.model.answer_pane_update.emit(True, 0)
                 self.model.corrected = False
-        
+
         self.model.info_update.emit()
-        
+
     def accept_wait(self):
         """Connected to the "Continue/Show Answer" button that is shown
         when the question is wrong, or when the question is correct
-        and self.model.wait_wrong == True. 
+        and self.model.wait_wrong == True.
         """
         if self.model.corrected:
             self.next_question()
 
-        else: # show answer
+        else:  # show answer
             self.model.answer_pane_update.emit(True, 2)
             self.widget.show_answer()
             self.model.corrected = True
-            
 
     def do_cards_button(self):
-        """Connected to the "Card(s)" button press to review 
+        """Connected to the "Card(s)" button press to review
         the cards that were in the question.
         """
         self.web_views = []
         for card in self.model.curr_cards:
             view = SimpleCardView(card.card)
-            view.setWindowTitle("Card - "+ self.model.note_store.deck_name)
+            view.setWindowTitle("Card - " + self.model.note_store.deck_name)
             view.setWindowIcon(mw.windowIcon())
             self.web_views.append(view)
-            
+
         for v in self.web_views:
             v.show()
-            
-            
+
     def on_timeout(self):
         """Connected to the timer every second.
         Will change the display, and also stop the
-        practice during timed mode. 
+        practice during timed mode.
         """
         if self.model.timed_mode > 0:
             self.model.time -= 1
         else:
             self.model.time += 1
-        
+
         if self.model.time < 0:
             # TODO: play sound
             self.timer.stop()
@@ -251,5 +258,3 @@ class HomeworkController(QObject):
             self.model.stop = True
 
         self.model.info_update.emit()
-            
-

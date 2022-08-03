@@ -14,19 +14,22 @@ from ..stores import NotecardStore, OptionStore
 
 from ..forms.template_wizard import *
 
-from aqt.qt import (
-    QDialog
-)
+from aqt.qt import QDialog
 from aqt import mw
 
-# Template Dialog - create and edit templates to be used in the Questions dialog. 
+# Template Dialog - create and edit templates to be used in the Questions dialog.
 # saves templates to configuration for convenience
 #
 # should just be called by QuestionsDialog
 class TemplateDialog(QDialog, Ui_TemplateDialog):
     # set templ for edit card dialog, otherwise leave as None to create new card
-    def __init__(self, notecard_store: NotecardStore, options_store: OptionStore, templ: dict[str,Any]=None):
-        """Create template dialog. 
+    def __init__(
+        self,
+        notecard_store: NotecardStore,
+        options_store: OptionStore,
+        templ: dict[str, Any] = None,
+    ):
+        """Create template dialog.
 
         Args:
             notecard_store (NotecardStore): Instance of notecard store to pull cards from.
@@ -35,10 +38,10 @@ class TemplateDialog(QDialog, Ui_TemplateDialog):
         """
         super(TemplateDialog, self).__init__()
         self.setupUi(self)
-        self.setWindowTitle("Template - "+notecard_store.deck_name)
+        self.setWindowTitle("Template - " + notecard_store.deck_name)
         self.setWindowIcon(mw.windowIcon())
         self.questiontype.currentIndexChanged.connect(self.change_type)
-        
+
         self.stackedWidget.setCurrentIndex(0)
 
         # data
@@ -73,11 +76,11 @@ class TemplateDialog(QDialog, Ui_TemplateDialog):
             elif templ["type_ind"] == 1:
                 self.groupsize.setValue(templ["groupsize"])
                 self.extrabank.setValue(templ["extrabank"])
-            
+
             self.reverse.setChecked(templ["include_reverse"])
             self.reverse_2.setChecked(templ["include_reverse"])
             self.reverse_3.setChecked(templ["include_reverse"])
-        
+
         # extra bank unsupported yet
         self.extrabank.setVisible(False)
         self.label_7.setVisible(False)
@@ -101,14 +104,14 @@ class TemplateDialog(QDialog, Ui_TemplateDialog):
                 res["include_reverse"] = bool(self.reverse.isChecked())
 
             elif self.stackedWidget.currentIndex() == 1:
-                #matching
+                # matching
                 res["type"] = "Matching"
                 res["question"] = self.question_2.currentText()
                 res["answer"] = self.answer_2.currentText()
                 res["groupsize"] = self.groupsize.value()
                 res["extrabank"] = self.extrabank.value()
                 res["include_reverse"] = bool(self.reverse_2.isChecked())
-            
+
             elif self.stackedWidget.currentIndex() == 2:
                 # write the answer
                 res["type"] = "Write the Answer"

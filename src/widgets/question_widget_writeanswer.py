@@ -29,37 +29,42 @@ from aqt.qt import (
 from aqt import mw
 
 from ..style import confirm_button_style
+
 # Write the answer widget
 # Shows a question at the top and you must write the answer in the line edit
-# Support for japanese learners to use a "virtual keyboard" to help learn how to type with IME, or to entirely replace the keyboard with virtual buttons 
+# Support for japanese learners to use a "virtual keyboard" to help learn how to type with IME, or to entirely replace the keyboard with virtual buttons
 # - planned pinyin support
 class WriteTheAnswerWidget(QuestionWidget):
     def load(self):
-        """Load this question widget.
-        """
-        self.conf = self.model.options_store.get_homework_config(self.model.note_store.deck_name)
+        """Load this question widget."""
+        self.conf = self.model.options_store.get_homework_config(
+            self.model.note_store.deck_name
+        )
         self.layout = QVBoxLayout(self)
         self.questionLabel = QuestionLabel(self)
-        self.handle_font(self.questionLabel, self.conf["write_question_size"],
-            self.options["question_field"])
+        self.handle_font(
+            self.questionLabel,
+            self.conf["write_question_size"],
+            self.options["question_field"],
+        )
         self.questionLabel.setText(self.options["question"])
-        #self.questionLabel.setAlignment(Qt.AlignCenter)
-        #self.questionLabel.setTextFormat(Qt.RichText)
+        # self.questionLabel.setAlignment(Qt.AlignCenter)
+        # self.questionLabel.setTextFormat(Qt.RichText)
 
-        #self.set_font_size(self.questionLabel, 30)
-        
+        # self.set_font_size(self.questionLabel, 30)
+
         self.ansLayout = QHBoxLayout()
         self.ansBox = EventLineEdit()
         self.ansBox.setFixedHeight(60)
         self.model.last_card = self.options["card_ind"]
         self.ansBox.returnPressed.connect(self.submit_callback)
         self.set_font_size(self.ansBox, 20)
-        #self.set_font_size(self.ansBox, self.conf["write_question_size"])
-        #self.handle_font(self.ansBox, self.conf["write_question_size"], 
+        # self.set_font_size(self.ansBox, self.conf["write_question_size"])
+        # self.handle_font(self.ansBox, self.conf["write_question_size"],
         #    self.options["question_field"])
         self.boxTypeLabel = QLabel(self.ansBox)
-        self.boxTypeLabel.setText("("+self.options["answer_field"]+")")
-        
+        self.boxTypeLabel.setText("(" + self.options["answer_field"] + ")")
+
         self.set_font_size(self.boxTypeLabel, 9)
         self.ansSubmit = QPushButton()
         self.ansSubmit.setFixedHeight(60)
@@ -79,23 +84,25 @@ class WriteTheAnswerWidget(QuestionWidget):
             if not hasattr(mw, "_bKeyboard"):
                 if self.conf["write_keyboard_type"] == 0:
                     mw._bKeyboard = KeyboardView(translation=KB_JAPANESE_HIRAGANA)
-                
+
             if not mw._bKeyboard.isVisible():
                 mw._bKeyboard.showNormal()
             mw._bKeyboard.link_field(self.ansBox)
 
-        QTimer.singleShot(0, lambda: self.ansBox.setFocus()) # ez hack to make the ans box auto-focus.
+        QTimer.singleShot(
+            0, lambda: self.ansBox.setFocus()
+        )  # ez hack to make the ans box auto-focus.
 
     def submit_callback(self):
-        """Return was pressed or the submit button was pressed.
-        """
+        """Return was pressed or the submit button was pressed."""
         text = self.ansBox.text()
-        self.questionAnswered.emit(text.casefold() == self.options["answer"].casefold(), False)
-    
+        self.questionAnswered.emit(
+            text.casefold() == self.options["answer"].casefold(), False
+        )
+
     # sending key events to virtual keyboard to display key strokes
     def on_key(self, event: QKeyEvent):
-        """Handle key event.
-        """
+        """Handle key event."""
         if self.show_keyboard:
             # TODO: support caps shift etc
             if len(event.text()) > 0:
@@ -103,8 +110,7 @@ class WriteTheAnswerWidget(QuestionWidget):
 
     # sending ime events to virtual keyboard to display key strokes
     def inputMethodEvent(self, event: QInputMethodEvent):
-        """Handle IME events.
-        """
+        """Handle IME events."""
         if self.show_keyboard:
             mw._bKeyboard.on_key(event.preeditString()[-1:])
 
@@ -116,6 +122,5 @@ class WriteTheAnswerWidget(QuestionWidget):
         self.on_key(event)
 
     def get_answer(self) -> str:
-        """Return answer string.
-        """
+        """Return answer string."""
         return self.options["answer"]

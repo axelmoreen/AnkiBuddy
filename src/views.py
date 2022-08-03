@@ -10,16 +10,24 @@ Note: Other UI's, such as the main homework wizard, are currently under
 the /dialogs/ folder.
 """
 from aqt import mw
-from aqt.qt import QDialog, QWidget, QMessageBox, QMenu, QAction, QCloseEvent, Qt
+from aqt.qt import (
+    QDialog,
+    QWidget,
+    QMessageBox,
+    QMenu,
+    QAction,
+    QCloseEvent,
+    Qt
+)
 
 from .widgets import BTableWidgetItem, QuestionWidget
 from .forms.list import Ui_CardList
-from .forms.practice import *
-from .forms.summary import *
+from .forms.practice import Ui_Practice
+from .forms.summary import Ui_Summary
 from .models import ListModel, HomeworkModel
 from .controllers import ListController, HomeworkController
 
-from .style import *
+from .style import incorrect_button_style
 
 
 class ListView(QDialog):
@@ -72,8 +80,10 @@ class ListView(QDialog):
 
         # signals
 
-        self.ui.checkBox.stateChanged.connect(self.controller.on_hide_back_changed)
-        self.ui.checkBox_2.stateChanged.connect(self.controller.on_hide_front_changed)
+        self.ui.checkBox.stateChanged.connect(
+            self.controller.on_hide_back_changed)
+        self.ui.checkBox_2.stateChanged.connect(
+            self.controller.on_hide_front_changed)
         self.ui.pushButton_6.clicked.connect(self.on_close)
 
         self.ui.tableWidget.cellDoubleClicked.connect(
@@ -131,8 +141,8 @@ class ListView(QDialog):
                         self.ui.tableWidget.cellWidget(j, i).show_value()
 
     def handle_font(self, ele: QWidget, base_size: int, field_name: str):
-        """Internal method to set a QWidget's font based on the field-specific options
-        set in the Options dialog
+        """Internal method to set a QWidget's font based on the field-specific
+        options set in the Options dialog
 
         Args:
             ele (QWidget): Element whose font to modify
@@ -158,7 +168,7 @@ class HomeworkView(QWidget):
 
         Args:
             model (HomeworkModel): Homework model class for data
-            controller (HomeworkController): Homework controller class for logic
+            controller (HomeworkController): Homework controller class
         """
         super().__init__()
 
@@ -227,17 +237,20 @@ class HomeworkView(QWidget):
         dial.show()
 
     def info_update_handler(self):
-        """Update progress summary with information from the model such as time and score.
+        """Update progress summary with information from the model
+        such as time and score.
         This is connected to a signal from the model.
         """
         self.correctAction.setText(
             "Score: "
-            + "{}/{}".format(self.model.total_correct, self.model.total_answered)
+            + "{}/{}".format(
+                self.model.total_correct, self.model.total_answered)
         )
         self.accuracyAction.setText(
             "Accuracy: "
             + "{:d}%".format(
-                int(100 * self.model.total_correct / max(1, self.model.total_answered))
+                int(100 * self.model.total_correct / max(
+                    1, self.model.total_answered))
             )
         )
         self.cardsAction.setText(
@@ -245,12 +258,13 @@ class HomeworkView(QWidget):
         )
 
         self.ui.labelRight.setText(
-            ("-" if self.model.timed_mode > 0 else "") + _sec2Time(self.model.time)
+            ("-" if self.model.timed_mode > 0 else "")
+            + _sec2Time(self.model.time)
         )
 
         if self.model.stop:
             self.ui.labelRight.setText("Time's Up!")
-            # TODO: instead of self.close(), simply just pause the screen and open dialog.
+            # TODO: instead of self.close(), pause the screen
             self.close()
 
     # CORRECT: 0 = wrong, 1 = right, 2 = show answer
@@ -261,19 +275,22 @@ class HomeworkView(QWidget):
         The three main states of the answer pane, and what they should display:
         0. Incorrect - Show Answer [they tried to answer and got it wrong,
             so show a "Show Answer" button or let them try again]
-        1. Correct - Continue [they answered correctly and program should pause,
-            so show a "Continue" button to move on]
-        2. Shown Answer - Continue [they pressed Show Answer and program will pause,
-            show a "Continue" button to move on]
+        1. Correct - Continue [they answered correctly and program should
+            pause, so show a "Continue" button to move on]
+        2. Shown Answer - Continue [they pressed Show Answer and program will
+            pause, show a "Continue" button to move on]
 
-        By default, the add-on should move on to the next question (i.e. not show the Continue button) unless:
+        By default, the add-on should move on to the next question (i.e. not
+        show the Continue button) unless:
         1. Pausing before the next question is enabled in the options
         2. There is an audio field present in the Answers
         3. The user got the question wrong
 
         Args:
-            show_pane (bool): True if there is a message to display below question, False to hide.
-            correct (int): Integer from 0-2 containing state of the answer pane. See the example in this docstring.
+            show_pane (bool): True to display message below question,
+                False to hide.
+            correct (int): Integer from 0-2 containing state of the answer
+                pane. See the example in this docstring.
         """
         if show_pane:
             self.ui.horizontalWidget.show()
@@ -299,7 +316,7 @@ class HomeworkView(QWidget):
         Called from the model when a new question has started.
 
         Args:
-            widget (QuestionWidget): An (already instantiated) QuestionWidget to place in the layout.
+            widget (QuestionWidget): A QuestionWidget to place in the layout.
         """
         self.ui.pushButton.hide()
         self.ui.pushButton.setFocusPolicy(Qt.NoFocus)
@@ -308,7 +325,8 @@ class HomeworkView(QWidget):
         oldQuestionWidget = self.ui.verticalLayout.itemAt(0)
         oldQuestionWidget.widget().deleteLater()
 
-        self.ui.verticalLayout.replaceWidget(oldQuestionWidget.widget(), widget)
+        self.ui.verticalLayout.replaceWidget(
+            oldQuestionWidget.widget(), widget)
 
 
 class SummaryDialog(QDialog, Ui_Summary):
@@ -330,12 +348,14 @@ class SummaryDialog(QDialog, Ui_Summary):
         )
         self.accuracyLabel.setText(
             "{:d}%".format(
-                int(100 * hwmodel.total_correct / max(1, hwmodel.total_answered))
+                int(100 * hwmodel.total_correct /
+                    max(1, hwmodel.total_answered))
             )
         )
         self.cardsLabel.setText("{} cards".format(len(hwmodel.card_history)))
         if hwmodel.timed_mode > 0:
-            self.timeLabel.setText(_sec2Time(hwmodel.timed_mode * 60 - hwmodel.time))
+            self.timeLabel.setText(
+                _sec2Time(hwmodel.timed_mode * 60 - hwmodel.time))
         else:
             self.timeLabel.setText(_sec2Time(hwmodel.time))
 
