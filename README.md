@@ -5,7 +5,7 @@ This add-on does not aim to replace the core functionality of Anki in any way (i
 
 This add-on also does not write to or modify your existing Anki data at all, it only reads the deck information. So it is safe to use. But keep in mind it is still under development, so other issues in its usage may arise.  Supports PyQt5 and PyQt6 with compatibility shims. For best results, use Anki 2.1.54.
 
-Issues can be directed to the [issue tracker] and contributions are always welcome!
+Issues can be directed to the [issue tracker](https://github.com/axelmoreen/AnkiBuddy/issues) and contributions are always welcome!
 # Features
 * List mode for manual practice
     * Custom layout based on card fields
