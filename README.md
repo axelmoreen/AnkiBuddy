@@ -3,21 +3,26 @@ AnkiBuddy is an add-on for Anki 2.1 that gives you study lists, multiple choice,
 This add-on aims to be a Quizlet-clone / Duolingo-clone to give you quizzing or timed practice from your Anki decks with alternative formats.
 You can choose subsets to study cards you already know, new cards, cards you struggle most with. This add-on tries to be as customizable as possible, as it allows you to create question templates for each deck based on their model. 
 Supports PyQt5 and PyQt6. For best results, use Anki 2.1.54.
-
-# Features
-
-
 This add-on does not aim to replace the core functionality of Anki in any way (it relies on you to complete your daily repetitions in order to have "learned" a card), nor has it been tested alongside SRS at-length, so your mileage may vary. It is something I made for myself simply for fun and to experiment with. Practice from multiple choice and matching can be great for drilling yourself, but I cannot guarantee any particular outcome. It is easier than remembering a full notecard. 
 
 This add-on also does not write to or modify your existing Anki data at all, it only reads the deck information. So it is safe to use. But keep in mind it is still under development, so other issues in its usage may arise. 
 
 Issues can be directed to the [issue tracker] and contributions are always welcome!
+# Features
+
+
+
 
 ## Demo
 
+![List View](/screenshots/list_view.png?raw=true "List View")
+![Multiple Choice](/screenshots/multiple_choice2.png?raw=true "Multiple Choice")
+![Matching](/screenshots/matching.png?raw=true "Matching")
+![Write the Answer](/screenshots/write%20the%20answer.png?raw=true "Write the Answer")
+![Audio Questions](/screenshots/multiple_choice.png?raw=true "Audio Question")
 # Installation
 
-Until the add-on is published on the Anki website, you may install it by cloning the repo and copying the contents to a folder in your addons directory. The Anki2 directory is usually in your %AppData%/Roaming directory on Windows.
+Until the add-on is published on the Anki website, you may install it by cloning the repo and copying the contents of src to a folder in your addons directory. The Anki2 directory is usually in your %AppData%/Roaming directory on Windows.
 <pre>
 Anki2/
 ├─ addons21/
