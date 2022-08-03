@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'questions_wizard.ui'
+# Form implementation generated from reading ui file './designer/questions_wizard.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.7
 #

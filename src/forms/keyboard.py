@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'keyboard.ui'
+# Form implementation generated from reading ui file './designer/keyboard.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.7
 #
@@ -681,9 +681,9 @@ class Ui_Keyboard(object):
         self.pushButton_19.setText(_translate("Keyboard", "I"))
         self.pushButton_18.setText(_translate("Keyboard", "O"))
         self.pushButton_17.setText(_translate("Keyboard", "P"))
-        self.pushButton_15.setText(_translate("Keyboard", "[{"))
-        self.pushButton_28.setText(_translate("Keyboard", "]}"))
-        self.pushButton_27.setText(_translate("Keyboard", "\|"))
+        self.pushButton_15.setText(_translate("Keyboard", "["))
+        self.pushButton_28.setText(_translate("Keyboard", "]"))
+        self.pushButton_27.setText(_translate("Keyboard", "|"))
         self.pushButton_34.setText(_translate("Keyboard", "Caps"))
         self.pushButton_42.setText(_translate("Keyboard", "A"))
         self.pushButton_41.setText(_translate("Keyboard", "S"))

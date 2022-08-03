@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-# Form implementation generated from reading ui file 'template_wizard.ui'
+# Form implementation generated from reading ui file './designer/template_wizard.ui'
 #
 # Created by: PyQt5 UI code generator 5.15.7
 #
@@ -12,15 +12,15 @@ from PyQt5 import QtCore, QtGui, QtWidgets
 
 
 class Ui_TemplateDialog(object):
-    def setupUi(self, Dialog):
-        Dialog.setObjectName("Dialog")
-        Dialog.resize(400, 306)
-        self.buttonBox = QtWidgets.QDialogButtonBox(Dialog)
+    def setupUi(self, TemplateDialog):
+        TemplateDialog.setObjectName("TemplateDialog")
+        TemplateDialog.resize(400, 306)
+        self.buttonBox = QtWidgets.QDialogButtonBox(TemplateDialog)
         self.buttonBox.setGeometry(QtCore.QRect(300, 10, 81, 251))
         self.buttonBox.setOrientation(QtCore.Qt.Vertical)
         self.buttonBox.setStandardButtons(QtWidgets.QDialogButtonBox.Cancel|QtWidgets.QDialogButtonBox.Ok)
         self.buttonBox.setObjectName("buttonBox")
-        self.stackedWidget = QtWidgets.QStackedWidget(Dialog)
+        self.stackedWidget = QtWidgets.QStackedWidget(TemplateDialog)
         self.stackedWidget.setGeometry(QtCore.QRect(10, 60, 271, 241))
         self.stackedWidget.setObjectName("stackedWidget")
         self.multiplechoice = QtWidgets.QWidget()
@@ -61,7 +61,7 @@ class Ui_TemplateDialog(object):
         self.matching = QtWidgets.QWidget()
         self.matching.setObjectName("matching")
         self.verticalLayoutWidget_3 = QtWidgets.QWidget(self.matching)
-        self.verticalLayoutWidget_3.setGeometry(QtCore.QRect(0, 0, 271, 221))
+        self.verticalLayoutWidget_3.setGeometry(QtCore.QRect(0, 0, 271, 234))
         self.verticalLayoutWidget_3.setObjectName("verticalLayoutWidget_3")
         self.verticalLayout_3 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_3)
         self.verticalLayout_3.setContentsMargins(0, 0, 0, 0)
@@ -125,7 +125,7 @@ class Ui_TemplateDialog(object):
         spacerItem2 = QtWidgets.QSpacerItem(20, 40, QtWidgets.QSizePolicy.Minimum, QtWidgets.QSizePolicy.Expanding)
         self.verticalLayout_4.addItem(spacerItem2)
         self.stackedWidget.addWidget(self.writetheanswer)
-        self.verticalLayoutWidget_2 = QtWidgets.QWidget(Dialog)
+        self.verticalLayoutWidget_2 = QtWidgets.QWidget(TemplateDialog)
         self.verticalLayoutWidget_2.setGeometry(QtCore.QRect(10, 10, 271, 41))
         self.verticalLayoutWidget_2.setObjectName("verticalLayoutWidget_2")
         self.verticalLayout_2 = QtWidgets.QVBoxLayout(self.verticalLayoutWidget_2)
@@ -141,28 +141,28 @@ class Ui_TemplateDialog(object):
         self.questiontype.addItem("")
         self.verticalLayout_2.addWidget(self.questiontype)
 
-        self.retranslateUi(Dialog)
-        self.stackedWidget.setCurrentIndex(2)
-        self.buttonBox.accepted.connect(Dialog.accept) # type: ignore
-        self.buttonBox.rejected.connect(Dialog.reject) # type: ignore
-        QtCore.QMetaObject.connectSlotsByName(Dialog)
+        self.retranslateUi(TemplateDialog)
+        self.stackedWidget.setCurrentIndex(1)
+        self.buttonBox.accepted.connect(TemplateDialog.accept) # type: ignore
+        self.buttonBox.rejected.connect(TemplateDialog.reject) # type: ignore
+        QtCore.QMetaObject.connectSlotsByName(TemplateDialog)
 
-    def retranslateUi(self, Dialog):
+    def retranslateUi(self, TemplateDialog):
         _translate = QtCore.QCoreApplication.translate
-        Dialog.setWindowTitle(_translate("Dialog", "Dialog"))
-        self.label.setText(_translate("Dialog", "Question"))
-        self.label_2.setText(_translate("Dialog", "Answer"))
-        self.label_8.setText(_translate("Dialog", "Number of Choices"))
-        self.reverse.setText(_translate("Dialog", "Include Reverse"))
-        self.label_4.setText(_translate("Dialog", "Question"))
-        self.label_5.setText(_translate("Dialog", "Answer"))
-        self.label_6.setText(_translate("Dialog", "Group Size"))
-        self.label_7.setText(_translate("Dialog", "Bank Overflow"))
-        self.reverse_2.setText(_translate("Dialog", "Include Reverse"))
-        self.label_9.setText(_translate("Dialog", "Question"))
-        self.label_10.setText(_translate("Dialog", "Answer"))
-        self.reverse_3.setText(_translate("Dialog", "Include Reverse"))
-        self.label_3.setText(_translate("Dialog", "Question Type"))
-        self.questiontype.setItemText(0, _translate("Dialog", "Multiple Choice"))
-        self.questiontype.setItemText(1, _translate("Dialog", "Matching"))
-        self.questiontype.setItemText(2, _translate("Dialog", "Write the Answer"))
+        TemplateDialog.setWindowTitle(_translate("TemplateDialog", "Dialog"))
+        self.label.setText(_translate("TemplateDialog", "Question"))
+        self.label_2.setText(_translate("TemplateDialog", "Answer"))
+        self.label_8.setText(_translate("TemplateDialog", "Number of Choices"))
+        self.reverse.setText(_translate("TemplateDialog", "Include Reverse"))
+        self.label_4.setText(_translate("TemplateDialog", "Question"))
+        self.label_5.setText(_translate("TemplateDialog", "Answer"))
+        self.label_6.setText(_translate("TemplateDialog", "Group Size"))
+        self.label_7.setText(_translate("TemplateDialog", "Bank Overflow"))
+        self.reverse_2.setText(_translate("TemplateDialog", "Include Reverse"))
+        self.label_9.setText(_translate("TemplateDialog", "Question"))
+        self.label_10.setText(_translate("TemplateDialog", "Answer"))
+        self.reverse_3.setText(_translate("TemplateDialog", "Include Reverse"))
+        self.label_3.setText(_translate("TemplateDialog", "Question Type"))
+        self.questiontype.setItemText(0, _translate("TemplateDialog", "Multiple Choice"))
+        self.questiontype.setItemText(1, _translate("TemplateDialog", "Matching"))
+        self.questiontype.setItemText(2, _translate("TemplateDialog", "Write the Answer"))
