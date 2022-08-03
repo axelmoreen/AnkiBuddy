@@ -238,6 +238,7 @@ class HomeworkController(QObject):
             # TODO: play sound
             self.timer.stop()
             self.model.time = 0
+            self.model.stop = True
 
         self.model.info_update.emit()
             

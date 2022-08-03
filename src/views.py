@@ -231,7 +231,7 @@ class HomeworkView(QWidget):
         ) + 
             _sec2Time(self.model.time))
 
-        if self.model.time < 0:
+        if self.model.stop:
             self.ui.labelRight.setText("Time's Up!")
             #TODO: instead of self.close(), simply just pause the screen and open dialog.
             self.close()

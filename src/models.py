@@ -184,7 +184,8 @@ class HomeworkModel(Model):
         self.to_revisit = []
 
         self.curr_cards = []
-
+        self.stop = False
+        
     def next_template(self) -> dict[str, Any]:
         """Get a random template to use (for the next question).
 
