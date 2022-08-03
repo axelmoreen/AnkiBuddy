@@ -3,17 +3,23 @@
 
 """
 Contains the questions dialog, (also referred to as homework wizard).
-The questions dialog pops up when the user clicks the main "Study Buddy" button,
-so it is the entry point for all of the UI within the add-on.
+The questions dialog pops up when the user clicks the main "Study Buddy"
+button, so it is the entry point for all of the UI within the add-on.
 
-The main purpose of this dialog is to set up question templates for use 
-in the practice mode. 
+The main purpose of this dialog is to set up question templates for use
+in the practice mode.
 """
 from __future__ import annotations
 from typing import Any
 
-from ..forms.questions_wizard import *
-from ..subsets import *
+from ..forms.questions_wizard import Ui_QuestionsWizard
+from ..subsets import (
+    Subset,
+    LinearSubset,
+    LearnedSubset,
+    LapsedSubset,
+    NewSubset,
+)
 
 from ..models import ListModel, HomeworkModel
 from ..controllers import ListController, HomeworkController
@@ -27,33 +33,10 @@ from ..stores import NotecardStore, OptionStore
 from aqt.qt import QDialog, QMessageBox
 from aqt import mw
 
-# Questions Dialog - setup the questions that are
-# asked in Homework and Assessments
-#
-# use getResults() to show the dialog
-# state is managed internally and does not rely on a model
-
-# Templates:
-# self.sel_templates = list of templates (dicts)
-### template schema:
-###     type_ind: question type. 0= multiple choice, 1=matching, 2=write the answer
-###     type: question type string. "Multiple Choice", "Matching", or "Write the Answer"
-###     question: Anki field to populate Question(s) from.
-###     answer: Anki field to populate Answer(s) from.
-###     include_reverse: True/False should sometimes reverse the question and answer fields
-# extra fields
-###### for Multiple choice:
-######      number_choices: the number of Answers to choose from.
-###### for Matching:
-######      groupsize: How many many questions/answers should be on a single page to match from.
-######      extrabank: (not implemented currently) will be how many extra answers than questions there are.
-
-# self.subsets[self.curr_subset] -> returns Subset object with information needed
-#           must also include self.sub_group_ind to know which group of the subset to look at. or pass -1 to pass nothing
-
 
 class QuestionsDialog(QDialog, Ui_QuestionsWizard):
-    def __init__(self, notecard_store: NotecardStore, options_store: OptionStore):
+    def __init__(self, notecard_store: NotecardStore,
+                 options_store: OptionStore):
         """Load questions wizard.
 
         Args:
@@ -132,8 +115,9 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
             self.subsetBox.setCurrentIndex(self.curr_subset)
 
     def do_accept(self):
-        """Connected to button box, either reject the user because no templates have been
-        created yet, or create the Homework view instance and begin practice.
+        """Connected to button box, either reject the user because no
+        templates have been created yet, or create the Homework view instance
+        and begin practice.
         """
 
         if len(self.sel_templates) == 0:
@@ -178,7 +162,8 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         # auto-add to selected templates
         row = len(self.templates) - 1
         self.sel_templates.append(row)
-        self.selectedList.addItem(self.get_template_string(self.templates[row]))
+        self.selectedList.addItem(
+            self.get_template_string(self.templates[row]))
 
         # update options store
         self.update_options()
@@ -194,8 +179,9 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         self.templatesList.item(index).setText(self.get_template_string(templ))
         try:
             sel_pos = self.sel_templates.index(index)
-            self.selectedList.item(sel_pos).setText(self.get_template_string(templ))
-        except:
+            self.selectedList.item(sel_pos).setText(
+                self.get_template_string(templ))
+        except IndexError:
             pass  # not in selected templates
         self.update_options()
 
@@ -210,8 +196,8 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         self.options_store.save()
 
     def get_template_string(self, templ: dict[str, Any]) -> str:
-        """Helper method to get a pretty string from a template dict, to display
-        in the list views.
+        """Helper method to get a pretty string from a template dict, to
+        display in the list views.
 
         Args:
             templ (dict[str, Any]): Template dict to translate to string
@@ -242,13 +228,12 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         """Connected to the Edit Template button."""
         if len(self.templates) < 1:
             return
-        # QListWidget.currentRow() is given -1 if nothing is selected
-        # todo : consider selected list as well
-        # if self.templatesList.currentRow() < 0 and self.selectedList.currentRow() < 0: return
+        # TODO: add sel template support here
         if self.templatesList.currentRow() < 0:
             return
         row = self.templatesList.currentRow()
-        d = TemplateDialog(self.notecard_store, self.options_store, self.templates[row])
+        d = TemplateDialog(self.notecard_store, self.options_store,
+                           self.templates[row])
         res = d.getResults()
         if res:
             self.edit_template(row, res)
@@ -267,7 +252,8 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         self.templatesList.takeItem(row)
 
         # delete any reference in self.sel_templates
-        # so far, there can only be one reference in sel_templates, but will write this as if there could be multiple anyway
+        # so far, there can only be one reference in sel_templates,
+        # but will write this as if there could be multiple anyway
         # and,
         # use _below to move all values above row self.sel_templates -1
         to_delete = []
@@ -275,7 +261,8 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
             if (
                 self.sel_templates[i] == row
             ):  # list index out of range after two deletes
-                to_delete.append(i)  # roundabout way to avoid concurrent modification?
+                to_delete.append(i)
+                # is this roundabout way to avoid concurrent modification?
 
         for ele in to_delete:
             # delete from model
@@ -302,12 +289,14 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
             self.sel_templates.append(row)
 
             # add to ui
-            self.selectedList.addItem(self.get_template_string(self.templates[row]))
+            self.selectedList.addItem(self.get_template_string(
+                self.templates[row]))
 
         self.update_options()
 
     def remove_sel_template_sig(self):
-        """Connected to the (left arrow) button to unselect a template for practice."""
+        """Connected to the (left arrow) button to unselect a template for
+        practice."""
         if self.selectedList.currentRow() < 0:
             return
         row = self.selectedList.currentRow()
@@ -339,7 +328,8 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         self.group_index_box.setMinimum(0)
 
     def subset_index_sig(self, ind: int):
-        """Connected to the changes in the subset combo box, will save config and update the rest of the UI.
+        """Connected to the changes in the subset combo box, will save config
+        and update the rest of the UI.
 
         Args:
             ind (int): current index of the subset combo box.
@@ -365,7 +355,8 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         self.update_subset_ui()
 
     def group_index_sig(self, ind: int):
-        """Connected to changes in the group number (subset group index) spinbox.
+        """Connected to changes in the group number (subset group index)
+        spinbox.
 
         Args:
             ind (int): _description_
@@ -373,17 +364,20 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         self.sub_group_ind = ind
 
     def preview_subset_sig(self):
-        """Connected to the List Button, to create a List view using the current subset settings."""
+        """Connected to the List Button, to create a List view using the
+        current subset settings."""
         subset_text = (
             self.subsets[self.curr_subset].get_subset_name()
             + " - "
-            + ("All" if self.all_groups else "Group " + str(self.sub_group_ind))
+            + ("All" if self.all_groups else "Group "
+                + str(self.sub_group_ind))
         )
 
         if self.all_groups:
             _subset = self.subsets[self.curr_subset].get_all_cards()
         else:
-            _subset = self.subsets[self.curr_subset].get_cards(self.sub_group_ind)
+            _subset = self.subsets[self.curr_subset].get_cards(
+                self.sub_group_ind)
 
         model = ListModel(
             self.notecard_store,
@@ -398,16 +392,20 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
 
     def show_options_sig(self):
         """Connected to the Options button, to create the Options dialog."""
-        self.options_dialog = OptionsDialog(self.notecard_store, self.options_store)
-        self.options_dialog.buttonBox.accepted.connect(self.update_from_options)
+        self.options_dialog = OptionsDialog(
+            self.notecard_store, self.options_store)
+        self.options_dialog.buttonBox.accepted.connect(
+            self.update_from_options)
         # self.update_from_options()
         self.options_dialog.show()
 
     def update_from_options(self):
-        """Connected to the accepted button box of an options dialog (so when the options change),
-        to update things here in this questions wizard as necessary.
+        """Connected to the accepted button box of an options dialog (so when
+        the options change), to update things here in this questions wizard as
+        necessary.
         """
-        lesson_size = self.options_store.get_globals(self.notecard_store.deck_name)[
+        lesson_size = self.options_store.get_globals(
+            self.notecard_store.deck_name)[
             "lesson_size"
         ]
         for subset in self.subsets:

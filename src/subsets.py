@@ -67,8 +67,8 @@ class Subset:
         Returns:
             str: Subgroup information
         """
-        return ("Group " + str(index + 1) + " / " +
-                str(self.get_max_index() + 1))
+        return "Group " + str(index + 1) + " / " + str(self.get_max_index()
+                                                       + 1)
 
 
 # linear subset = evenly spaced group of cards for grouping into lessons
@@ -168,9 +168,7 @@ class LapsedSubset(Subset):
         self.notecard_store = notecard_store
         self.lesson_size = lesson_size
         for i in range(len(notecard_store.notecards)):
-            notecard_store.notecards[
-                i
-            ]._lpos = i  # field reserved for lapsed subset
+            notecard_store.notecards[i]._lpos = i  # field reserved for this
         self.sorted_ = sorted(
             self.notecard_store.notecards, key=lambda card: card.lapses,
             reverse=True

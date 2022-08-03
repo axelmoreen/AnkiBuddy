@@ -16,17 +16,18 @@ from aqt.qt import (
     QSize,
 )
 from aqt.sound import av_player
-
 import re
 
-# Answer Button - can display rich text and handle sound tags
-# adapted from https://stackoverflow.com/questions/2990060/qt-qpushbutton-text-formatting
+
+# Answer Button - can display rich text and handle sound tags. Adapted from:
+# https://stackoverflow.com/questions/2990060/qt-qpushbutton-text-formatting
 class AnswerButton(QPushButton):
     def __init__(self, parent: QWidget = None, text: str = None):
         """Create answer button.
 
         Args:
-            parent (QWidget, optional): Parent widget if applicable. Defaults to None.
+            parent (QWidget, optional): Parent widget if applicable. Defaults
+                to None.
             text (str, optional): Text to set. Defaults to None.
         """
         if parent is not None:
@@ -69,7 +70,8 @@ class AnswerButton(QPushButton):
         m = re.search("\[sound:[\w.\-]{0,}\]", text)
         if m:
             self.__lbl.setText(
-                "Play  <a href='#' style='color: #32a3fa; text-decoration: none;'>▶</a>"
+                "Play  <a href='#' style='color: #32a3fa;"
+                + "text-decoration: none;'>▶</a>"
             )
 
             self.sound = m.group(0)[7:-1]

@@ -6,8 +6,8 @@ Contains the Question Label widget. This is used in Multiple
 Choice and in Write the Answer to display the question.
 
 It was originally a subclass of QLabel, but it has been made
-a subclass of AnkiWebView because QLabel rich tags don't support 
-ruby tags (for furigana). Could use clean-up / refactoring. 
+a subclass of AnkiWebView because QLabel rich tags don't support
+ruby tags (for furigana). Could use clean-up / refactoring.
 """
 from aqt.qt import (
     QWidget,
@@ -16,14 +16,14 @@ from aqt.qt import (
 from aqt.webview import AnkiWebView
 from aqt.sound import av_player
 import re
-from aqt import mw
+
 
 # QLabel that can also accept [sound] tags.
 # default behavior is to auto-play the sound when the widget is loaded.
 # shows a button style if it is a sound
 # regex pattern: \[sound:[\w.\-]{0,}\]
-
-# recently was changed from QLabel to webview to support ruby tags, needs cleanup / further testing
+# recently was changed from QLabel to webview to support ruby tags, needs
+# cleanup / further testing
 class QuestionLabel(AnkiWebView):
     def __init__(self, parent: QWidget):
         """Load question label."""
@@ -44,9 +44,11 @@ class QuestionLabel(AnkiWebView):
     def setText(self, text):
         """Override QLabel setText() to handle sound tags.
 
-        The sound gets auto-played here, since it will be run when the question is loaded anyway.
+        The sound gets auto-played here, since it will be run when the
+            question is loaded anyway.
 
-        If it is a sound, then the text will be replaced with a link so that the user can re-play the sound if needed.
+        If it is a sound, then the text will be replaced with a link so that
+            the user can re-play the sound if needed.
 
         If it is not a sound, the text just gets set as normal.
 
@@ -57,7 +59,9 @@ class QuestionLabel(AnkiWebView):
 
         m = re.search("\[sound:[\w.\-]{0,}\]", text)
         style_string = (
-            "style='position: absolute; top: 50%; width: 95%; transform: translateY(-50%); margin: 0 auto; text-align: center; font-size: "
+            "style='position: absolute; top: 50%; width: 95%;"
+            + "transform:translateY(-50%); margin: 0 auto; text-align: center;"
+            + "font-size: "
             + str(4 * self.font().pointSize())
             + "px; font-family: "
             + self.font().family()
@@ -73,12 +77,14 @@ class QuestionLabel(AnkiWebView):
         """
         content = "<span></span>"
         if m:
-            # super().setText("<a href='#' style='color: #32a3fa; text-decoration: none;'><span style='color: #fff;'>Play </span>▶</a>")
-            # html_out = "<p><a href='#' style='color: #32a3fa; text-decoration: none;'><span style='color: #fff;'>Play </span>▶</a></p>"
-
             self.sound = m.group(0)[7:-1]
             self._isSound = True
-            content = "<a href='#' onclick='pycmd(\"playsound\")'; style='color: #32a3fa; text-decoration: none; font-size: 35px;'><span style='color: #fff;'>Play </span>▶</a>"
+            content = (
+                "<a href='#' onclick='pycmd(\"playsound\")'; "
+                + "style='color: #32a3fa; text-decoration: none;"
+                + "font-size: 35px;'><span style='color: #fff;'>"
+                + "Play </span>▶</a>"
+            )
             av_player.play_file(self.sound)
         else:
             # super().setText(text)
@@ -106,12 +112,16 @@ class QuestionLabel(AnkiWebView):
         if "[" not in text:
             return text
         to_replace = []
-        # TODO: add numbers
         # is_kanji = lambda char: u'\u3400'<= char <= u'\u4DB5' or \
         #    u'\u4E00' <= char <= u'\u9FCB' or u'\uF900' <= char <= u'\uFA6A'
-        is_kanji = lambda char: True
-        line = "<ruby style='display: inline-flex; flex-direction: column-reverse;'><rb style='line-height: 1; display: inline;'>{}</rb><rt style='line-height: 1; display: inline;'>{}</rt></ruby>"
-        # line = "<table style=\"-qt-table-type: root\"><tr ><td style=\"line-height: 20%; font-size: 5pt;\">{}</td></tr><tr ><td style=\"line-height: 80%;\">{}<tr><td></table>"
+        is_kanji = True
+        line = (
+            "<ruby style='display: inline-flex; flex-direction:"
+            + "column-reverse;'><rb style='line-height: 1;"
+            + "display: inline;'>{}</rb><rt style="
+            + "'line-height: 1; display: inline;'>{}</rt></ruby>"
+        )
+
         for word in text.split(" "):
             is_furi = False
             furi_start = -1
@@ -147,7 +157,7 @@ class QuestionLabel(AnkiWebView):
             print("replacing with furigana")
             to_replace.append(
                 (
-                    word[t + 1 : furi_end + 1],
+                    word[t + 1:furi_end + 1],
                     line.format(rkanj_str[::-1], word[furi_start:furi_end]),
                 )
             )

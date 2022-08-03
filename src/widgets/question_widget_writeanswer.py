@@ -3,11 +3,11 @@
 
 """
 Contains the Write the Answer Widget - widget for a written
-question. 
+question.
 
-Widget manages its own state and passes signals to its parent. The layout is also
-generated from code in this class. See ./question_widget.py for more info
-about the question widgets. 
+Widget manages its own state and passes signals to its parent. The layout is
+also generated from code in this class. See ./question_widget.py for more info
+about the question widgets.
 """
 
 from .question_widget import QuestionWidget
@@ -30,9 +30,11 @@ from aqt import mw
 
 from ..style import confirm_button_style
 
+
 # Write the answer widget
 # Shows a question at the top and you must write the answer in the line edit
-# Support for japanese learners to use a "virtual keyboard" to help learn how to type with IME, or to entirely replace the keyboard with virtual buttons
+# Support for japanese learners to use a "virtual keyboard" to help learn how
+# to type with IME, or to entirely replace the keyboard with virtual buttons
 # - planned pinyin support
 class WriteTheAnswerWidget(QuestionWidget):
     def load(self):
@@ -83,7 +85,8 @@ class WriteTheAnswerWidget(QuestionWidget):
         if self.show_keyboard:
             if not hasattr(mw, "_bKeyboard"):
                 if self.conf["write_keyboard_type"] == 0:
-                    mw._bKeyboard = KeyboardView(translation=KB_JAPANESE_HIRAGANA)
+                    mw._bKeyboard = KeyboardView(
+                        translation=KB_JAPANESE_HIRAGANA)
 
             if not mw._bKeyboard.isVisible():
                 mw._bKeyboard.showNormal()

@@ -3,11 +3,11 @@
 
 """
 Contains the Multiple Choice Widget - widget for a multiple choice
-question. 
+question.
 
-Widget manages its own state and passes signals to its parent. The layout is also
-generated from code in this class. See ./question_widget.py for more info
-about the question widgets. 
+Widget manages its own state and passes signals to its parent. The layout is
+also generated from code in this class. See ./question_widget.py for more info
+about the question widgets.
 """
 
 from .question_widget import QuestionWidget
@@ -15,6 +15,7 @@ from .answer_button import AnswerButton
 from .question_label import QuestionLabel
 from aqt.qt import QVBoxLayout, QGridLayout, Qt, QPushButton
 from ..style import button_style, confirm_button_style
+
 
 # multiple choice widget
 # Shows a Question and then a # of answer buttons to press
@@ -33,11 +34,7 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
             self.options["question_field"],
         )
         self.questionLabel.setText(self.options["question"])
-        # self.set_font_size(self.questionLabel, self.conf["choice_question_size"])
 
-        # self.questionLabel.setAlignment(Qt.AlignCenter)
-
-        # self.questionLabel.setTextFormat(Qt.RichText)
         self.vlayout.addWidget(self.questionLabel)
         self.gridLayout = QGridLayout()
 
@@ -52,7 +49,8 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
             button.setStyleSheet(button_style)
             # self.set_font_size(button, self.conf["choice_answer_size"])
             self.handle_font(
-                button, self.conf["choice_answer_size"], self.options["answer_field"]
+                button, self.conf["choice_answer_size"],
+                self.options["answer_field"]
             )
 
             button.setAutoDefault(False)
@@ -61,10 +59,13 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
             button.setCheckable(True)
 
             self.handle_field_sound(
-                button, self.options["answer_field"], self.options["answer_cards"][i]
+                button, self.options["answer_field"],
+                self.options["answer_cards"][i]
             )
-            # currently if buttons are allowed to have sound and not confirm answer, sound may not play/might be buggy
-            # but this if block could be moved above the line above to create that behavior.
+            # currently if buttons are allowed to have sound and not confirm
+            # answer, sound may not play/might be buggy
+            # but this 'if block' could be moved above the line above to create
+            # that behavior.
             if button.is_sound():
                 # change default behavior
                 self.confirm_answer = True
@@ -78,7 +79,8 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
             self.confirmButton.clicked.connect(self.confirm_callback)
             self.confirmButton.setStyleSheet(confirm_button_style)
             self.set_font_size(self.confirmButton, 14)
-            self.gridLayout.addWidget(self.confirmButton, 1 + (num_ans // 2), 0, 1, 2)
+            self.gridLayout.addWidget(self.confirmButton, 1 + (num_ans // 2),
+                                      0, 1, 2)
 
         self.vlayout.addLayout(self.gridLayout)
 
@@ -118,8 +120,8 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
         return self.options["answers"][self.options["correct_answer"]]
 
     def show_answer(self):
-        """Visually show which button was the correct one by disabling/flattening
-        the others. Called by the parent controller.
+        """Visually show which button was the correct one by disabling
+        and flattening the others. Called by the parent controller.
         """
         for i in range(len(self.buttons)):
             self.buttons[i].setEnabled(i == self.options["correct_answer"])

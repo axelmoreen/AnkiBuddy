@@ -1,26 +1,23 @@
 # Copyright: Axel Moreen, 2022
 # License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 """
-Hooks module does the injections into Anki for 
-the "Study Buddy" button to appear. 
+Hooks module does the injections into Anki for
+the "Study Buddy" button to appear.
 """
 from __future__ import annotations
 from typing import Any
 
 from aqt import gui_hooks
 import aqt
+from aqt import mw
 
-from .views import *
-from .stores import *
-from .models import *
-from .controllers import *
-from .const import *
-from .dialogs import *
-from .style import button_style
+from .const import options, notecards
+from .dialogs import QuestionsDialog
 
 
 def patch_all():
-    """Do all the patches together. Should be called from the addon's __init__.py."""
+    """Do the patches AnkiBuddy requires.
+    Should be called from the addon's __init__.py."""
     gui_hooks.webview_will_set_content.append(_inject_overview)
     gui_hooks.webview_did_receive_js_message.append(_receive_pycmd)
 
@@ -43,9 +40,11 @@ def _receive_pycmd(
     handled: tuple[bool, Any], message: str, context: Any
 ) -> tuple[bool, Any]:
     """Handle webview_did_receive_js_message, i.e. the pycmd hooks from html.
-    Checks if the button that was added in _inject_overview was pressed, as it has the pycmd("BuddyWizard") onclick command.
+    Checks if the button that was added in _inject_overview was pressed, as it
+    has the pycmd("BuddyWizard") onclick command.
 
-    If our add-on's button was pressed, then it will open the questions dialog for the user to select templates / subset / start practicing.
+    If our add-on's button was pressed, then it will open the questions dialog
+    for the user to select templates / subset / start practicing.
     """
     if message == "BuddyWizard":
         curr_did = mw.col.decks.current()["id"]
@@ -63,16 +62,18 @@ def _receive_pycmd(
 
 overview_content = """
 <div style="position: absolute; bottom: 15px; right: 15px;">
-<button id="buddybutton" style="background: transparent; min-height: 20px; border: 5px solid #32a3fa; border-radius: 8px;" onclick="pycmd(\'BuddyWizard\')">Study Buddy</button>
+<button id="buddybutton" style="background: transparent; min-height: 20px;
+    border: 5px solid #32a3fa; border-radius: 8px;"
+    onclick="pycmd(\'BuddyWizard\')">Study Buddy</button>
 </div>
 """
 
 overview_css = """
 <style>
 #buddybutton{
-    background: transparent; 
-    min-height: 20px; 
-    border: 5px solid #555; 
+    background: transparent;
+    min-height: 20px;
+    border: 5px solid #555;
     border-radius: 8px;
 }
 </style>

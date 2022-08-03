@@ -8,8 +8,8 @@ This dialog controls the config for the add-on and links them
 to its UI. 
 """
 from ..stores import NotecardStore, OptionStore
-from ..forms.options import *
-from ..forms.field_options import *
+from ..forms.options import Ui_OptionsDialog
+from ..forms.field_options import Ui_FieldOptions
 from aqt.qt import (
     QDialog,
     QListWidgetItem,
@@ -21,12 +21,15 @@ from aqt import mw
 
 
 class OptionsDialog(Ui_OptionsDialog, QDialog):
-    def __init__(self, notecard_store: NotecardStore, options_store: OptionStore):
+    def __init__(self, notecard_store: NotecardStore,
+                 options_store: OptionStore):
         """Setup the options dialog.
 
         Args:
-            notecard_store (NotecardStore): Instance of notecard store to load the model from.
-            options_store (OptionStore): Option store to modify and save config with.
+            notecard_store (NotecardStore): Instance of notecard store to load
+                the model from.
+            options_store (OptionStore): Option store to modify and save
+                config with.
         """
         super(OptionsDialog, self).__init__()
         self.setupUi(self)
@@ -36,40 +39,39 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
 
         self.options_store = options_store
         self.notecard_store = notecard_store
-        ### initialize "field" comboboxes
+        # initialize "field" comboboxes
 
         self.load_values()
-        ### signals
+        # signals
         # "OK" exiting options
         self.buttonBox.accepted.connect(self.do_accept)
 
         # timer checkbox to enable spinbox
         self.gen_cbTimed.stateChanged.connect(
-            lambda state, widget=self.gen_timedAmount: self._bind_enabled_widget(
+            lambda state, widget=self.gen_timedAmount:
+            self._bind_enabled_widget(
                 state, widget
             )
         )
         # revisit checkbox to enable spinbox
         self.gen_cbDoRevisit.stateChanged.connect(
-            lambda state, widget=self.gen_revisitSteps: self._bind_enabled_widget(
+            lambda state, widget=self.gen_revisitSteps:
+            self._bind_enabled_widget(
                 state, widget
             )
         )
         # sound checkbox to enable volume slider
         self.gen_cbDoSounds.stateChanged.connect(
-            lambda state, widget=self.gen_soundVolume: self._bind_enabled_widget(
+            lambda state, widget=self.gen_soundVolume:
+            self._bind_enabled_widget(
                 state, widget
             )
         )
         # edit field button
         self.gen_editFieldButton.clicked.connect(self._edit_field_btn)
-        # MC play audio on button press to enable combo box (moved to edit field...)
-        # self.mc_cbAudio.stateChanged.connect(lambda state, widget=self.mc_audioField: self._bind_enabled_widget(state, widget))
-        # Matching play audio on button press to enable combo box (moved to edit field..)
-        # self.ma_cbAudio.stateChanged.connect(lambda state, widget=self.ma_audioField: self._bind_enabled_widget(state, widget))
-        # Show virtual keyboard enable type combobox
         self.wr_cbKeyboard.stateChanged.connect(
-            lambda state, widget=self.wr_coKeyboardType: self._bind_enabled_widget(
+            lambda state, widget=self.wr_coKeyboardType:
+            self._bind_enabled_widget(
                 state, widget
             )
         )
@@ -81,7 +83,7 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
         self.list_moveDownButton.clicked.connect(self._list_move_down_btn)
         self.list_setFrontButton.clicked.connect(self._list_front_back_btn)
 
-        ### hidden widgets (unsupported currently)
+        # hidden widgets (unsupported currently)
         self.gen_soundVolume.setVisible(False)
         self.gen_SoundVolumeLabel.setVisible(False)
 
@@ -94,9 +96,10 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
         into their respective widgets in the options dialog.
         """
         g = self.options_store.get_globals(self.notecard_store.deck_name)
-        l = self.options_store.get_list_config(self.notecard_store.deck_name)
-        h = self.options_store.get_homework_config(self.notecard_store.deck_name)
-        ### General
+        lc = self.options_store.get_list_config(self.notecard_store.deck_name)
+        h = self.options_store.get_homework_config(
+            self.notecard_store.deck_name)
+        # General
         # Show answer before moving on
         self.gen_showAnswer.setChecked(g["show_answer_before_next"])
         # Enable/disable timer
@@ -122,19 +125,19 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
         # fields options
         self._load_notecard_fields(self.gen_fieldsCb)
 
-        ### List
+        # List
         # load types of fields to use as list columns
         self._load_notecard_fields(self.list_fieldSelCo)
         # load columns / frontback
-        for i in range(len(l["columns"])):
-            item = QListWidgetItem(l["columns"][i])
+        for i in range(len(lc["columns"])):
+            item = QListWidgetItem(lc["columns"][i])
             font = item.font()
-            font.setBold(bool(l["front"][i]))
-            font.setItalic(bool(l["front"][i]))
+            font.setBold(bool(lc["front"][i]))
+            font.setItalic(bool(lc["front"][i]))
             item.setFont(font)
             self.list_list.addItem(item)
 
-        ### Multiple Choice
+        # Multiple Choice
         # confirm answer
         self.mc_cbConfirm.setChecked(h["choice_confirm_answer"])
         # mc question font size
@@ -142,11 +145,11 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
         # mc answer button font size
         self.mc_answerFontSize.setValue(h["choice_answer_size"])
 
-        ### Matching
+        # Matching
         # matching answer button font size
         self.ma_answerFontSize.setValue(h["matching_answer_size"])
 
-        ### Write the answer
+        # Write the answer
         # show virtual keyboard
         self.wr_cbKeyboard.setChecked(h["write_show_keyboard"])
         self.wr_coKeyboardType.setEnabled(h["write_show_keyboard"])
@@ -160,9 +163,10 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
         option store dicts, and then save that to a file.
         """
         g = self.options_store.get_globals(self.notecard_store.deck_name)
-        l = self.options_store.get_list_config(self.notecard_store.deck_name)
-        h = self.options_store.get_homework_config(self.notecard_store.deck_name)
-        ### General options
+        lc = self.options_store.get_list_config(self.notecard_store.deck_name)
+        h = self.options_store.get_homework_config(
+            self.notecard_store.deck_name)
+        # General options
         # show answer before moving on
         g["show_answer_before_next"] = bool(self.gen_showAnswer.isChecked())
         # enable/disable timer
@@ -182,9 +186,7 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
         # sort by field
         g["sort"] = str(self.gen_sortByCb.currentText())
 
-        # TODO: more field options here??
-
-        ### List
+        # List
         cols = []
         front = []
         for i in range(self.list_list.count()):
@@ -192,23 +194,24 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
             cols.append(item.text())
             front.append(bool(item.font().bold()))
 
-        l["columns"] = cols
-        l["front"] = front
+        lc["columns"] = cols
+        lc["front"] = front
 
-        ### Multiple Choice
+        # Multiple Choice
         h["choice_confirm_answer"] = bool(self.mc_cbConfirm.isChecked())
         h["choice_question_size"] = int(self.mc_questionFontSize.value())
         h["choice_answer_size"] = int(self.mc_answerFontSize.value())
-        ### Matching
+        # Matching
         h["matching_answer_size"] = int(self.ma_answerFontSize.value())
-        ### Write the answer
+        # Write the answer
         h["write_show_keyboard"] = bool(self.wr_cbKeyboard.isChecked())
         h["write_keyboard_type"] = int(self.wr_coKeyboardType.currentIndex())
         h["write_question_size"] = int(self.wr_questionFontSize.value())
 
         self.options_store.config["decks"][self.notecard_store.deck_name] = g
-        self.options_store.config["list"][self.notecard_store.deck_name] = l
-        self.options_store.config["homework"][self.notecard_store.deck_name] = h
+        self.options_store.config["list"][self.notecard_store.deck_name] = lc
+        self.options_store.config["homework"][
+            self.notecard_store.deck_name] = h
 
         self.options_store.save()
 
@@ -280,7 +283,8 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
         the field that is selected in the gen_fieldsCb combobox.
         """
         self._fieldopts = FieldOptionsDialog(
-            self.options_store, self.notecard_store, self.gen_fieldsCb.currentText()
+            self.options_store, self.notecard_store,
+            self.gen_fieldsCb.currentText()
         )
         self._fieldopts.show()
 
@@ -292,8 +296,10 @@ class FieldOptionsDialog(QDialog, Ui_FieldOptions):
         """Load the field options dialog..
 
         Args:
-            options_store (OptionStore): instance of option store to write config.
-            note_store (NotecardStore): instance of notecard store to get card model.
+            options_store (OptionStore): instance of option store to write
+                config.
+            note_store (NotecardStore): instance of notecard store to get card
+                model.
             field (str): model field to edit options for.
         """
         super(FieldOptionsDialog, self).__init__()
@@ -326,12 +332,14 @@ class FieldOptionsDialog(QDialog, Ui_FieldOptions):
         self.buttonBox.accepted.connect(self.do_accept)
 
     def do_accept(self):
-        """Connected to buttonBox. Set field options, and save to config file."""
+        """Connected to buttonBox. Set field options, and save to config file.
+        """
         self.field_settings[0] = self.fontTypeBox.currentFont().family()
         self.field_settings[1] = self.fontSizeOffsetBox.value()
         self.field_settings[2] = self.fieldAudioBox.currentText()
 
-        self.options_store.config["decks"][self.note_store.deck_name]["field_settings"][
+        self.options_store.config["decks"][self.note_store.deck_name][
+            "field_settings"][
             self.field
         ] = self.field_settings
         self.options_store.save()

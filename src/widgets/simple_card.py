@@ -3,8 +3,8 @@
 
 """
 Contains SimpleCardView, which is a QWidget that can be shown
-representing the back of an Anki card. It can be used from 
-anywhere and manages its own state / pycmd signals. 
+representing the back of an Anki card. It can be used from
+anywhere and manages its own state / pycmd signals.
 """
 from aqt.webview import AnkiWebView
 from anki.sound import SoundOrVideoTag
@@ -44,7 +44,8 @@ class SimpleCardView(AnkiWebView):
         # ONLY if the webviews are created in the same method scope
         # (i.e. after a Matching question)
 
-        # unknown if this still exists after breaking out this code to its own class.
+        # unknown if this still exists after breaking out this code to its own
+        # class.
         # regardless, just putting the av tag into the pycmd directly here.
         for i in range(len(card.answer_av_tags())):
             html = html.replace(

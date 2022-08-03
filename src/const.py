@@ -4,8 +4,8 @@
 """
 Handles singleton instances of NotecardStore
 and OptionStore. Used specifically in hooks.py to pass these
-instances to the rest of the code, but should be avoided 
-imported elsewhere to avoid circular imports. 
+instances to the rest of the code, but should be avoided
+imported elsewhere to avoid circular imports.
 """
 from .stores import OptionStore, NotecardStore
 
@@ -36,7 +36,8 @@ class NotecardStoreManager:
             did (int): Deck id.
 
         Returns:
-            NotecardStore: instantiated notecard store for use within the add-on.
+            NotecardStore: instantiated notecard store for use within the
+                add-on.
         """
         if self.has_store(did):
             return self.stores[did]
@@ -49,7 +50,7 @@ class NotecardStoreManager:
             if "sort" in options.get_globals(store.deck_name):
                 try:
                     store.sort(options.get_globals(store.deck_name)["sort"])
-                except:
+                except RuntimeError:
                     print("Warning: AnkiBuddy could not sort deck")
             self.stores[did] = store
             return store

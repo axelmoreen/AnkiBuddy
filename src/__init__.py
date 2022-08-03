@@ -3,8 +3,6 @@
 """
 Main entry point for the Anki add-on.
 """
-from .stores import *
 from .hooks import patch_all
-from .const import *
 
 patch_all()

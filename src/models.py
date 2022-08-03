@@ -80,9 +80,7 @@ class ListModel(Model):
                 row.append(str(notecard.fields[self.columns[j]]))
             return tuple(row)
 
-        if (
-            not subset
-        ):  # subset should always be passed, so should not be executed
+        if not subset:  # subset should always be passed, so not executed
             self.length = note_store.length()
             for notecard in note_store.notecards:
                 self.rows.append(build_row(notecard))
@@ -207,9 +205,7 @@ class HomeworkModel(Model):
 
         self.card_history = set()  # previous cards
 
-        self.wait_wrong = self.globals[
-            "show_answer_before_next"
-        ]
+        self.wait_wrong = self.globals["show_answer_before_next"]
 
         self.true_random = self.globals["true_random"]
         self.cards_shuffle = [i for i in range(len(self.cards))]

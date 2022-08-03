@@ -3,11 +3,11 @@
 
 """
 Contains the Matching Widget - widget for a matching
-question. 
+question.
 
-Widget manages its own state and passes signals to its parent. The layout is also
-generated from code in this class. See ./question_widget.py for more info
-about the question widgets. 
+Widget manages its own state and passes signals to its parent. The layout is
+also generated from code in this class. See ./question_widget.py for more info
+about the question widgets.
 """
 from .question_widget import QuestionWidget
 from .answer_button import AnswerButton
@@ -16,6 +16,7 @@ from aqt.qt import QVBoxLayout, QGridLayout, Qt, QMouseEvent
 
 import random
 from ..style import button_style, button_style_custom_border
+
 
 # Matching widget
 # Shows two columns of buttons to match
@@ -41,7 +42,8 @@ class MatchingWidget(QuestionWidget):
         self.l_buttons = []
         self.r_buttons = []
         for i in range(self.size):
-            buttonL = AnswerButton(text=self.options["questions"][i], parent=self)
+            buttonL = AnswerButton(text=self.options["questions"][i],
+                                   parent=self)
             buttonL.clicked.connect(lambda ch, i=i: self.left_callback(i))
             buttonL.setStyleSheet(button_style)
             buttonL.setAutoDefault(False)
@@ -53,7 +55,8 @@ class MatchingWidget(QuestionWidget):
                 self.options["question_field"],
             )
             self.handle_field_sound(
-                buttonL, self.options["question_field"], self.options["cards"][i]
+                buttonL, self.options["question_field"],
+                self.options["cards"][i]
             )
             self.l_buttons.append(buttonL)
             self.left_layout.addWidget(self.l_buttons[i])
@@ -67,7 +70,8 @@ class MatchingWidget(QuestionWidget):
             buttonR.setFocusPolicy(Qt.NoFocus)
 
             self.handle_font(
-                buttonR, self.conf["matching_answer_size"], self.options["answer_field"]
+                buttonR, self.conf["matching_answer_size"],
+                self.options["answer_field"]
             )
             self.handle_field_sound(
                 buttonR,
@@ -94,7 +98,8 @@ class MatchingWidget(QuestionWidget):
 
     def left_callback(self, i: int):
         """Callback for the left side of buttons to compare with the right.
-        The button index increases down the left side from 0 -> number of answers.
+        The button index increases down the left side from 0 -> number of
+        answers.
         Args:
             i (int): The button index that was pressed.
         """
@@ -114,7 +119,8 @@ class MatchingWidget(QuestionWidget):
                 self.sel_left = -1
                 self.sel_right = -1
 
-                self.questionAnswered.emit(True, len(self.answered) < self.size)
+                self.questionAnswered.emit(
+                    True, len(self.answered) < self.size)
 
             else:
                 self.questionAnswered.emit(False, True)
@@ -128,7 +134,8 @@ class MatchingWidget(QuestionWidget):
 
     def right_callback(self, i: int):
         """Callback for the right side of buttons to compare with the left.
-        The button index increases down the right side from 0 -> number of answers.
+        The button index increases down the right side from 0 -> number of
+        answers.
         Args:
             i (int): The button index that was pressed.
         """
@@ -148,7 +155,8 @@ class MatchingWidget(QuestionWidget):
                 self.sel_left = -1
                 self.sel_right = -1
 
-                self.questionAnswered.emit(True, len(self.answered) < self.size)
+                self.questionAnswered.emit(
+                    True, len(self.answered) < self.size)
             else:
                 self.questionAnswered.emit(False, True)
                 self.unsel_buttons()
@@ -160,8 +168,10 @@ class MatchingWidget(QuestionWidget):
             self.sel_right = i
 
     def mousePressEvent(self, event: QMouseEvent):
-        """Mouse press event, use this to clear the current selection of buttons.
-        Since the event is called here, it must have not been handled by one of the child widgets
+        """Mouse press event, use this to clear the current selection of
+        buttons.
+        Since the event is called here, it must have not been handled by one
+        of the child widgets
         (i.e. it wasn't handled by a button).
         """
         super().mousePressEvent(event)
@@ -173,27 +183,32 @@ class MatchingWidget(QuestionWidget):
 
         Currently, this uses random colors some distance apart,
         which may not be optimal or color-blind friendly at all. There is also
-        no guarantee that the color may not accidentally blend in with the parent layout's background, etc.
+        no guarantee that the color may not accidentally blend in with the
+        parent layout's background, etc.
 
-        This behavior is "fine" for now, but it could be improved significantly. Perhaps
-        drawing lines from button to button would be the most color-friendly improvement.
+        This behavior is "fine" for now, but it could be improved
+        significantly. Perhaps drawing lines from button to button would be
+        the most color-friendly improvement.
         """
         used_bgcols = []
-        used_fgcols = []
         for i in range(len(self.l_buttons)):
             buttonL = self.l_buttons[self.order[i]]
             buttonR = self.r_buttons[i]
-            # bg col
+
             # pick a color
-            r = lambda: random.randint(0, 255)
+            def r():
+                return random.randint(0, 255)
+
             # try to avoid similar colors...
-            d = lambda col1, col2, i: (col1[i] - col2[i]) ** 2
+            def d(col1, col2, i):  # square dist fn
+                return (col1[i] - col2[i]) ** 2
+
             su_sq = (
                 lambda col1, col2: d(col1, col2, 0)
                 + d(col1, col2, 1)
                 + d(col1, col2, 2)
             )
-            min_sq_dist = 11000  # sqrt(11000) ~= 100, so like +- 30 diff per color.
+            min_sq_dist = 11000  # like +- 30 diff per color.
 
             def valid_col(col, col_array):
                 for other in col_array:
@@ -208,18 +223,8 @@ class MatchingWidget(QuestionWidget):
                 i += 1
                 min_sq_dist -= 100
                 if i > 50:
-                    break  # don't know how else to prevent infinite recursion here..
-            """"
-            r2 = lambda: random.randint(120, 220)
-            fgcol_pick = (r2(), r2(), r2())
-            j = 0
-            while not valid_col(fgcol_pick, used_fgcols):
-                fgcol_pick = (r2(), r2(), r2())
-                j += 1
-                if j > 50: break
-            used_fgcols.append(fgcol_pick)
-            col2 = '#%02X%02X%02X' % fgcol_pick
-            """
+                    break  # preventing infinite recursion here
+
             used_bgcols.append(bgcol_pick)
             col = "#%02X%02X%02X" % bgcol_pick
 

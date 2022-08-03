@@ -4,13 +4,14 @@
 """
 Contains the event line edit widget, which gets used specifically in the
 Write the Answer layout so that the parent layout can get IME
-events when it is focused, for the virtual keyboard. 
+events when it is focused, for the virtual keyboard.
 """
 from aqt.qt import (
     QLineEdit,
     QKeyEvent,
     QInputMethodEvent,
 )
+
 
 # Line edit that passes key press events to its parent
 class EventLineEdit(QLineEdit):

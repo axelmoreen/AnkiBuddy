@@ -4,30 +4,32 @@
 """
 Keyboard module for displaying virtual keyboards alongside the Write the Answer
 widget. Designed to match the Windows Japanese hiragana layout, but this
-differs on Mac (untested on Linux).   
+differs on Mac (untested on Linux).
 
 Currently experimental, see issue tracker.
 """
 from __future__ import annotations
 from .forms.keyboard import Ui_Keyboard
-from aqt.qt import QDialog, QWidget, QTimer, QPushButton, QKeyEvent, QLineEdit
+from aqt.qt import QDialog, QTimer, QPushButton, QKeyEvent, QLineEdit
 from aqt import mw
 
 import unicodedata
 
 
 class KeyboardView(QDialog, Ui_Keyboard):
-    def __init__(self, translation: List[Tuple] = None):
+    def __init__(self, translation: list[tuple] = None):
         """Initialize the keyboard view.
 
         Args:
-            translation (List[Tuple], optional): Keyboard type to load. See the definitions at the bottom of keyboards.py. Defaults to None.
+            translation (List[Tuple], optional): Keyboard type to load. See
+                the definitions at the bottom of keyboards.py.
+                Defaults to None.
         """
         super(KeyboardView, self).__init__()
         self.setupUi(self)
         self.setWindowTitle("Virtual Keyboard")
         self.setWindowIcon(mw.windowIcon())
-        self.field_entry = None  # list of lineedits to modify from this keyboard
+        self.field_entry = None  # is modified by this keyboard
         self.buttons = (
             []
         )  # just for character keys for text to get updated on shift / caps
@@ -71,14 +73,14 @@ class KeyboardView(QDialog, Ui_Keyboard):
         """Signal callback for qpushbutton.
 
         Note: Currently, this method actually looks at
-        the button text to determine what to 'type', eventually it would be better
-        to look up what the translation should be based on the button that
-        has already been linked.
+        the button text to determine what to 'type', eventually it would be
+        better to look up what the translation should be based on the button
+        that has already been linked.
 
         This method also has hard-coded support for Japanese dakutens.
 
         Args:
-            button (QPushButton): Button that was pressed in the clicked signal.
+            button (QPushButton): Button that was pressed.
             ind (int): Unused currently.
         """
         if button.text() == "◌゙":
@@ -117,7 +119,8 @@ class KeyboardView(QDialog, Ui_Keyboard):
         for pair in self.buttons:
             if pair[1]:  # has ind
                 if len(self.translation[pair[1]]) > 1:
-                    pair[0].setText(self.translation[pair[1]][int(self._is_caps())])
+                    pair[0].setText(self.translation[
+                        pair[1]][int(self._is_caps())])
 
     def _caps(self):
         """Signal callback to toggle Caps lock."""
@@ -147,11 +150,12 @@ class KeyboardView(QDialog, Ui_Keyboard):
     def _dakuten(
         self, han: bool = False
     ):  # support for japanese dakuten, may be a better way to do this
-        """Helper method to insert dakutens. It will act on the character before the cursor
-        in the linked field entry, if it is possible.
+        """Helper method to insert dakutens. It will act on the character
+        before the cursor in the linked field entry, if it is possible.
 
         Args:
-            han (bool, optional): True if it is a handakuten, False if it is a dakuten. Defaults to False.
+            han (bool, optional): True if it is a handakuten, False if it is a
+                dakuten. Defaults to False.
         """
 
         pos = self.field_entry.cursorPosition()
@@ -266,20 +270,25 @@ class KeyboardView(QDialog, Ui_Keyboard):
     def keyPressEvent(self, event: QKeyEvent):
         """Handle the Key Press Event from QT.
 
-        This event won't actually be called too frequently, since other windows / the linked line edit will
-            get focus, but this will handle the events if the keyboard window is what's focused.
+        This event won't actually be called too frequently, since other
+            windows / the linked line edit will get focus, but this will
+            handle the events if the keyboard window is what's focused.
         """
         self.on_key(event.text())
 
     def on_key(self, key: str):
-        """Handle the input of a character key, displaying that the button is pressed on the virtual keyboard.
+        """Handle the input of a character key, displaying that the button is
+        pressed on the virtual keyboard.
 
-        A string key instead of QtKey is used currently because the QInputMethodEvent must also be handled
-            for foreign languages, and getting the most recent text from that returns a string.
+        A string key instead of QtKey is used currently because the
+            QInputMethodEvent must also be handled for foreign languages, and
+            getting the most recent text from that returns a string.
 
-        This is written really poorly right now, as it loops over the entire keyboard (twice!) to check which
-        button should be virtually pressed. This should be updated to make this O(1). However since the number
-        of buttons on the keyboard is rather small, perhaps this doesn't have much impact on performance at all.
+        This is written really poorly right now, as it loops over the entire
+            keyboard (twice!) to check which button should be virtually
+            pressed. This should be updated to make this O(1). However since
+            the number of buttons on the keyboard is rather small, perhaps
+            this doesn't have much impact on performance at all.
 
         Args:
             key (str): String of the key that was pressed.

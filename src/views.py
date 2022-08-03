@@ -290,7 +290,7 @@ class HomeworkView(QWidget):
             show_pane (bool): True to display message below question,
                 False to hide.
             correct (int): Integer from 0-2 containing state of the answer
-                pane. See the example in this docstring.
+                See the example in this docstring.
         """
         if show_pane:
             self.ui.horizontalWidget.show()

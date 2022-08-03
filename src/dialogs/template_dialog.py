@@ -1,28 +1,31 @@
 # Copyright: Axel Moreen, 2022
 # License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 """
-Contains Template Dialog. 
-This is created from the Homework wizard in ./questions_dialog.py. 
+Contains Template Dialog.
+This is created from the Homework wizard in ./questions_dialog.py.
 It is used to create new question templates or edit an existing one
 by letting the user choose which fields to use for the question
-and giving some extra options based on the type (multiple choice, matching, written).  
+and giving some extra options based on the type (multiple choice, matching,
+written).
 """
 from __future__ import annotations
 from typing import Any
 
 from ..stores import NotecardStore, OptionStore
 
-from ..forms.template_wizard import *
+from ..forms.template_wizard import Ui_TemplateDialog
 
 from aqt.qt import QDialog
 from aqt import mw
 
-# Template Dialog - create and edit templates to be used in the Questions dialog.
+
+# Template Dialog - create and edit templates to be used in the Questions
+# dialog.
 # saves templates to configuration for convenience
 #
 # should just be called by QuestionsDialog
 class TemplateDialog(QDialog, Ui_TemplateDialog):
-    # set templ for edit card dialog, otherwise leave as None to create new card
+    # set templ for edit card dialog, leave as None to create new card
     def __init__(
         self,
         notecard_store: NotecardStore,
@@ -32,9 +35,11 @@ class TemplateDialog(QDialog, Ui_TemplateDialog):
         """Create template dialog.
 
         Args:
-            notecard_store (NotecardStore): Instance of notecard store to pull cards from.
+            notecard_store (NotecardStore): Instance of notecard store to pull
+                cards from.
             options_store (OptionStore): Option store to use for config.
-            templ (dict[str,Any], optional): Template to edit. Pass none, if creating new template. Defaults to None.
+            templ (dict[str,Any], optional): Template to edit. Pass none, if
+                creating new template. Defaults to None.
         """
         super(TemplateDialog, self).__init__()
         self.setupUi(self)

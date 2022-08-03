@@ -22,7 +22,7 @@ from anki.cards import Card
 #
 # currently only supports one card model - (it takes from notecard zero)
 #
-# should call sort() after initializing if you want this to be sorted by a 
+# should call sort() after initializing if you want this to be sorted by a
 # field.
 
 
@@ -223,7 +223,7 @@ class OptionStore:
 
     def _write_global_defaults(self, deck_name: str):
         """Internal function to write global defaults. Called by
-            write_all_defaults()."""
+        write_all_defaults()."""
         c = self.config["decks"]
         if deck_name not in c:
             c[deck_name] = dict()
@@ -261,8 +261,8 @@ class OptionStore:
             c[deck_name] = dict()
 
         # Multiple choice defaults
-        self._set_default(
-            deck_name, "homework", "choice_confirm_answer", False)
+        self._set_default(deck_name, "homework", "choice_confirm_answer",
+                          False)
         self._set_default(deck_name, "homework", "choice_question_size", 30)
         self._set_default(deck_name, "homework", "choice_answer_size", 20)
 
