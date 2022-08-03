@@ -10,7 +10,7 @@ Issues can be directed to the [issue tracker](https://github.com/axelmoreen/Anki
 * List mode for manual practice
     * Custom layout based on card fields
     * Change size of the group to learn  
-    * Create subsets of the deck (All, Learned, Lapsed, Unlearned)
+    * Choose subsets of the deck (All, Learned, Lapsed, Unlearned)
     * Set front / back columns to manually hide and show them
     * Click on a row to view card
     * Export to .csv and to .txt (Experimental)
@@ -71,6 +71,7 @@ TODO: move this to the issue tracker
 * Check your own answer for Write the Answer ("i was right" button)
 * Add API for question type for other developers to add custom ones
 * Better cloze mode (instead of just using the field, use the difference of two)
+* Move everything away from QT layouts to WebView for better handling of furigana / better layouts.
 
 ## Known Issues
 * In some cases, playing multiple sounds at the same time causes one to not be heard.
