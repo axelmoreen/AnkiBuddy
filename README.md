@@ -1,5 +1,5 @@
 # AnkiBuddy
-AnkiBuddy is an add-on for Anki with a variety of practice tools for outside of scheduled review. 
+Add-on for Anki with a variety of practice tools.
 
 This add-on does not aim to replace the core functionality of Anki, nor has it been tested alongside SRS at-length, so your mileage may vary. It is simply for fun and to experiment with. A mixture of different inputs and outputs can be great for drilling yourself, but I cannot guarantee any particular outcome. Multiple choice and matching are easier than remembering a full notecard. 
 
