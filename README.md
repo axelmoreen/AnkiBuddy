@@ -32,7 +32,7 @@ Issues can be directed to the [issue tracker](https://github.com/axelmoreen/Anki
 The add-on also has an options wizard that lets you customize most aspects, like the font of each field, timer length, sounds, default behavior, etc.
 
 ## Demo
-[Video Demo](https://www.youtube.com/watch?v=cCn8Hh09s0c)
+Watch [Video Demo](https://www.youtube.com/watch?v=cCn8Hh09s0c)
 ![List View](/screenshots/list_view.png?raw=true "List View")
 ![Multiple Choice](/screenshots/multiple_choice2.png?raw=true "Multiple Choice")
 ![Matching](/screenshots/matching.png?raw=true "Matching")
