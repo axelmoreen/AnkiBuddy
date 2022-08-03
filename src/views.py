@@ -21,8 +21,6 @@ from aqt.qt import (
     Qt
 )
 
-import random
-
 from .widgets import BTableWidgetItem, QuestionWidget 
 from .forms.list import *
 from .forms.practice import *

@@ -21,8 +21,6 @@ from .widgets import *
 from os.path import join, dirname
 from .models import ListModel, HomeworkModel
 from pathlib import Path
-import unicodedata
-
 
 class ListController(QObject):
     def __init__(self, model: ListModel):

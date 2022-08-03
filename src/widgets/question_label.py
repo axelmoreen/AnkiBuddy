@@ -10,11 +10,7 @@ a subclass of AnkiWebView because QLabel rich tags don't support
 ruby tags (for furigana). Could use clean-up / refactoring. 
 """
 from aqt.qt import (
-    Qt, 
-    QLabel, 
     QWidget,
-    QMouseEvent,
-    QWebEngineView,
     QFont,
 )
 from aqt.webview import AnkiWebView

@@ -18,6 +18,7 @@ from aqt.qt import (
     QDialog
 )
 from aqt import mw
+
 # Template Dialog - create and edit templates to be used in the Questions dialog. 
 # saves templates to configuration for convenience
 #

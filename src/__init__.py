@@ -3,7 +3,6 @@
 """
 Main entry point for the Anki add-on.
 """
-from aqt import mw, gui_hooks
 from .stores import *
 from .hooks import patch_all
 from .const import *

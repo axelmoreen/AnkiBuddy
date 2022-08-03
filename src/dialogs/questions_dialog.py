@@ -1,3 +1,14 @@
+# Copyright: Axel Moreen, 2022
+# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+
+"""
+Contains the questions dialog, (also referred to as homework wizard).
+The questions dialog pops up when the user clicks the main "Study Buddy" button,
+so it is the entry point for all of the UI within the add-on.
+
+The main purpose of this dialog is to set up question templates for use 
+in the practice mode. 
+"""
 from __future__ import annotations
 from typing import Any
 
