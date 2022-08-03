@@ -3,7 +3,7 @@ AnkiBuddy is an add-on for that gives you a variety of different practice tools 
 
 This add-on does not aim to replace the core functionality of Anki, nor has it been tested alongside SRS at-length, so your mileage may vary. It is simply for fun and to experiment with. A mixture of different inputs and outputs can be great for drilling yourself, but I cannot guarantee any particular outcome. Multiple choice and matching are easier than remembering a full notecard. 
 
-This add-on also does not write to or modify your existing Anki data at all, it only reads the deck information. So it is safe to use. But keep in mind it is still under development, so other issues in its usage may arise.  Supports PyQt5 and PyQt6 with compatibility shims. For best results, use Anki 2.1.54, but other versions of Anki 2.1 will likely work. 
+This add-on also does not write to or modify your existing Anki data at all, it only reads the deck information. So it is safe to use. But keep in mind it is still a very early version, so other issues in its usage may arise.  Supports PyQt5 and PyQt6 with compatibility shims. For best results, use Anki 2.1.54, but other versions of Anki 2.1 will likely work. 
 
 Issues can be directed to the [issue tracker](https://github.com/axelmoreen/AnkiBuddy/issues) and contributions are always welcome.
 # Features
