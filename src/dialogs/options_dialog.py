@@ -1,3 +1,12 @@
+# Copyright: Axel Moreen, 2022
+# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+"""
+Contains the options dialog, which appears when the user
+clicks on "Options" within the questions dialog.
+
+This dialog controls the config for the add-on and links them
+to its UI. 
+"""
 from ..stores import NotecardStore, OptionStore
 from ..forms.options import *
 from ..forms.field_options import *

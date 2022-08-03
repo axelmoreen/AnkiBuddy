@@ -1,3 +1,10 @@
+# Copyright: Axel Moreen, 2022
+# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+
+"""
+Subsets module. Used for creating subsets of the deck, these get passed
+to either the List or the Homework UI for picking cards. 
+"""
 from __future__ import annotations
 from .stores import NotecardStore
 # Subset represents subsets of notecards for studying

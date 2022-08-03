@@ -1,3 +1,12 @@
+# Copyright: Axel Moreen, 2022
+# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+
+"""
+Models module for managing state in the List and Homework UI's. 
+
+The related UI code is managed in ./views.py, and logic in ./controllers.py. 
+State for other UI's, like the homework wizard dialog, is in /dialogs/.
+"""
 from __future__ import annotations
 from typing import Any
 

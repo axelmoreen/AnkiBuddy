@@ -1,3 +1,14 @@
+# Copyright: Axel Moreen, 2022
+# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+
+"""
+Contains the Question Label widget. This is used in Multiple
+Choice and in Write the Answer to display the question.
+
+It was originally a subclass of QLabel, but it has been made
+a subclass of AnkiWebView because QLabel rich tags don't support 
+ruby tags (for furigana). Could use clean-up / refactoring. 
+"""
 from aqt.qt import (
     Qt, 
     QLabel, 

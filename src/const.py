@@ -1,3 +1,12 @@
+# Copyright: Axel Moreen, 2022
+# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+
+"""
+Handles singleton instances of NotecardStore
+and OptionStore. Used specifically in hooks.py to pass these
+instances to the rest of the code, but should be avoided 
+imported elsewhere to avoid circular imports. 
+"""
 from .stores import OptionStore, NotecardStore
 
 class NotecardStoreManager:

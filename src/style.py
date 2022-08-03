@@ -1,3 +1,9 @@
+# Copyright: Axel Moreen, 2022
+# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+"""
+Module with some miscellaneous CSS.
+To be used anywhere within the add-on.
+"""
 button_style = """
 QPushButton{
     background-color: transparent;

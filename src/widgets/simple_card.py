@@ -1,3 +1,11 @@
+# Copyright: Axel Moreen, 2022
+# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+
+"""
+Contains SimpleCardView, which is a QWidget that can be shown
+representing the back of an Anki card. It can be used from 
+anywhere and manages its own state / pycmd signals. 
+"""
 from aqt.webview import AnkiWebView
 from anki.sound import SoundOrVideoTag
 from aqt.sound import av_refs_to_play_icons, av_player

@@ -1,3 +1,9 @@
+# Copyright: Axel Moreen, 2022
+# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+"""
+Hooks module does the injections into Anki for 
+the "Study Buddy" button to appear. 
+"""
 from __future__ import annotations
 from typing import Any
 

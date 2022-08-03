@@ -1,3 +1,15 @@
+# Copyright: Axel Moreen, 2022
+# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+
+"""
+Contains the Write the Answer Widget - widget for a written
+question. 
+
+Widget manages its own state and passes signals to its parent. The layout is also
+generated from code in this class. See ./question_widget.py for more info
+about the question widgets. 
+"""
+
 from .question_widget import QuestionWidget
 from .event_line_edit import EventLineEdit
 from .question_label import QuestionLabel

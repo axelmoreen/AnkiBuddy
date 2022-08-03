@@ -1,3 +1,15 @@
+# Copyright: Axel Moreen, 2022
+# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+
+"""
+Contains the Multiple Choice Widget - widget for a multiple choice
+question. 
+
+Widget manages its own state and passes signals to its parent. The layout is also
+generated from code in this class. See ./question_widget.py for more info
+about the question widgets. 
+"""
+
 from .question_widget import QuestionWidget
 from .answer_button import AnswerButton
 from .question_label import QuestionLabel

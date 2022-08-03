@@ -1,3 +1,13 @@
+# Copyright: Axel Moreen, 2022
+# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+
+"""
+Stores module for managing data to/from Anki. 
+There should be one instance of NotecardStore for each Deck, 
+and one instance of OptionStore globally.
+
+The singleton for these is managed in ./const.py.
+"""
 from __future__ import annotations
 from dataclasses import dataclass
 

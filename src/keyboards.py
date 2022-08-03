@@ -1,3 +1,13 @@
+# Copyright: Axel Moreen, 2022
+# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+
+"""
+Keyboard module for displaying virtual keyboards alongside the Write the Answer
+widget. Designed to match the Windows Japanese hiragana layout, but this
+differs on Mac (untested on Linux).   
+
+Currently experimental, see issue tracker.
+"""
 from __future__ import annotations
 from .forms.keyboard import Ui_Keyboard
 from aqt.qt import (

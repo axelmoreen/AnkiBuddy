@@ -1,3 +1,19 @@
+# Copyright: Axel Moreen, 2022
+# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+
+"""
+Contains QuestionWidget, which is a superclass for practice question widgets.
+
+The children are:
+./question_widget_multiplechoice.py
+./question_widget_matching.py
+./question_widget_writeanswer.py
+
+These widgets manage their own state and emit a signal to the parent layout
+whenever an answser is given by the user. See QuestionWidget class for more
+documentation. 
+"""
+
 from __future__ import annotations
 from typing import Any
 

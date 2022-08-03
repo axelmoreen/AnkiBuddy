@@ -1,3 +1,15 @@
+# Copyright: Axel Moreen, 2022
+# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+
+"""
+Controllers module handles the logic for the List and
+Homework UI's. 
+
+The related graphical elements are in ./views.py and 
+the state is held in ./models.py.
+
+Other UI's can be found in ./dialogs/.
+"""
 from aqt.qt import (
     QObject,
     QTimer,

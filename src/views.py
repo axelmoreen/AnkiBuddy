@@ -1,3 +1,14 @@
+# Copyright: Axel Moreen, 2022
+# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+
+"""
+Views module, containing the graphical elements of the List and Practice UI's. 
+The logic for these views are in ./controllers.py and the data
+is in ./models.py. The data stores referenced here are in ./stores.py.
+
+Note: Other UI's, such as the main homework wizard, are currently under
+the /dialogs/ folder. 
+"""
 from sys import maxunicode
 from aqt import mw
 from aqt.qt import (

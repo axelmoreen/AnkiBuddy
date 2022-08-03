@@ -1,3 +1,12 @@
+# Copyright: Axel Moreen, 2022
+# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+"""
+Contains Template Dialog. 
+This is created from the Homework wizard in ./questions_dialog.py. 
+It is used to create new question templates or edit an existing one
+by letting the user choose which fields to use for the question
+and giving some extra options based on the type (multiple choice, matching, written).  
+"""
 from __future__ import annotations
 from typing import Any
 

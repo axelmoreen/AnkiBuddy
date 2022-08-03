@@ -1,3 +1,9 @@
+# Copyright: Axel Moreen, 2022
+# License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
+"""
+Contains the Answer Button widget. This is used in
+Matching and Multiple Choice layouts.
+"""
 from aqt.qt import (
     QPushButton, 
     QSizePolicy, 
