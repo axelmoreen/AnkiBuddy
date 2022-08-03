@@ -62,7 +62,7 @@ TODO: move this to the issue tracker
 * Rework subsets as "Filters" so you could use multiple at a time
 * ~~Virtual Keyboard/Foreign languages keyboard layout for Write the Answer~~
     * Add more virtual keyboards (pinyin in particular)
-    * Implment Return properly on keyboard
+    * Implement Return properly on keyboard
     * Show shift/caps on display
     * Restyle keyboard so "Checked" buttons are easier to see
 * Personal Leaderboard for Timed Mode?
