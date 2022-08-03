@@ -1,13 +1,9 @@
 # AnkiBuddy
-AnkiBuddy is an add-on for Anki 2.1 that gives you study lists, multiple choice, and matching questions to learn from outside of your regular notecard review.
-Supports PyQt5 and PyQt6 with compatibility shims. For best results, use Anki 2.1.54.
+AnkiBuddy is an add-on for Anki 2.1 that gives you a variety of different practice tools outside of scheduled review. 
 
-This add-on aims to be a Quizlet-clone / Duolingo-clone to give you quizzing or timed practice from your Anki decks with alternative formats.
-You can choose subsets to study cards you already know, new cards, cards you struggle most with. This add-on tries to be as customizable as possible, as it allows you to create question templates for each deck based on their model. 
+This add-on does not aim to replace the core functionality of Anki in any way (it relies on you to complete your daily repetitions in order to have "learned" a card), nor has it been tested alongside SRS at-length, so your mileage may vary. It is something simply for fun and to experiment with. A mixture of different inputs and outputs can be great for drilling yourself, but I cannot guarantee any particular outcome. Multiple choice and matching are easier than remembering a full notecard. 
 
-This add-on does not aim to replace the core functionality of Anki in any way (it relies on you to complete your daily repetitions in order to have "learned" a card), nor has it been tested alongside SRS at-length, so your mileage may vary. It is something I made for myself simply for fun and to experiment with. Practice from multiple choice and matching can be great for drilling yourself, but I cannot guarantee any particular outcome. It is easier than remembering a full notecard. 
-
-This add-on also does not write to or modify your existing Anki data at all, it only reads the deck information. So it is safe to use. But keep in mind it is still under development, so other issues in its usage may arise. 
+This add-on also does not write to or modify your existing Anki data at all, it only reads the deck information. So it is safe to use. But keep in mind it is still under development, so other issues in its usage may arise.  Supports PyQt5 and PyQt6 with compatibility shims. For best results, use Anki 2.1.54.
 
 Issues can be directed to the [issue tracker] and contributions are always welcome!
 # Features
@@ -22,7 +18,7 @@ Issues can be directed to the [issue tracker] and contributions are always welco
     * Multiple choice - choose the correct answer from options
     * Matching - match left and right side
     * Write the Answer - type the answer in a box
-        * Field hint on the box for ambiguity
+        * Field hints 
         * Virtual keyboard for language learners to use or reference while typing. (Experimental, Only Japanese supported currently)
     * Supports sound field questions / answers
     * Supports linked audio to a play on a non-sound field (Experimental) 
