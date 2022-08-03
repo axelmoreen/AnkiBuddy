@@ -1,11 +1,11 @@
 # AnkiBuddy
 AnkiBuddy is an add-on for Anki 2.1 that gives you a variety of different practice tools outside of scheduled review. 
 
-This add-on does not aim to replace the core functionality of Anki in any way (it relies on you to complete your daily repetitions in order to have "learned" a card), nor has it been tested alongside SRS at-length, so your mileage may vary. It is something simply for fun and to experiment with. A mixture of different inputs and outputs can be great for drilling yourself, but I cannot guarantee any particular outcome. Multiple choice and matching are easier than remembering a full notecard. 
+This add-on does not aim to replace the core functionality of Anki in any way (it relies on you to complete your daily repetitions in order to have "learned" a card), nor has it been tested alongside SRS at-length, so your mileage may vary. It is simply for fun and to experiment with. A mixture of different inputs and outputs can be great for drilling yourself, but I cannot guarantee any particular outcome. Multiple choice and matching are easier than remembering a full notecard. 
 
 This add-on also does not write to or modify your existing Anki data at all, it only reads the deck information. So it is safe to use. But keep in mind it is still under development, so other issues in its usage may arise.  Supports PyQt5 and PyQt6 with compatibility shims. For best results, use Anki 2.1.54.
 
-Issues can be directed to the [issue tracker](https://github.com/axelmoreen/AnkiBuddy/issues) and contributions are always welcome!
+Issues can be directed to the [issue tracker](https://github.com/axelmoreen/AnkiBuddy/issues) and contributions are always welcome.
 # Features
 * List mode for manual practice
     * Custom layout based on card fields
@@ -20,6 +20,7 @@ Issues can be directed to the [issue tracker](https://github.com/axelmoreen/Anki
     * Write the Answer - type the answer in a box
         * Field hints 
         * Virtual keyboard for language learners to use or reference while typing. (Experimental, Only Japanese supported currently)
+    * Correct / incorrect sound feedback
     * Supports sound field questions / answers
     * Supports linked audio to a play on a non-sound field (Experimental) 
     * Balanced deck or true random
@@ -28,11 +29,10 @@ Issues can be directed to the [issue tracker](https://github.com/axelmoreen/Anki
     * View cards while practicing
     * Furigana support
     * View session stats
-The add-on also has an options wizard that lets you customize most aspects, like the font of each field, timer length, some default behavior, etc.
-
+The add-on also has an options wizard that lets you customize most aspects, like the font of each field, timer length, sounds, default behavior, etc.
 
 ## Demo
-
+[Video Demo](https://www.youtube.com/watch?v=cCn8Hh09s0c)
 ![List View](/screenshots/list_view.png?raw=true "List View")
 ![Multiple Choice](/screenshots/multiple_choice2.png?raw=true "Multiple Choice")
 ![Matching](/screenshots/matching.png?raw=true "Matching")
@@ -40,7 +40,7 @@ The add-on also has an options wizard that lets you customize most aspects, like
 
 # Installation
 
-Until the add-on is published on the Anki website, you may install it by cloning the repo and copying the contents of src to a folder in your addons directory. The Anki2 directory is usually in your %AppData%/Roaming directory on Windows.
+Until the add-on is published on the Anki website, you may install it by cloning the repo and linking the contents of src to a folder in your addons directory. The Anki2 directory is usually in your %AppData%/Roaming directory on Windows.
 <pre>
 Anki2/
 ├─ addons21/
