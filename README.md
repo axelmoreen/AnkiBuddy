@@ -65,6 +65,7 @@ Anki2/
 * Keyboard shortcuts for matching / multiple-choice
 * Check your own answer for Write the Answer ("i was right" button)
 * Add API for question type for other developers to add custom ones
+* Better cloze mode (instead of just using the field, use the difference of two)
 * ~~List view: export .csv~~
 ## Known Issues
 * ~~Duplicate answers sometimes on multiple choice (not fixed?) ~~

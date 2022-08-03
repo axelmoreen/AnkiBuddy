@@ -52,7 +52,7 @@ class QuestionLabel(AnkiWebView):
         self._text = text
 
         m = re.search('\[sound:[\w.\-]{0,}\]', text)
-        style_string = "style='position: absolute; top: 50%; width: 95%; transform: translateY(-50%); margin: 0 auto; text-align: center; font-size: "+str(5 * self.font().pointSize())+"px; font-family: "+self.font().family()+"'"
+        style_string = "style='position: absolute; top: 50%; width: 95%; transform: translateY(-50%); margin: 0 auto; text-align: center; font-size: "+str(4 * self.font().pointSize())+"px; font-family: "+self.font().family()+"'"
         html_out = """
         <div>
         <p $(stylestring)>
