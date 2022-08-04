@@ -285,7 +285,7 @@ class OptionStore:
         """Internal function to write homework defaults. Called by
         write_all_defaults()."""
         c = self.config["homework"]
-        if deck_name in c:
+        if deck_name not in c:
             c[deck_name] = dict()
 
         # Multiple choice defaults
@@ -314,5 +314,9 @@ class OptionStore:
 
     def _set_default(self, deck_name: str, cat: str, name: str, val: Any):
         """Internal function to write an individual default."""
+        if cat not in self.config:
+            self.config[cat] = dict()
+        if deck_name not in self.config[cat]:
+            self.config[cat][deck_name] = dict()
         if name not in self.config[cat][deck_name]:
             self.config[cat][deck_name][name] = val
