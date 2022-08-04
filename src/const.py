@@ -4,8 +4,7 @@
 """
 Handles singleton instances of NotecardStore
 and OptionStore. Used specifically in hooks.py to pass these
-instances to the rest of the code, but should be avoided
-imported elsewhere to avoid circular imports.
+instances to the rest of the code.
 """
 from .stores import OptionStore, NotecardStore
 

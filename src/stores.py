@@ -16,17 +16,22 @@ from typing import Any
 from aqt import mw
 from anki.cards import Card
 
-# Notecard Store -
-# meant to store all information about the cards and notes from Anki
-# including fields, lapses, etc
-#
-# currently only supports one card model - (it takes from notecard zero)
-#
-# should call sort() after initializing if you want this to be sorted by a
-# field.
-
 
 class NotecardStore:
+    """Data representation of all the cards in a Deck, including their fields,
+    the number of lapses, etc.
+
+    Currently this only supports one card model.
+
+    Should call sort() after initializing it, if you want this to be sorted
+    by a field.
+
+    Attributes:
+        notecards: List of Notecard objects representing the deck. See Notecard.
+        deck_dict: Information from Anki about the deck. See Decks JSONObjects
+            https://github.com/ankidroid/Anki-Android/wiki/Database-Structure
+        deck_name: String name of the deck.
+    """
     def __init__(self):
         """Initialize NotecardStore.
         Must call load(deck_id) to load cards.
@@ -110,6 +115,13 @@ class NotecardStore:
 
 @dataclass
 class Notecard:
+    """Data representation of an Anki flashcard for this add-on.
+    It is called a notecard because it is meant to combine info from
+    Anki's note and Anki's card.
+
+    Note: in the loading code, the fields "card" and "note" are set as
+    well, with references to the Anki instances of those..
+    """
     fields: dict[str, str]
     id: int
     nid: int
@@ -118,8 +130,24 @@ class Notecard:
     lapses: int
 
 
-# bridge to options
 class OptionStore:
+    """Data representation of the add-on configuration.
+    There is just one instance of this class, which is in ./const.py.
+    This class gets and sets data from the Anki add-on manager's
+    config, and is also responsible for writing the default values there.
+
+    Usage:
+        # Getting
+        if key in option_store.get_globals(deck):
+            print(option_store.get_globals(deck)[key])
+
+        # Setting
+        option_store.get_globals(deck)[key] = value
+        option_store.save()
+
+        # Writing defaults
+        option_store.write_all_defaults()
+    """
     def __init__(self, name: str):
         """Initialize options store."""
         self.name = name

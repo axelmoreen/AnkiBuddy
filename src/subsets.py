@@ -3,22 +3,22 @@
 
 """
 Subsets module. Used for creating subsets of the deck, these get passed
-to either the List or the Homework UI for picking cards. 
+to either the List or the Homework UI for picking cards.
 """
 from __future__ import annotations
 from .stores import NotecardStore
 
-# Subset represents subsets of notecards for studying
-# each subset here - is a "group" of actual subsets!, not just one subset!
-# for example, for an evenly spaced group of subsets, such as
-# 0-19, 20-39, 40-59, etc.....
-# this will be represented by one subset class.
-# the cards within a subset are sorted by indices, so the index for this
-# example would be
-# arr[0]: 0-19, arr[1] = 20-39, arr[2] = 40-59, etc.
-
 
 class Subset:
+    """Parent class for subset.
+
+    Each subset represents groups of notecards for studying, organized by
+    some criteria. For an evenly spaced group of subsets, such as cards
+    0-19, 20-39, 40-59, etc... this is represented by one subset class
+    (Linear Subset, in this case). These subgroups (in this case of 20
+    cards each) are each represented by an index, going from 0 to
+    get_max_index().
+    """
     def get_subset_name(self) -> str:
         """Get the name of this subset.
 
@@ -71,10 +71,10 @@ class Subset:
                                                        + 1)
 
 
-# linear subset = evenly spaced group of cards for grouping into lessons
-# notecard_store is a reference to the current deck.
-# lesson_size is the number of cards that should be present in one lesson.
 class LinearSubset(Subset):
+    """Evenly spaced group of cards for grouping into lessons.
+    See Subset.
+    """
     def __init__(self, notecard_store: NotecardStore, lesson_size: int = 20):
         """Initializes subset with information from the notecard store.
         Does not need to be ordered any differently.
@@ -113,6 +113,9 @@ class LinearSubset(Subset):
 
 
 class LearnedSubset(Subset):
+    """Cards only that have already been learned.
+    The subset is ordered by recency. See Subset.
+    """
     def __init__(self, notecard_store: NotecardStore, lesson_size: int = 20):
         """Initializes subset with information from the notecard store.
         Then, prune cards that have not been learned yet, and order them
@@ -154,6 +157,9 @@ class LearnedSubset(Subset):
 
 
 class LapsedSubset(Subset):
+    """Learned cards, ordered by the amount of mistakes during regular
+    Anki review. See Subset.
+    """
     def __init__(self, notecard_store: NotecardStore, lesson_size: int = 20):
         """Initializes subset with information from the notecard store.
         Prune cards that have not been learned yet, then order them
@@ -196,6 +202,9 @@ class LapsedSubset(Subset):
 
 
 class NewSubset(Subset):
+    """New cards that haven't been learned yet in the Anki review.
+    See subset.
+    """
     def __init__(self, notecard_store: NotecardStore, lesson_size: int = 20):
         """Initializes subset with information from the notecard store.
         Prune cards that have already been learned, so that only new cards

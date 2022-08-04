@@ -21,10 +21,20 @@ from .subsets import Subset
 
 
 class Model(QObject):
+    """Parent class for Models.
+    """
     pass
 
 
 class ListModel(Model):
+    """Model class for the ListView / ListController.
+
+    Emits:
+        hide_front_changed: Should hide table columns that are Front
+        hide_back_changed: Should hide table columns that are Back
+        show_cancel_dialog: Inform the user that they should set-up
+            the columns in the options. 
+    """
     hide_front_changed = pyqtSignal(bool)
     hide_back_changed = pyqtSignal(bool)
     show_cancel_dialog = pyqtSignal()
@@ -132,11 +142,20 @@ class ListModel(Model):
         self.hide_back_changed.emit(value)
 
 
-# Homework Model
-# represents a "quizzer" window where the user is asked one question at a time.
-# quiz settings are set in the Questions Wizard beforehand and passed to the
-# homework model
 class HomeworkModel(Model):
+    """Homework model for the homework controller / view.
+
+    Represents the main Practice window where the user is asked one question
+        at a time.
+    The config for the quizzer are set in the Question Wizard before hand.
+
+    Emits:
+        info_update: Tell the view to update practice summary such as timer,
+            correct/ incorrect.
+        answer_pane_update: Update the bottom bar based on user input, i.e.
+            if they got the question right / wrong or to show answer.
+        new_question_update: Clear the view to start a new question.
+    """
     info_update = pyqtSignal()
     answer_pane_update = pyqtSignal(bool, int)
     new_question_update = pyqtSignal(QWidget)
