@@ -21,6 +21,11 @@ from aqt import mw
 
 
 class OptionsDialog(Ui_OptionsDialog, QDialog):
+    """Options dialog used to control the config.
+    Loads the UI, and then links all of the widgets so their values
+    are the same as the config. Then it saves the values
+    when do_accept() is called (the OK button is pressed).
+    """
     def __init__(self, notecard_store: NotecardStore,
                  options_store: OptionStore):
         """Setup the options dialog.
@@ -290,10 +295,15 @@ class OptionsDialog(Ui_OptionsDialog, QDialog):
 
 
 class FieldOptionsDialog(QDialog, Ui_FieldOptions):
+    """Field options dialog. Used to change the font size, font family,
+    and the linked audio field (experimental) for a field.
+    Instantiate with the options store, notecard store, and the field name
+    to load the options for.
+    """
     def __init__(
         self, options_store: OptionStore, note_store: NotecardStore, field: str
     ):
-        """Load the field options dialog..
+        """Load the field options dialog.
 
         Args:
             options_store (OptionStore): instance of option store to write

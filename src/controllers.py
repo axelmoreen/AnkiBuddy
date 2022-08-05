@@ -29,6 +29,10 @@ from pathlib import Path
 
 
 class ListController(QObject):
+    """List controller handles the logic for the list view. 
+
+    This class handles signals from various parts of the List UI.
+    """
     def __init__(self, model: ListModel):
         """Initialize List Controller for handling logic from the ListView.
 
@@ -123,6 +127,18 @@ class ListController(QObject):
 
 
 class HomeworkController(QObject):
+    """Homework controller handles logic for the main practice
+    UI i.e. homework view.
+
+    It mainly handles signals from the Question Widget with
+    question_answered(), and then gives the user feedback and/or
+    moves on to the next question depending on configuration,
+    and if they got the question right / wrong. Does not
+    make assumptions about how the question is determined
+    right vs. wrong, that is determined in the Widget itself.
+
+    Also is responsible for updating the timer.
+    """
     def __init__(self, model: HomeworkModel):
         """Initialize Homework Controller for handling logic from the
         HomeworkView.

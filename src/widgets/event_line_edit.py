@@ -2,7 +2,7 @@
 # License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
 """
-Contains the event line edit widget, which gets used specifically in the
+Contains the event line edit widget, which gets used in the
 Write the Answer layout so that the parent layout can get IME
 events when it is focused, for the virtual keyboard.
 """
@@ -13,8 +13,9 @@ from aqt.qt import (
 )
 
 
-# Line edit that passes key press events to its parent
 class EventLineEdit(QLineEdit):
+    """Line edit that passes events to its parent.
+    """
     def keyPressEvent(self, event: QKeyEvent):
         """Pass key press event to parent."""
         if self.parentWidget():

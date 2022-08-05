@@ -31,12 +31,16 @@ from aqt import mw
 from ..style import confirm_button_style
 
 
-# Write the answer widget
-# Shows a question at the top and you must write the answer in the line edit
-# Support for japanese learners to use a "virtual keyboard" to help learn how
-# to type with IME, or to entirely replace the keyboard with virtual buttons
-# - planned pinyin support
 class WriteTheAnswerWidget(QuestionWidget):
+    """Write the answer widget. Shows a question label at the top, and has
+    the user write the answer in the LineEdit below.
+
+    Currently there is also support for Japanese learners to use a virtual
+    keyboard to help learn to type there, but it is incomplete - could be
+    extended to more languages.
+
+    See QuestionWidget for more info.
+    """
     def load(self):
         """Load this question widget."""
         self.conf = self.model.options_store.get_homework_config(

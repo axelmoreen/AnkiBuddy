@@ -13,6 +13,11 @@ from anki.cards import Card
 
 
 class SimpleCardView(AnkiWebView):
+    """Card web view containing just the back of an Anki card, that can handle
+    av tags.
+    To use, simply create with an instance of an Anki card object,
+    and call .show().
+    """
     def __init__(self, card: Card):
         """Creates a window with Anki "Card" object instance that
         will show a simplified back of the card, including sounds.

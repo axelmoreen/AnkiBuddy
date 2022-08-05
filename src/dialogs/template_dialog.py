@@ -19,13 +19,13 @@ from aqt.qt import QDialog
 from aqt import mw
 
 
-# Template Dialog - create and edit templates to be used in the Questions
-# dialog.
-# saves templates to configuration for convenience
-#
-# should just be called by QuestionsDialog
 class TemplateDialog(QDialog, Ui_TemplateDialog):
-    # set templ for edit card dialog, leave as None to create new card
+    """Template dialog - used to create and edit templates that are
+    used in the questions dialog to set-up the practice mode.
+
+    Results returns a dict with the template information for the
+    questions dialog to use.
+    """
     def __init__(
         self,
         notecard_store: NotecardStore,

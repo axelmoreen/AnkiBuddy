@@ -18,9 +18,17 @@ import random
 from ..style import button_style, button_style_custom_border
 
 
-# Matching widget
-# Shows two columns of buttons to match
 class MatchingWidget(QuestionWidget):
+    """Matching widget. Shows the user two columns of buttons,
+    in a randomized order. The user has to select one button on
+    the left and one button on the right in order to match the
+    related cards. 
+
+    When the program is meant to show the correct answer, the
+    widget will choose random colors to highlight the two sides with
+    matching colors. Currently this could be improved to be color-blind
+    friendly.
+    """
     def load(self):
         """Load the matching widget."""
         self.conf = self.model.options_store.get_homework_config(

@@ -18,13 +18,21 @@ from aqt.sound import av_player
 import re
 
 
-# QLabel that can also accept [sound] tags.
-# default behavior is to auto-play the sound when the widget is loaded.
-# shows a button style if it is a sound
-# regex pattern: \[sound:[\w.\-]{0,}\]
-# recently was changed from QLabel to webview to support ruby tags, needs
-# cleanup / further testing
 class QuestionLabel(AnkiWebView):
+    """Used to display a question.
+
+    Supports [sound] fields, rich text and furigana bracket notation.
+
+    Note: This code used to extend QLabel, but it has been moved to
+    a webview because unfortunately there is no ruby tags solution
+    within the rich text tags in a label. It did not seem possible to
+    display furigana with a table either. This class needs clean-up
+    and further testing to make sure it works the same. Refactoring
+    of some things including the class name should probably done too.
+    
+    Currently, the font sizes do not match up 1:1 with the
+    rest of the program.
+    """
     def __init__(self, parent: QWidget):
         """Load question label."""
         super().__init__(parent)

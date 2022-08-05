@@ -35,6 +35,36 @@ from aqt import mw
 
 
 class QuestionsDialog(QDialog, Ui_QuestionsWizard):
+    """Questions dialog. Responsible for setting up the practice
+    mode, but it is also an entry point for the List view and for
+    the Options dialog. 
+
+    Maintains two list widgets, one on the left side represents templates
+    that can be used for practice mode, the right side represents templates
+    that will be used.
+
+    self.templates[] is a list of all the possible templates, and
+    self.sel_templates[] is a list of indices on self.templates that are
+    selected for use. The UI is expected to manage these two arrays
+    accordingly and display them. There are arrow buttons to select and
+    unselect templates.
+
+    self.curr_subset is an index corresponding to the subset in
+    self.subsets that is also selected in the ComboBox.
+    self.sub_group_ind is the "group index" within the subset
+    that is used to break down into smaller lessons. The class is
+    responsible for handling these UI events as well as setting the
+    UI properties so that the user can only select valid
+    configurations.
+
+    This dialog should likely be broken out to separate classes like
+    model, view, and controller since the class can be confusing.
+
+    One minor improvement that can be made currently is to
+    remove templates from the left List widget when they are
+    selected, so it is easy to see which templates are not
+    selected. This would be more intuitive.
+    """
     def __init__(self, notecard_store: NotecardStore,
                  options_store: OptionStore):
         """Load questions wizard.

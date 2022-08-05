@@ -22,16 +22,25 @@ from ..stores import Notecard
 from ..models import HomeworkModel
 
 
-# abstract class for question types (multiple choice, matching, write the
-# answer)
-#   to set up their UI.
-#   options = {} dict with specific schema for each type of question.
-#       assumes that the right dict is passed and that the program knows how
-# to handle it.
 class QuestionWidget(QWidget):
-    # arg1 = [True, False] => "Correct", "Incorrect"
-    # arg2 = [True, False] True if should continue to next question, False if
-    # should stay on the current widget.
+    """Abstract class for question widgets, with some helper functions.
+
+    Question widgets should override .load() to setup their UI.
+    Sub-classes may also override .get_answer() to display a text answer when
+    the Show Answer button is pressed, and .show_answer() to modify UI elements
+    when the button is pressed.  
+
+    Emits questionAnswered, which is a signal connected to the Homework
+    Controller to let it know when the user has answered. The widget must
+    specify in questionAnswered whether the user was right or wrong,
+    and if it should continue to the next question or stay on the current
+    widget (i.e. it's multi-answer, in the case of matching.)
+    
+    questionAnswered args:
+        correct (bool): True if the user answered correct, False if wrong
+        multi_answer: True if the parent should stay on the current widget,
+            False if it should continue.
+    """
     questionAnswered = pyqtSignal(bool, bool)
 
     def __init__(self, options: dict[str, Any], model: HomeworkModel):

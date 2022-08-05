@@ -12,6 +12,9 @@ from aqt.qt import Qt, QLabel
 
 
 class BTableWidgetItem(QLabel):
+    """Label that can be hidden and shown while managing its own
+    value.
+    """
     def __init__(self, text: str):
         """Instantiate custom table widget item with text.
 

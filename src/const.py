@@ -10,6 +10,12 @@ from .stores import OptionStore, NotecardStore
 
 
 class NotecardStoreManager:
+    """Notecard store manager manages one notecard store per
+    each deck, into a dict with the deck id as a key.
+
+    This is used as a singleton so that the notecard information
+    is only loaded once within the add-on.
+    """
     def __init__(self):
         """Initialize manager."""
         self.stores = {}

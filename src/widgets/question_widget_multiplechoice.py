@@ -20,6 +20,12 @@ from ..style import button_style, confirm_button_style
 # multiple choice widget
 # Shows a Question and then a # of answer buttons to press
 class MultipleChoiceQuestionWidget(QuestionWidget):
+    """Multiple choice widget. Shows a question label at the top,
+    then gives the user N answer buttons at the bottom to choose
+    the answer from.
+
+    See QuestionWidget for more info.
+    """
     def load(self):
         """Load the multiple choice widget."""
         self.conf = self.model.options_store.get_homework_config(

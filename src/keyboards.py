@@ -17,6 +17,13 @@ import unicodedata
 
 
 class KeyboardView(QDialog, Ui_Keyboard):
+    """Virtual keyboard representation with Qt. Loads key translation
+    from array and displays it on buttons. Is linked to a LineEdit
+    (from Write the Answer widget) to input characters from there.
+
+    Note: Doesn't seem to match the Mac layout, only Windows. Has
+    not been tested on Linux.
+    """
     def __init__(self, translation: list[tuple] = None):
         """Initialize the keyboard view.
 

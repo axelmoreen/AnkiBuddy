@@ -19,9 +19,10 @@ from aqt.sound import av_player
 import re
 
 
-# Answer Button - can display rich text and handle sound tags. Adapted from:
-# https://stackoverflow.com/questions/2990060/qt-qpushbutton-text-formatting
 class AnswerButton(QPushButton):
+    """Answer button is a subclass of QPushButton that can display rich text
+    and handle the [sound] tag fields. It cannot display furigana.
+    """
     def __init__(self, parent: QWidget = None, text: str = None):
         """Create answer button.
 
@@ -56,7 +57,6 @@ class AnswerButton(QPushButton):
         self._isSound = False
         self.handle_sound(text)
 
-    # TODO: fix duplicate [sound] tag code with QuestionLabel.?
     def handle_sound(self, text: str):
         """Handle if the text is a sound tag.
         If the text is a sound tag, then replace the text with the Play button,
