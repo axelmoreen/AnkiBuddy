@@ -1,6 +1,6 @@
 # AnkiBuddy
+[Anki Add-On Page](https://ankiweb.net/shared/info/1704476211)
 ![Questions Wizard](/screenshots/questions_wizard.png?raw=true)
-[Link to the Anki add-on page](https://ankiweb.net/shared/info/1704476211)
 Add-on for Anki with a variety of tools for practice. Create multiple choice, matching, and written answer questions using cards from your Anki deck. 
 
 This add-on does not replace the core functionality of Anki. It is designed to be supplemental practice. It has not been tested at length with flashcards, so your mileage may vary.
