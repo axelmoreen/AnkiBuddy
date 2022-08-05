@@ -1,7 +1,8 @@
 # AnkiBuddy
-Add-on for Anki with a variety of tools for practice. 
+![Questions Wizard](/screenshots/questions_wizard.png?raw=true)
+Add-on for Anki with a variety of tools for practice. Create multiple choice, matching, and written answer questions using cards from your Anki deck. 
 
-This add-on does not replace the core functionality of Anki. It is meant for supplemental practice. It has not been tested at length with flashcards, so your mileage may vary.
+This add-on does not replace the core functionality of Anki. It is designed to be supplemental practice. It has not been tested at length with flashcards, so your mileage may vary.
 
 This add-on does not write to or modify your existing Anki data at all, it only reads the deck information. So, it is safe to use. But keep in mind this is an early version, so some features may not work as intended.  Supports PyQt5 and PyQt6 with compatibility shims. For best results, use Anki 2.1.54, but other versions of Anki 2.1 will likely work. 
 
@@ -53,5 +54,5 @@ Anki2/
 │  │  ├─ (files go here)
 </pre>
 
-# Feedback / Contributions
+## Contribution
 Issues or suggestions can be directed to the [issue tracker](https://github.com/axelmoreen/AnkiBuddy/issues) and contributions are welcome.
