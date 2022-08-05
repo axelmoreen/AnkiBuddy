@@ -61,5 +61,10 @@ class NotecardStoreManager:
             return store
 
 
+ADDON_VERSION = "1.0.0"
+
 options = OptionStore(__name__)
 notecards = NotecardStoreManager()
+
+options.config["version"] = ADDON_VERSION
+options.save()

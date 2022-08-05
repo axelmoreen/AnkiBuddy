@@ -4,5 +4,7 @@
 Main entry point for the Anki add-on.
 """
 from .hooks import patch_all
+from .const import ADDON_VERSION
 
+print("Enabling AnkiBuddy version %s" % ADDON_VERSION)
 patch_all()
