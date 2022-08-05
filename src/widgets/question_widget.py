@@ -28,14 +28,14 @@ class QuestionWidget(QWidget):
     Question widgets should override .load() to setup their UI.
     Sub-classes may also override .get_answer() to display a text answer when
     the Show Answer button is pressed, and .show_answer() to modify UI elements
-    when the button is pressed.  
+    when the button is pressed.
 
     Emits questionAnswered, which is a signal connected to the Homework
     Controller to let it know when the user has answered. The widget must
     specify in questionAnswered whether the user was right or wrong,
     and if it should continue to the next question or stay on the current
     widget (i.e. it's multi-answer, in the case of matching.)
-    
+
     questionAnswered args:
         correct (bool): True if the user answered correct, False if wrong
         multi_answer: True if the parent should stay on the current widget,

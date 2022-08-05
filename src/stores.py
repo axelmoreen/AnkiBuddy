@@ -2,8 +2,8 @@
 # License: GNU AGPL, version 3 or later; http://www.gnu.org/licenses/agpl.html
 
 """
-Stores module for managing data to/from Anki. 
-There should be one instance of NotecardStore for each Deck, 
+Stores module for managing data to/from Anki.
+There should be one instance of NotecardStore for each Deck,
 and one instance of OptionStore globally.
 
 The singleton for these is managed in ./const.py.
@@ -27,7 +27,8 @@ class NotecardStore:
     by a field.
 
     Attributes:
-        notecards: List of Notecard objects representing the deck. See Notecard.
+        notecards: List of Notecard objects representing the deck. 
+            See Notecard.
         deck_dict: Information from Anki about the deck. See Decks JSONObjects
             https://github.com/ankidroid/Anki-Android/wiki/Database-Structure
         deck_name: String name of the deck.

@@ -33,7 +33,7 @@ class ListModel(Model):
         hide_front_changed: Should hide table columns that are Front
         hide_back_changed: Should hide table columns that are Back
         show_cancel_dialog: Inform the user that they should set-up
-            the columns in the options. 
+            the columns in the options.
     """
     hide_front_changed = pyqtSignal(bool)
     hide_back_changed = pyqtSignal(bool)

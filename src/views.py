@@ -33,7 +33,7 @@ from .style import incorrect_button_style
 class ListView(QDialog):
     """Qt Dialog for displaying list of cards, in a table.
 
-    Once instantiated, use .show() or .exec_() (to show modally). 
+    Once instantiated, use .show() or .exec_() (to show modally).
     """
     def __init__(self, model: ListModel, controller: ListController):
         """Creates a window that simply shows the notecards in a tabular

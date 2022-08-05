@@ -29,7 +29,7 @@ from pathlib import Path
 
 
 class ListController(QObject):
-    """List controller handles the logic for the list view. 
+    """List controller handles the logic for the list view.
 
     This class handles signals from various parts of the List UI.
     """

@@ -5,7 +5,7 @@ Contains the options dialog, which appears when the user
 clicks on "Options" within the questions dialog.
 
 This dialog controls the config for the add-on and links them
-to its UI. 
+to its UI.
 """
 from ..stores import NotecardStore, OptionStore
 from ..forms.options import Ui_OptionsDialog

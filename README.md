@@ -1,19 +1,17 @@
 # AnkiBuddy
-Add-on for Anki with a variety of practice tools.
+Add-on for Anki with a variety of tools for practice. 
 
-This add-on does not aim to replace the core functionality of Anki, nor has it been tested alongside SRS at-length, so your mileage may vary. It is simply for fun and to experiment with. A mixture of different inputs and outputs can be great practice, but I cannot guarantee any particular outcome. Multiple choice and matching are easier than remembering a full notecard. 
+This add-on does not replace the core functionality of Anki. It is meant for supplemental practice. It has not been tested at length with flashcards, so your mileage may vary.
 
-This add-on also does not write to or modify your existing Anki data at all, it only reads the deck information. So it is safe to use. But keep in mind it is still a very early version, so other issues in its usage may arise.  Supports PyQt5 and PyQt6 with compatibility shims. For best results, use Anki 2.1.54, but other versions of Anki 2.1 will likely work. 
-
-~~Issues can be directed to the [issue tracker](https://github.com/axelmoreen/AnkiBuddy/issues) and contributions are always welcome.~~ (not released yet)
+This add-on does not write to or modify your existing Anki data at all, it only reads the deck information. So, it is safe to use. But keep in mind this is an early version, so some features may not work as intended.  Supports PyQt5 and PyQt6 with compatibility shims. For best results, use Anki 2.1.54, but other versions of Anki 2.1 will likely work. 
 
 # Features
 * List mode for manual practice
     * Custom layout based on card fields
     * Change size of the group to learn  
     * Choose subsets of the deck (All, Learned, Lapsed, Unlearned)
-    * Set front / back columns to manually hide and show them
-    * Click on a row to view card
+    * Show and hide columns
+    * View card information from list
     * Export to .csv and to .txt (Experimental)
 * Practice mode for quizzing
     * Multiple choice - choose the correct answer from options
@@ -55,34 +53,5 @@ Anki2/
 │  │  ├─ (files go here)
 </pre>
 
-
-# Planned 
-TODO: move this to the issue tracker
-* ~~Options wizard~~
-    * Change correct/incorrect sound volume
-    * Show field name (implemented, but not in options yet)
-* Create custom subsets
-* Subsets from field, like Part of Speech
-* Rework subsets as "Filters" so you could use multiple at a time
-* ~~Virtual Keyboard/Foreign languages keyboard layout for Write the Answer~~
-    * Add more virtual keyboards (pinyin in particular)
-    * Implement Return properly on keyboard
-    * Show shift/caps on display
-    * Restyle keyboard so "Checked" buttons are easier to see
-* Personal Leaderboard for Timed Mode?
-* Test mode
-* Profile / presets for the Questions Wizard. 
-* Keyboard shortcuts for matching / multiple-choice
-* Check your own answer for Write the Answer ("i was right" button)
-* Add API for question type for other developers to add custom ones
-* Better cloze mode (instead of just using the field, use the difference of two)
-* Move everything away from QT layouts to WebView for better handling of furigana / more complicated layouts.
-
-## Known Issues
-* In some cases, playing multiple sounds at the same time causes one to not be heard.
-* Can't Edit template with just the Selected templates selection.
-* QOL: remove templates from the left box, once they are in the right box.
-* Decrease font-size for longer questions/answers
-* Fix auto focus on virtual keyboard pyqt5
-* Mac is missing spaces in labels?
-* Keyboard buttons don't unfocus on pyqt6
+# Feedback / Contributions
+Issues or suggestions can be directed to the [issue tracker](https://github.com/axelmoreen/AnkiBuddy/issues) and contributions are welcome.
