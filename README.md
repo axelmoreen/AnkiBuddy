@@ -44,17 +44,10 @@ The add-on also has an options wizard that lets you customize most aspects, like
 ![Write the Answer](/screenshots/write%20the%20answer.png?raw=true "Write the Answer")
 
 # Installation
+The best way to install the add-on is to use the code 1704476211 in Anki. See the [add-on page](https://ankiweb.net/shared/info/1704476211) for more info. 
+You can also install the add-on from an .ankiaddon file, which you can find under [releases](https://github.com/axelmoreen/AnkiBuddy/releases). 
 
-Until the add-on is published on the Anki website, you may install it by cloning the repo and linking the contents of src to a folder in your addons directory. The Anki2 directory is usually in your %AppData%/Roaming directory on Windows.
-<pre>
-Anki2/
-├─ addons21/
-│  ├─ AnkiBuddy/
-│  │  ├─ dialogs/
-│  │  ├─ forms/
-│  │  ├─ resources/
-│  │  ├─ (files go here)
-</pre>
+For development or otherwise, you may install it by cloning the repo and linking the contents of src to a folder in your addons directory. 
 
 ## Contribution
 Issues or suggestions can be directed to the [issue tracker](https://github.com/axelmoreen/AnkiBuddy/issues) and contributions are welcome.
