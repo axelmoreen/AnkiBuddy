@@ -55,7 +55,7 @@ class MatchingWidget(QuestionWidget):
             buttonL.clicked.connect(lambda ch, i=i: self.left_callback(i))
             buttonL.setStyleSheet(button_style)
             buttonL.setAutoDefault(False)
-            buttonL.setFocusPolicy(Qt.NoFocus)
+            buttonL.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
             self.handle_font(
                 buttonL,
@@ -75,7 +75,7 @@ class MatchingWidget(QuestionWidget):
             buttonR.clicked.connect(lambda ch, i=i: self.right_callback(i))
             buttonR.setStyleSheet(button_style)
             buttonR.setAutoDefault(False)
-            buttonR.setFocusPolicy(Qt.NoFocus)
+            buttonR.setFocusPolicy(Qt.FocusPolicy.NoFocus)
 
             self.handle_font(
                 buttonR, self.conf["matching_answer_size"],

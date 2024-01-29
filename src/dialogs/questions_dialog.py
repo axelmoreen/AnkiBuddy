@@ -155,7 +155,7 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
             self._cancelMsg.setText(
                 "Please set-up question templates in order to proceed."
             )
-            self._cancelMsg.exec_()
+            self._cancelMsg.exec()
             return
         templs = [self.templates[i] for i in self.sel_templates]
         if self.all_groups:
@@ -418,7 +418,7 @@ class QuestionsDialog(QDialog, Ui_QuestionsWizard):
         controller = ListController(model)
 
         self.list = ListView(model, controller)
-        self.list.exec_()
+        self.list.exec()
 
     def show_options_sig(self):
         """Connected to the Options button, to create the Options dialog."""

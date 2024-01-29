@@ -43,14 +43,14 @@ class AnswerButton(QPushButton):
         self.__lyt.setContentsMargins(0, 0, 0, 0)
         self.__lyt.setSpacing(0)
         self.setLayout(self.__lyt)
-        self.__lbl.setAttribute(Qt.WA_TranslucentBackground)
-        self.__lbl.setAttribute(Qt.WA_TransparentForMouseEvents)
+        self.__lbl.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.__lbl.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents)
         self.__lbl.setSizePolicy(
-            QSizePolicy.Expanding,
-            QSizePolicy.Expanding,
+            QSizePolicy.Policy.Expanding,
+            QSizePolicy.Policy.Expanding,
         )
-        self.__lbl.setAlignment(Qt.AlignCenter | Qt.AlignVCenter)
-        self.__lbl.setTextFormat(Qt.RichText)
+        self.__lbl.setAlignment(Qt.AlignmentFlag.AlignCenter | Qt.AlignmentFlag.AlignVCenter)
+        self.__lbl.setTextFormat(Qt.TextFormat.RichText)
         self.__lyt.addWidget(self.__lbl)
 
         self.sound = None

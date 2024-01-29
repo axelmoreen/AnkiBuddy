@@ -54,8 +54,8 @@ class WriteTheAnswerWidget(QuestionWidget):
             self.options["question_field"],
         )
         self.questionLabel.setText(self.options["question"])
-        # self.questionLabel.setAlignment(Qt.AlignCenter)
-        # self.questionLabel.setTextFormat(Qt.RichText)
+        # self.questionLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        # self.questionLabel.setTextFormat(Qt.TextFormat.RichText)
 
         # self.set_font_size(self.questionLabel, 30)
 
@@ -75,7 +75,7 @@ class WriteTheAnswerWidget(QuestionWidget):
         self.ansSubmit = QPushButton()
         self.ansSubmit.setFixedHeight(60)
         self.ansSubmit.setText("Submit")
-        self.ansSubmit.setFocusPolicy(Qt.NoFocus)
+        self.ansSubmit.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         # self.ansSubmit.setAutoDefault(True)
         self.set_font_size(self.ansSubmit, 15)
         self.ansSubmit.setStyleSheet(confirm_button_style)
@@ -84,7 +84,7 @@ class WriteTheAnswerWidget(QuestionWidget):
         self.ansLayout.addWidget(self.ansSubmit)
         self.layout.addWidget(self.questionLabel)
         self.layout.addLayout(self.ansLayout)
-        self.ansBox.setFocusPolicy(Qt.StrongFocus)
+        self.ansBox.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.show_keyboard = self.conf["write_show_keyboard"]
         if self.show_keyboard:
             if not hasattr(mw, "_bKeyboard"):

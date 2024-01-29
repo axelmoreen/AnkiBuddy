@@ -26,7 +26,7 @@ class BTableWidgetItem(QLabel):
         self._text = text
         self._isBlank = False
 
-        self.setTextFormat(Qt.RichText)
+        self.setTextFormat(Qt.TextFormat.RichText)
 
     def hide_value(self):
         """Hide the value in this cell."""
