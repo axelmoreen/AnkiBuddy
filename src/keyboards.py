@@ -275,7 +275,7 @@ class KeyboardView(QDialog, Ui_Keyboard):
         self.pushButton_60.setAutoDefault(False)
 
     def keyPressEvent(self, event: QKeyEvent):
-        """Handle the Key Press Event from QT.
+        """Handle the Key Press Event from Qt.
 
         This event won't actually be called too frequently, since other
             windows / the linked line edit will get focus, but this will

@@ -96,7 +96,7 @@ class TemplateDialog(QDialog, Ui_TemplateDialog):
         Returns:
             dict[str, Any]: Returns dict representing the template.
         """
-        if self.exec_() == QDialog.Accepted:
+        if self.exec() == QDialog.DialogCode.Accepted:
             res = {}
             res["type_ind"] = self.stackedWidget.currentIndex()
 

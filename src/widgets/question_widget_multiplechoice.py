@@ -60,7 +60,7 @@ class MultipleChoiceQuestionWidget(QuestionWidget):
             )
 
             button.setAutoDefault(False)
-            button.setFocusPolicy(Qt.NoFocus)
+            button.setFocusPolicy(Qt.FocusPolicy.NoFocus)
             button.clicked.connect(lambda ch, i=i: self.answer_callback(i))
             button.setCheckable(True)
 

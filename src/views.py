@@ -33,7 +33,7 @@ from .style import incorrect_button_style
 class ListView(QDialog):
     """Qt Dialog for displaying list of cards, in a table.
 
-    Once instantiated, use .show() or .exec_() (to show modally).
+    Once instantiated, use .show() or .exec() (to show modally).
     """
     def __init__(self, model: ListModel, controller: ListController):
         """Creates a window that simply shows the notecards in a tabular
@@ -108,7 +108,7 @@ class ListView(QDialog):
         """
         self._cancelMsg = QMessageBox()
         self._cancelMsg.setText("Please set-up List view in Options first.")
-        self._cancelMsg.exec_()  # modal popup
+        self._cancelMsg.exec()  # modal popup
 
     ######
     # signals
@@ -323,7 +323,7 @@ class HomeworkView(QWidget):
             widget (QuestionWidget): A QuestionWidget to place in the layout.
         """
         self.ui.pushButton.hide()
-        self.ui.pushButton.setFocusPolicy(Qt.NoFocus)
+        self.ui.pushButton.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         self.ui.horizontalWidget.hide()
 
         oldQuestionWidget = self.ui.verticalLayout.itemAt(0)
@@ -365,7 +365,7 @@ class SummaryDialog(QDialog, Ui_Summary):
 
     def show(self):
         """Override show() dialog behavior in favor of a modal dialog."""
-        return self.exec_()
+        return self.exec()
 
 
 def _sec2Time(sec: int) -> str:
